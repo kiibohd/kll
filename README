@@ -6,6 +6,8 @@ KLL Compiler
 Most current version of the KLL spec: https://www.writelatex.com/read/zzqbdwqjfwwf
 Or visit http://kiibohd.com
 
+Uses funcparserlib: https://code.google.com/p/funcparserlib/
+
 
 Usage
 -----
