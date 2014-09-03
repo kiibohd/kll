@@ -1,0 +1,10 @@
+Name = colemak;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.2a;
+
+#S0x40 : U0x43;
+S0x40 : U"Backspace";
+
+S0x42 : U"}";
+S0x42 : U"Esc";
+

@@ -1,0 +1,17 @@
+Name = colemak;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+
+myCapability2 => myFunc2();
+myCapability3 => myFunc3( myArg1 : 2 );
+myCapability  => myFunc( myArg1 : 1, myArg2 : 4 );
+
+S0x3 : myCapability2();
+S0x6 : 'abcdDfF';
+S0x40 : U[0x1];
+S0x40 : U[0x1-0x4];
+S0x0B : U["Esc"];
+S[ 0x7 - 0x9 ] : U"6";
+S[ 0x7 - 0x9 ], S[0x2,0x3] : U"6";
+S[ 0x2 - 0x9, 0x10 ] : U"r";
+
