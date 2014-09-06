@@ -83,9 +83,9 @@ def processCommandLineArgs():
 		help="Specify .kll files to generate partial map, multiple files per flag.\n"
 		"Each -p defines another partial map.\n"
 		"Base .kll files (that define the scan code maps) must be defined for each partial map." )
-	pArgs.add_argument( '-t', '--template', type=str, default="templateKeymap.h",
+	pArgs.add_argument( '-t', '--template', type=str, default="templates/kiibohdKeymap.h",
 		help="Specify template used to generate the keymap.\n"
-		"Default: templateKeymap.h" )
+		"Default: templates/kiibohdKeymap.h" )
 	pArgs.add_argument( '-o', '--output', type=str, default="templateKeymap.h",
 		help="Specify output file. Writes to current working directory by default.\n"
 		"Default: generatedKeymap.h" )
@@ -133,10 +133,10 @@ def tokenize( string ):
 		( 'CodeEnd',          ( r'\]', ) ),
 		( 'String',           ( r'"[^"]*"', VERBOSE ) ),
 		( 'SequenceString',   ( r"'[^']*'", ) ),
+		( 'Operator',         ( r'=>|:\+|:-|:|=', ) ),
 		( 'Comma',            ( r',', ) ),
 		( 'Dash',             ( r'-', ) ),
 		( 'Plus',             ( r'\+', ) ),
-		( 'Operator',         ( r'=>|:|=', ) ),
 		( 'Parenthesis',      ( r'\(|\)', ) ),
 		( 'Number',           ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', VERBOSE ) ),
 		( 'Name',             ( r'[A-Za-z_][A-Za-z_0-9]*', ) ),
@@ -155,8 +155,7 @@ def tokenize( string ):
 ### Parsing ###
 
  ## Map Arrays
-scanCode_map      = [ None ] * 0xFF # Define 8 bit address width
-usbCode_map       = [ None ] * 0xFF # Define 8 bit address width
+macros_map        = Macros()
 variable_dict     = dict()
 capabilities_dict = Capabilities()
 
@@ -301,6 +300,9 @@ eol         = a( Token( 'EndOfLine', ';' ) )
 def listElem( item ):
 	return [ item ]
 
+def listToTuple( items ):
+	return tuple( items )
+
   # Flatten only the top layer (list of lists of ...)
 def oneLayerFlatten( items ):
 	mainList = []
@@ -357,26 +359,72 @@ def optionExpansion( sequences ):
 	return expandedSequences
 
 
+# Converts USB Codes into Capabilities
+def usbCodeToCapability( items ):
+	# Items already converted to variants using optionExpansion
+	for variant in range( 0, len( items ) ):
+		# Sequence of Combos
+		for sequence in range( 0, len( items[ variant ] ) ):
+			for combo in range( 0, len( items[ variant ][ sequence ] ) ):
+				# Only convert if an integer, otherwise USB Code doesn't need converting
+				if isinstance( items[ variant ][ sequence ][ combo ], int ):
+					# Use backend capability name and a single argument
+					items[ variant ][ sequence ][ combo ] = tuple( [ backend.usbCodeCapability(), tuple( [ items[ variant ][ sequence ][ combo ] ] ) ] )
+
+	return items
+
+
  ## Evaluation Rules
 
-def eval_scanCode( trigger, result ):
+def eval_scanCode( triggers, operator, results ):
 	# Convert to lists of lists of lists to tuples of tuples of tuples
-	trigger = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in trigger )
-	result  = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in result )
+	# Tuples are non-mutable, and can be used has index items
+	triggers = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in triggers )
+	results  = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in results )
 
-	# Add to the base scanCode map, overwrite if already defined
-#	if scanCode_map[ trigger ] != None:
-#		print ( "ScanCodeMap - Replacing '{0}' with '{1}' -> {2}".format( scanCode_map[ trigger ], result, trigger ) )
-#	scanCode_map[ trigger ] = result
+	# Iterate over all combinations of triggers and results
+	for trigger in triggers:
+		for result in results:
+			# Append Case
+			if operator == ":+":
+				macros_map.appendScanCode( trigger, result )
 
-def eval_usbCode( trigger, result ):
-	# Check if trigger is list
+			# Remove Case
+			elif operator == ":-":
+				macros_map.removeScanCode( trigger, result )
 
-	# Add to the base usbCode map, overwrite if already defined
-	if usbCode_map[ trigger ] != None:
-		print ( "USBCodeMap - Replacing '{0}' with '{1}' -> {2}".format( usbCode_map[ trigger ], result, trigger ) )
-	usbCode_map[ trigger ] = result
-	print ( trigger )
+			# Replace Case
+			elif operator == ":":
+				macros_map.replaceScanCode( trigger, result )
+
+	print ( triggers )
+	print ( results )
+
+def eval_usbCode( triggers, operator, results ):
+	# Convert to lists of lists of lists to tuples of tuples of tuples
+	# Tuples are non-mutable, and can be used has index items
+	triggers = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in triggers )
+	results  = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in results )
+
+	# Iterate over all combinations of triggers and results
+	for trigger in triggers:
+		scanCodes = macros_map.lookupUSBCodes( trigger )
+		for scanCode in scanCodes:
+			for result in results:
+				# Append Case
+				if operator == ":+":
+					macros_map.appendScanCode( scanCode, result )
+
+				# Remove Case
+				elif operator == ":-":
+					macros_map.removeScanCode( scanCode, result )
+
+				# Replace Case
+				elif operator == ":":
+					macros_map.replaceScanCode( scanCode, result )
+
+	#print ( triggers )
+	print ( results )
 
 def eval_variable( name, content ):
 	# Content might be a concatenation of multiple data types, convert everything into a single string
@@ -435,15 +483,15 @@ usbCode_combo       = oneplus( ( usbCode_expanded | usbCode_elem ) + skip( maybe
 usbCode_sequence    = oneplus( ( usbCode_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
   # Capabilities
-capFunc_arguments = number + skip( maybe( comma ) )
-capFunc_elem      = name + skip( parenthesis('(') ) + many( capFunc_arguments ) + skip( parenthesis(')') ) >> listElem
+capFunc_arguments = many( number + skip( maybe( comma ) ) ) >> listToTuple
+capFunc_elem      = name + skip( parenthesis('(') ) + capFunc_arguments + skip( parenthesis(')') ) >> listElem
 capFunc_combo     = oneplus( ( usbCode_expanded | usbCode_elem | capFunc_elem ) + skip( maybe( plus ) ) ) >> listElem
 capFunc_sequence  = oneplus( ( capFunc_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
   # Trigger / Result Codes
 triggerCode_outerList    = scanCode_sequence >> optionExpansion
-triggerUSBCode_outerList = usbCode_sequence >> optionExpansion
-resultCode_outerList     = capFunc_sequence >> optionExpansion
+triggerUSBCode_outerList = usbCode_sequence >> optionExpansion >> usbCodeToCapability
+resultCode_outerList     = capFunc_sequence >> optionExpansion >> usbCodeToCapability
 
 
  ## Main Rules
@@ -457,8 +505,9 @@ capability_arguments  = name + skip( operator(':') ) + number + skip( maybe( com
 capability_expression = name + skip( operator('=>') ) + name + skip( parenthesis('(') ) + many( capability_arguments ) + skip( parenthesis(')') ) + skip( eol ) >> set_capability
 
 #| <trigger> : <result>;
-scanCode_expression = triggerCode_outerList + skip( operator(':') ) + resultCode_outerList + skip( eol ) >> map_scanCode
-usbCode_expression  = triggerUSBCode_outerList + skip( operator(':') ) + resultCode_outerList + skip( eol ) #>> map_usbCode
+operatorTriggerResult = operator(':') | operator(':+') | operator(':-')
+scanCode_expression = triggerCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> map_scanCode
+usbCode_expression  = triggerUSBCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) #>> map_usbCode
 
 def parse( tokenSequence ):
 	"""Sequence(Token) -> object"""
@@ -489,15 +538,14 @@ if __name__ == '__main__':
 			data = file.read()
 
 			tokenSequence = tokenize( data )
-			print ( pformat( tokenSequence ) )
+			print ( pformat( tokenSequence ) ) # Display tokenization
 			tree = parse( tokenSequence )
 			#print ( tree )
-			#print ( scanCode_map )
-			#print ( usbCode_map )
 			print ( variable_dict )
 			print ( capabilities_dict )
 
 	# TODO Move
+	#macros_map.usbCodeToCapability( backend.usbCodeCapability() )
 	backend.process( capabilities_dict )
 
 	# Successful Execution

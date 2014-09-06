@@ -84,31 +84,40 @@ class Macros:
 		self.layer = 0
 
 		# Macro Storage
-		self.macros = [ [] ]
+		self.macros = [ dict() ]
+
+	def __repr__( self ):
+		return "{0}".format( self.macros )
 
 	def setLayer( self, layer ):
 		self.layer = layer
 
 	# Use for ScanCode trigger macros
 	def appendScanCode( self, trigger, result ):
-		self.macros[ self.layer ][ trigger ] = result
+		if not trigger in self.macros[ self.layer ]:
+			self.replaceScanCode( trigger, result )
+		else:
+			self.macros[ self.layer ][ trigger ].append( result )
 
-	# Use for USBCode trigger macros
-	# An extra lookup is required
-	def appendUSBCode( self, trigger, result ):
-		noSuccess = True
+	# Remove the given trigger/result pair
+	def removeScanCode( self, trigger, result ):
+		# Remove all instances of the given trigger/result pair
+		while result in self.macros[ self.layer ][ trigger ]:
+			self.macros[ self.layer ][ trigger ].remove( result )
 
+	# Replaces the given trigger with the given result
+	# If multiple results for a given trigger, clear, then add
+	def replaceScanCode( self, trigger, result ):
+		self.macros[ self.layer ][ trigger ] = [ result ]
+
+	# Return a list of ScanCode triggers with the given USB Code trigger
+	def lookupUSBCodes( self, usbCode ):
+		scanCodeList = []
+
+		# Scan current layer for USB Codes
 		for macro in self.macros[ self.layer ].keys():
-			# USB Code Found
-			if trigger == self.macros[ self.layer ][ macro ]:
-				print ( "USBCode - Replacing '{0}' with '{1}' -> '{2}'".format( trigger, macro, result ) )
-				self.macros[ self.layer ][ macro ] = result
-				noSuccess = False
+			if usbCode == self.macros[ self.layer ][ macro ]:
+				scanCodeList.append( macro )
 
-		# Only show warning if no replacements were done
-		if noSuccess:
-			print ( "Warning: '{1}' USB Code not found in layer {1}".format( trigger, self.layer ) )
-			return False
-
-		return True
+		return scanCodeList
 

@@ -60,6 +60,11 @@ class Backend:
 					self.tagList.append( item )
 
 
+	# USB Code Capability Name
+	def usbCodeCapability( self ):
+		return "usbKeyOut";
+
+
 	# Processes content for fill tags and does any needed dataset calculations
 	def process( self, capabilities ):
 		## Capabilities ##
