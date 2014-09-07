@@ -50,14 +50,14 @@ class Capabilities:
 		totalBytes = 0
 
 		# Iterate over the arguments, summing the total bytes
-		for arg in self.capabilities[ name ][1]:
-			totalBytes += int( arg[1] )
+		for arg in self.capabilities[ name ][ 1 ]:
+			totalBytes += int( arg[ 1 ] )
 
 		return totalBytes
 
 	# Name of the capability function
 	def funcName( self, name ):
-		return self.capabilities[ name ][0]
+		return self.capabilities[ name ][ 0 ]
 
 
 	# Only valid while dictionary keys are not added/removed
@@ -85,6 +85,14 @@ class Macros:
 
 		# Macro Storage
 		self.macros = [ dict() ]
+
+		# Correlated Macro Data
+		self.resultsIndex = dict()
+		self.triggersIndex = dict()
+		self.resultsIndexSorted = []
+		self.triggersIndexSorted = []
+		self.triggerList = []
+		self.maxScanCode = []
 
 	def __repr__( self ):
 		return "{0}".format( self.macros )
@@ -120,4 +128,74 @@ class Macros:
 				scanCodeList.append( macro )
 
 		return scanCodeList
+
+	# Generate/Correlate Layers
+	def generate( self ):
+		self.generateIndices()
+		self.sortIndexLists()
+		self.generateTriggerLists()
+
+	# Generates Index of Results and Triggers
+	def generateIndices( self ):
+		# Iterate over every trigger result, and add to the resultsIndex and triggersIndex
+		for layer in range( 0, len( self.macros ) ):
+			for trigger in self.macros[ layer ].keys():
+				# Each trigger has a list of results
+				for result in self.macros[ layer ][ trigger ]:
+					# Only add, with an index, if result hasn't been added yet
+					if not result in self.resultsIndex:
+						self.resultsIndex[ result ] = len( self.resultsIndex )
+
+					# Then add a trigger for each result, if trigger hasn't been added yet
+					triggerItem = tuple( [ trigger, self.resultsIndex[ result ] ] )
+					if not triggerItem in self.triggersIndex:
+						self.triggersIndex[ triggerItem ] = len( self.triggersIndex )
+
+	# Sort Index Lists using the indices rather than triggers/results
+	def sortIndexLists( self ):
+		self.resultsIndexSorted = [ None ] * len( self.resultsIndex )
+		# Iterate over the resultsIndex and sort by index
+		for result in self.resultsIndex.keys():
+			self.resultsIndexSorted[ self.resultsIndex[ result ] ] = result
+
+		self.triggersIndexSorted = [ None ] * len( self.triggersIndex )
+		# Iterate over the triggersIndex and sort by index
+		for trigger in self.triggersIndex.keys():
+			self.triggersIndexSorted[ self.triggersIndex[ trigger ] ] = trigger
+
+	# Generates Trigger Lists per layer using index lists
+	def generateTriggerLists( self ):
+		for layer in range( 0, len( self.macros ) ):
+			# Set max scancode to 0xFF (255)
+			# But keep track of the actual max scancode and reduce the list size
+			self.triggerList.append( [ [] ] * 0xFF )
+			self.maxScanCode.append( 0x00 )
+
+			# Iterate through triggersIndex to locate necessary ScanCodes and corresponding triggerIndex
+			for triggerItem in self.triggersIndex.keys():
+				# Iterate over the trigger portion of the triggerItem (other part is the index)
+				for sequence in triggerItem[ 0 ]:
+					for combo in sequence:
+						# Append triggerIndex for each found scanCode of the Trigger List
+						# Do not re-add if triggerIndex is already in the Trigger List
+						if not triggerItem[1] in self.triggerList[ layer ][ combo ]:
+							# Append is working strangely with list pre-initialization
+							# Doing a 0 check replacement instead -HaaTa
+							if len( self.triggerList[ layer ][ combo ] ) == 0:
+								self.triggerList[ layer ][ combo ] = [ triggerItem[ 1 ] ]
+							else:
+								self.triggerList[ layer ][ combo ].append( triggerItem[1] )
+
+						# Look for max Scan Code
+						if combo > self.maxScanCode[ layer ]:
+							self.maxScanCode[ layer ] = combo
+
+			# Shrink triggerList to actual max size
+			self.triggerList[ layer ] = self.triggerList[ layer ][ : self.maxScanCode[ layer ] + 1 ]
+
+		# Determine overall maxScanCode
+		self.overallMaxScanCode = 0x00
+		for maxVal in self.maxScanCode:
+			if maxVal > self.overallMaxScanCode:
+				self.overallMaxScanCode = maxVal
 

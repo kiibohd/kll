@@ -66,7 +66,7 @@ class Backend:
 
 
 	# Processes content for fill tags and does any needed dataset calculations
-	def process( self, capabilities ):
+	def process( self, capabilities, macros ):
 		## Capabilities ##
 		self.fill_dict['CapabilitiesList'] = "const Capability CapabilitiesList[] = {\n"
 
@@ -78,10 +78,154 @@ class Backend:
 
 		self.fill_dict['CapabilitiesList'] += "};"
 
-		print( self.fill_dict['CapabilitiesList'] )
+
+		## Results Macros ##
+		self.fill_dict['ResultMacros'] = ""
+
+		# Iterate through each of the result macros
+		for result in range( 0, len( macros.resultsIndexSorted ) ):
+			self.fill_dict['ResultMacros'] += "Guide_RM( {0} ) = {{ ".format( result )
+
+			# Add the result macro capability index guide (including capability arguments)
+			# See kiibohd controller Macros/PartialMap/kll.h for exact formatting details
+			for sequence in range( 0, len( macros.resultsIndexSorted[ result ] ) ):
+				# For each combo in the sequence, add the length of the combo
+				self.fill_dict['ResultMacros'] += "{0}, ".format( len( macros.resultsIndexSorted[ result ][ sequence ] ) )
+
+				# For each combo, add each of the capabilities used and their arguments
+				for combo in range( 0, len( macros.resultsIndexSorted[ result ][ sequence ] ) ):
+					resultItem = macros.resultsIndexSorted[ result ][ sequence ][ combo ]
+
+					# Add the capability index
+					self.fill_dict['ResultMacros'] += "{0}, ".format( capabilities.getIndex( resultItem[0] ) )
+
+					# Add each of the arguments of the capability
+					for arg in range( 0, len( resultItem[1] ) ):
+						self.fill_dict['ResultMacros'] += "0x{0:02X}, ".format( resultItem[1][ arg ] )
+
+			# Add list ending 0 and end of list
+			self.fill_dict['ResultMacros'] += "0 };\n"
+		self.fill_dict['ResultMacros'] = self.fill_dict['ResultMacros'][:-1] # Remove last newline
+
+
+		## Result Macro List ##
+		self.fill_dict['ResultMacroList'] = "ResultMacro ResultMacroList[] = {\n"
+
+		# Iterate through each of the result macros
+		for result in range( 0, len( macros.resultsIndexSorted ) ):
+			self.fill_dict['ResultMacroList'] += "\tDefine_RM( {0} ),\n".format( result )
+		self.fill_dict['ResultMacroList'] += "};"
+
+
+		## Trigger Macros ##
+		self.fill_dict['TriggerMacros'] = ""
+
+		# Iterate through each of the trigger macros
+		for trigger in range( 0, len( macros.triggersIndexSorted ) ):
+			self.fill_dict['TriggerMacros'] += "Guide_TM( {0} ) = {{ ".format( trigger )
+
+			# Add the trigger macro scan code guide
+			# See kiibohd controller Macros/PartialMap/kll.h for exact formatting details
+			for sequence in range( 0, len( macros.triggersIndexSorted[ trigger ][ 0 ] ) ):
+				# For each combo in the sequence, add the length of the combo
+				self.fill_dict['TriggerMacros'] += "{0}, ".format( len( macros.triggersIndexSorted[ trigger ][0][ sequence ] ) )
+
+				# For each combo, add the key type, key state and scan code
+				for combo in range( 0, len( macros.triggersIndexSorted[ trigger ][ 0 ][ sequence ] ) ):
+					triggerItem = macros.triggersIndexSorted[ trigger ][ 0 ][ sequence ][ combo ]
+
+					# TODO Add support for Analog keys
+					# TODO Add support for LED states
+					self.fill_dict['TriggerMacros'] += "0x00, 0x01, 0x{0:02X}, ".format( triggerItem )
+
+			# Add list ending 0 and end of list
+			self.fill_dict['TriggerMacros'] += "0 };\n"
+		self.fill_dict['TriggerMacros'] = self.fill_dict['TriggerMacros'][ :-1 ] # Remove last newline
+
+
+		## Trigger Macro List ##
+		self.fill_dict['TriggerMacroList'] = "TriggerMacro TriggerMacroList[] = {\n"
+
+		# Iterate through each of the trigger macros
+		for trigger in range( 0, len( macros.triggersIndexSorted ) ):
+			# Use TriggerMacro Index, and the corresponding ResultMacro Index
+			self.fill_dict['TriggerMacroList'] += "\tDefine_TM( {0}, {1} ),\n".format( trigger, macros.triggersIndexSorted[ trigger ][1] )
+		self.fill_dict['TriggerMacroList'] += "};"
+
+
+		## Max Scan Code ##
+		self.fill_dict['MaxScanCode'] = "#define MaxScanCode 0x{0:X}".format( macros.overallMaxScanCode )
+
+
+		## Default Layer and Default Layer Scan Map ##
+		self.fill_dict['DefaultLayerTriggerList'] = ""
+		self.fill_dict['DefaultLayerScanMap'] = "const unsigned int *default_scanMap[] = {\n"
+
+		# Iterate over triggerList and generate a C trigger array for the default map and default map array
+		for triggerList in range( 0, len( macros.triggerList[ 0 ] ) ):
+			# Generate ScanCode index and triggerList length
+			self.fill_dict['DefaultLayerTriggerList'] += "Define_TL( default, 0x{0:02X} ) = {{ {1}".format( triggerList, len( macros.triggerList[ 0 ][ triggerList ] ) )
+
+			# Add scanCode trigger list to Default Layer Scan Map
+			self.fill_dict['DefaultLayerScanMap'] += "default_tl_0x{0:02X}, ".format( triggerList )
+
+			# Add each item of the trigger list
+			for trigger in macros.triggerList[ 0 ][ triggerList ]:
+				self.fill_dict['DefaultLayerTriggerList'] += ", {0}".format( trigger )
+
+			self.fill_dict['DefaultLayerTriggerList'] += " };\n"
+		self.fill_dict['DefaultLayerTriggerList'] = self.fill_dict['DefaultLayerTriggerList'][:-1] # Remove last newline
+		self.fill_dict['DefaultLayerScanMap'] = self.fill_dict['DefaultLayerScanMap'][:-2] # Remove last comma and space
+		self.fill_dict['DefaultLayerScanMap'] += "\n};"
+
+		#print( self.fill_dict['DefaultLayerTriggerList'] )
+		#print( self.fill_dict['DefaultLayerScanMap'] )
+
+
+		## Partial Layers ##
+		self.fill_dict['PartialLayerTriggerLists'] = ""
+		# TODO
+		#print( self.fill_dict['PartialLayerTriggerLists'] )
+
+
+		## Partial Layer Scan Maps ##
+		self.fill_dict['PartialLayerScanMaps'] = ""
+		# TODO
+		#print( self.fill_dict['PartialLayerScanMaps'] )
+
+
+		## Layer Index List ##
+		self.fill_dict['LayerIndexList'] = "Layer LayerIndex[] = {\n"
+
+		# Iterate over each layer, adding it to the list
+		for layer in range( 0, len( macros.triggerList ) ):
+			# Default map is a special case, always the first index
+			if layer == 0:
+				self.fill_dict['LayerIndexList'] += '\tLayer_IN( default_scanMap, "DefaultMap" ),\n'
+			else:
+				# TODO Partial Layer
+				pass
+		self.fill_dict['LayerIndexList'] += "};"
+
+		#print( self.fill_dict['LayerIndexList'] )
 
 
 	# Generates the output keymap with fill tags filled
 	def generate( self, filepath ):
-		print("My path: {0}".format( filepath) )
+		# Process each line of the template, outputting to the target path
+		with open( filepath, 'w' ) as outputFile:
+			with open( self.templatePath, 'r' ) as templateFile:
+				for line in templateFile:
+					# TODO Support multiple replacements per line
+					# TODO Support replacement with other text inline
+					match = re.findall( '<\|([^|>]+)\|>', line )
+
+					# If match, replace with processed variable
+					if match:
+						outputFile.write( self.fill_dict[ match[ 0 ] ] )
+						outputFile.write("\n")
+
+					# Otherwise, just append template to output file
+					else:
+						outputFile.write( line )
 

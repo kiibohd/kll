@@ -64,7 +64,7 @@
 // - Should be corollated with the max scan code in the scan module
 // - Maximum value is 0x100 (0x0 to 0xFF)
 // - Increasing it beyond the keyboard's capabilities is just a waste of ram...
-#define MaxScanCode <MaxScanCode>
+#define MaxScanCode <|MaxScanCode|>
 
 // -- Trigger Lists
 //
@@ -94,6 +94,7 @@
 
 // - Default Map for ScanCode Lookup -
 <|DefaultLayerScanMap|>
+
 
 // - Partial Layer ScanCode Lookup Maps -
 <|PartialLayerScanMaps|>

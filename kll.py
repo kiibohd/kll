@@ -423,7 +423,7 @@ def eval_usbCode( triggers, operator, results ):
 				elif operator == ":":
 					macros_map.replaceScanCode( scanCode, result )
 
-	#print ( triggers )
+	print ( triggers )
 	print ( results )
 
 def eval_variable( name, content ):
@@ -541,12 +541,17 @@ if __name__ == '__main__':
 			print ( pformat( tokenSequence ) ) # Display tokenization
 			tree = parse( tokenSequence )
 			#print ( tree )
-			print ( variable_dict )
-			print ( capabilities_dict )
+			#print ( variable_dict )
+			#print ( capabilities_dict )
 
-	# TODO Move
-	#macros_map.usbCodeToCapability( backend.usbCodeCapability() )
-	backend.process( capabilities_dict )
+	# Do macro correlation and transformation
+	macros_map.generate()
+
+	# Process needed templating variables using backend
+	backend.process( capabilities_dict, macros_map )
+
+	# Generate output file using template and backend
+	backend.generate( output )
 
 	# Successful Execution
 	sys.exit( 0 )
