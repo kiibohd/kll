@@ -507,6 +507,18 @@ def parse( tokenSequence ):
 
 
 
+def processKLLFile( filename ):
+	with open( filename ) as file:
+		data = file.read()
+		tokenSequence = tokenize( data )
+		#print ( pformat( tokenSequence ) ) # Display tokenization
+		tree = parse( tokenSequence )
+
+	# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
+	macros_map.replayCachedAssignments()
+
+
+
 ### Main Entry Point ###
 
 if __name__ == '__main__':
@@ -517,17 +529,18 @@ if __name__ == '__main__':
 	backend_import = importlib.import_module( "backends.{0}".format( backend_name ) )
 	backend = backend_import.Backend( template )
 
-	#TODO Move elsewhere
+	# Default combined layer
 	for filename in defaultFiles:
-		with open( filename ) as file:
-			data = file.read()
+		processKLLFile( filename )
 
-			tokenSequence = tokenize( data )
-			#print ( pformat( tokenSequence ) ) # Display tokenization
-			tree = parse( tokenSequence )
+	# Iterate through additional layers
+	for partial in partialFileSets:
+		# Increment layer for each -p option
+		macros_map.addLayer()
 
-		# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
-		macros_map.replayCachedAssignments()
+		# Iterate and process each of the file in the layer
+		for filename in partial:
+			processKLLFile( filename )
 
 	# Do macro correlation and transformation
 	macros_map.generate()

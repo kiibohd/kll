@@ -178,20 +178,36 @@ class Backend:
 		self.fill_dict['DefaultLayerScanMap'] = self.fill_dict['DefaultLayerScanMap'][:-2] # Remove last comma and space
 		self.fill_dict['DefaultLayerScanMap'] += "\n};"
 
-		#print( self.fill_dict['DefaultLayerTriggerList'] )
-		#print( self.fill_dict['DefaultLayerScanMap'] )
 
-
-		## Partial Layers ##
+		## Partial Layers and Partial Layer Scan Maps ##
 		self.fill_dict['PartialLayerTriggerLists'] = ""
-		# TODO
-		#print( self.fill_dict['PartialLayerTriggerLists'] )
-
-
-		## Partial Layer Scan Maps ##
 		self.fill_dict['PartialLayerScanMaps'] = ""
-		# TODO
-		#print( self.fill_dict['PartialLayerScanMaps'] )
+
+		# Iterate over each of the layers, excluding the default layer
+		for layer in range( 1, len( macros.triggerList ) ):
+			# Prepare each layer
+			self.fill_dict['PartialLayerScanMaps'] += "// Partial Layer {0}\n".format( layer )
+			self.fill_dict['PartialLayerScanMaps'] += "const unsigned int *layer{0}_scanMap[] = {{\n".format( layer )
+			self.fill_dict['PartialLayerTriggerLists'] += "// Partial Layer {0}\n".format( layer )
+
+			# Iterate over triggerList and generate a C trigger array for the layer
+			for triggerList in range( 0, len( macros.triggerList[ layer ] ) ):
+				# Generate ScanCode index and triggerList length
+				self.fill_dict['PartialLayerTriggerLists'] += "Define_TL( layer{0}, 0x{1:02X} ) = {{ {2}".format( layer, triggerList, len( macros.triggerList[ 0 ][ triggerList ] ) )
+
+				# Add scanCode trigger list to Default Layer Scan Map
+				self.fill_dict['PartialLayerScanMaps'] += "layer{0}_tl_0x{1:02X}, ".format( layer, triggerList )
+
+				# Add each item of the trigger list
+				for trigger in macros.triggerList[ 0 ][ triggerList ]:
+					self.fill_dict['PartialLayerTriggerLists'] += ", {0}".format( trigger )
+
+				self.fill_dict['PartialLayerTriggerLists'] += " };\n"
+			self.fill_dict['PartialLayerTriggerLists'] += "\n"
+			self.fill_dict['PartialLayerScanMaps'] = self.fill_dict['PartialLayerScanMaps'][:-2] # Remove last comma and space
+			self.fill_dict['PartialLayerScanMaps'] += "\n};\n\n"
+		self.fill_dict['PartialLayerTriggerLists'] = self.fill_dict['PartialLayerTriggerLists'][:-2] # Remove last 2 newlines
+		self.fill_dict['PartialLayerScanMaps'] = self.fill_dict['PartialLayerScanMaps'][:-2] # Remove last 2 newlines
 
 
 		## Layer Index List ##
@@ -200,14 +216,12 @@ class Backend:
 		# Iterate over each layer, adding it to the list
 		for layer in range( 0, len( macros.triggerList ) ):
 			# Default map is a special case, always the first index
+			# TODO Fix names
 			if layer == 0:
 				self.fill_dict['LayerIndexList'] += '\tLayer_IN( default_scanMap, "DefaultMap" ),\n'
 			else:
-				# TODO Partial Layer
-				pass
+				self.fill_dict['LayerIndexList'] += '\tLayer_IN( layer{0}_scanMap, "Layer {0}" ),\n'.format( layer )
 		self.fill_dict['LayerIndexList'] += "};"
-
-		#print( self.fill_dict['LayerIndexList'] )
 
 
 	# Generates the output keymap with fill tags filled

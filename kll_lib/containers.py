@@ -100,8 +100,10 @@ class Macros:
 	def __repr__( self ):
 		return "{0}".format( self.macros )
 
-	def setLayer( self, layer ):
-		self.layer = layer
+	def addLayer( self ):
+		# Increment layer count, and append another macros dictionary
+		self.layer += 1
+		self.macros.append( dict() )
 
 	# Use for ScanCode trigger macros
 	def appendScanCode( self, trigger, result ):

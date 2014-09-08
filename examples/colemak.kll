@@ -6,7 +6,7 @@ KLL = 0.3;
 # Modified Date
 Date = 2014-09-07;
 
-# Top row
+# Top Row
 'e' : 'f';
 'r' : 'p';
 't' : 'g';
