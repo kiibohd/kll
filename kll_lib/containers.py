@@ -94,6 +94,9 @@ class Macros:
 		self.triggerList = []
 		self.maxScanCode = []
 
+		# USBCode Assignment Cache
+		self.assignmentCache = []
+
 	def __repr__( self ):
 		return "{0}".format( self.macros )
 
@@ -124,10 +127,34 @@ class Macros:
 
 		# Scan current layer for USB Codes
 		for macro in self.macros[ self.layer ].keys():
-			if usbCode == self.macros[ self.layer ][ macro ]:
+			if usbCode in self.macros[ self.layer ][ macro ]:
 				scanCodeList.append( macro )
 
 		return scanCodeList
+
+	# Cache USBCode Assignment
+	def cacheAssignment( self, operator, scanCode, result ):
+		self.assignmentCache.append( [ operator, scanCode, result ] )
+
+	# Assign cached USBCode Assignments
+	def replayCachedAssignments( self ):
+		# Iterate over each item in the assignment cache
+		for item in self.assignmentCache:
+			# Check operator, and choose the specified assignment action
+			# Append Case
+			if item[0] == ":+":
+				self.appendScanCode( item[1], item[2] )
+
+			# Remove Case
+			elif item[0] == ":-":
+				self.removeScanCode( item[1], item[2] )
+
+			# Replace Case
+			elif item[0] == ":":
+				self.replaceScanCode( item[1], item[2] )
+
+		# Clear assignment cache
+		self.assignmentCache = []
 
 	# Generate/Correlate Layers
 	def generate( self ):

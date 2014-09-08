@@ -4,11 +4,12 @@ Author = "HaaTa (Jacob Alexander) 2014";
 KLL = 0.3;
 
 # Modified Date
-Date = 2014-08-24;
+Date = 2014-09-07;
 
 
 # MOVE THIS SECTION to another file
 usbKeyOut => Output_usbCodeSend_capability( usbCode : 1 );
+layerState => Macro_layerState_capability( layer: 2, state : 1 );
 # END SECTION
 
 

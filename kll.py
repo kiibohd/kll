@@ -397,9 +397,6 @@ def eval_scanCode( triggers, operator, results ):
 			elif operator == ":":
 				macros_map.replaceScanCode( trigger, result )
 
-	print ( triggers )
-	print ( results )
-
 def eval_usbCode( triggers, operator, results ):
 	# Convert to lists of lists of lists to tuples of tuples of tuples
 	# Tuples are non-mutable, and can be used has index items
@@ -411,20 +408,8 @@ def eval_usbCode( triggers, operator, results ):
 		scanCodes = macros_map.lookupUSBCodes( trigger )
 		for scanCode in scanCodes:
 			for result in results:
-				# Append Case
-				if operator == ":+":
-					macros_map.appendScanCode( scanCode, result )
-
-				# Remove Case
-				elif operator == ":-":
-					macros_map.removeScanCode( scanCode, result )
-
-				# Replace Case
-				elif operator == ":":
-					macros_map.replaceScanCode( scanCode, result )
-
-	print ( triggers )
-	print ( results )
+				# Cache assignment until file finishes processing
+				macros_map.cacheAssignment( operator, scanCode, result )
 
 def eval_variable( name, content ):
 	# Content might be a concatenation of multiple data types, convert everything into a single string
@@ -506,8 +491,8 @@ capability_expression = name + skip( operator('=>') ) + name + skip( parenthesis
 
 #| <trigger> : <result>;
 operatorTriggerResult = operator(':') | operator(':+') | operator(':-')
-scanCode_expression = triggerCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> map_scanCode
-usbCode_expression  = triggerUSBCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) #>> map_usbCode
+scanCode_expression   = triggerCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> map_scanCode
+usbCode_expression    = triggerUSBCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> map_usbCode
 
 def parse( tokenSequence ):
 	"""Sequence(Token) -> object"""
@@ -538,11 +523,11 @@ if __name__ == '__main__':
 			data = file.read()
 
 			tokenSequence = tokenize( data )
-			print ( pformat( tokenSequence ) ) # Display tokenization
+			#print ( pformat( tokenSequence ) ) # Display tokenization
 			tree = parse( tokenSequence )
-			#print ( tree )
-			#print ( variable_dict )
-			#print ( capabilities_dict )
+
+		# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
+		macros_map.replayCachedAssignments()
 
 	# Do macro correlation and transformation
 	macros_map.generate()
