@@ -200,24 +200,31 @@ class Macros:
 			self.triggerList.append( [ [] ] * 0xFF )
 			self.maxScanCode.append( 0x00 )
 
-			# Iterate through triggersIndex to locate necessary ScanCodes and corresponding triggerIndex
-			for triggerItem in self.triggersIndex.keys():
-				# Iterate over the trigger portion of the triggerItem (other part is the index)
-				for sequence in triggerItem[ 0 ]:
-					for combo in sequence:
-						# Append triggerIndex for each found scanCode of the Trigger List
-						# Do not re-add if triggerIndex is already in the Trigger List
-						if not triggerItem[1] in self.triggerList[ layer ][ combo ]:
-							# Append is working strangely with list pre-initialization
-							# Doing a 0 check replacement instead -HaaTa
-							if len( self.triggerList[ layer ][ combo ] ) == 0:
-								self.triggerList[ layer ][ combo ] = [ triggerItem[ 1 ] ]
-							else:
-								self.triggerList[ layer ][ combo ].append( triggerItem[1] )
+			# Iterate through trigger macros to locate necessary ScanCodes and corresponding triggerIndex
+			for trigger in self.macros[ layer ].keys():
+				for variant in range( 0, len( self.macros[ layer ][ trigger ] ) ):
+					# Identify result index
+					resultIndex = self.resultsIndex[ self.macros[ layer ][ trigger ][ variant ] ]
 
-						# Look for max Scan Code
-						if combo > self.maxScanCode[ layer ]:
-							self.maxScanCode[ layer ] = combo
+					# Identify trigger index
+					triggerIndex = self.triggersIndex[ tuple( [ trigger, resultIndex ] ) ]
+
+					# Iterate over the trigger to locate the ScanCodes
+					for sequence in trigger:
+						for combo in sequence:
+							# Append triggerIndex for each found scanCode of the Trigger List
+							# Do not re-add if triggerIndex is already in the Trigger List
+							if not triggerIndex in self.triggerList[ layer ][ combo ]:
+								# Append is working strangely with list pre-initialization
+								# Doing a 0 check replacement instead -HaaTa
+								if len( self.triggerList[ layer ][ combo ] ) == 0:
+									self.triggerList[ layer ][ combo ] = [ triggerIndex ]
+								else:
+									self.triggerList[ layer ][ combo ].append( triggerIndex )
+
+							# Look for max Scan Code
+							if combo > self.maxScanCode[ layer ]:
+								self.maxScanCode[ layer ] = combo
 
 			# Shrink triggerList to actual max size
 			self.triggerList[ layer ] = self.triggerList[ layer ][ : self.maxScanCode[ layer ] + 1 ]
