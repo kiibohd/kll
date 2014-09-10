@@ -18,6 +18,8 @@
 
 ### Imports ###
 
+import copy
+
 
 
 ### Decorators ###
@@ -86,6 +88,10 @@ class Macros:
 		# Macro Storage
 		self.macros = [ dict() ]
 
+		# Base Layout Storage
+		self.baseLayout = None
+		self.layerLayoutMarkers = []
+
 		# Correlated Macro Data
 		self.resultsIndex = dict()
 		self.triggersIndex = dict()
@@ -100,10 +106,23 @@ class Macros:
 	def __repr__( self ):
 		return "{0}".format( self.macros )
 
+	def completeBaseLayout( self ):
+		# Copy base layout for later use when creating partial layers and add marker
+		self.baseLayout = copy.deepcopy( self.macros[ 0 ] )
+		self.layerLayoutMarkers.append( copy.deepcopy( self.baseLayout ) ) # Not used for default layer, just simplifies coding
+
+	def removeUnmarked( self ):
+		# Remove all of the unmarked mappings from the partial layer
+		for trigger in self.layerLayoutMarkers[ self.layer ].keys():
+			del self.macros[ self.layer ][ trigger ]
+
 	def addLayer( self ):
 		# Increment layer count, and append another macros dictionary
 		self.layer += 1
-		self.macros.append( dict() )
+		self.macros.append( copy.deepcopy( self.baseLayout ) )
+
+		# Add a layout marker for each layer
+		self.layerLayoutMarkers.append( copy.deepcopy( self.baseLayout ) )
 
 	# Use for ScanCode trigger macros
 	def appendScanCode( self, trigger, result ):
@@ -122,6 +141,10 @@ class Macros:
 	# If multiple results for a given trigger, clear, then add
 	def replaceScanCode( self, trigger, result ):
 		self.macros[ self.layer ][ trigger ] = [ result ]
+
+		# Mark layer scan code, so it won't be removed later
+		if not self.baseLayout is None:
+			del self.layerLayoutMarkers[ self.layer ][ trigger ]
 
 	# Return a list of ScanCode triggers with the given USB Code trigger
 	def lookupUSBCodes( self, usbCode ):

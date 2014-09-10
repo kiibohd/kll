@@ -61,12 +61,17 @@ argparse._ = textFormatter_gettext
 
 ### Argument Parsing ###
 
+def checkFileExists( filename ):
+	if not os.path.isfile( filename ):
+		print ( "{0} {1} does not exist...".format( ERROR, filename ) )
+		sys.exit( 1 )
+
 def processCommandLineArgs():
 	# Setup argument processor
 	pArgs = argparse.ArgumentParser(
 	        usage="%(prog)s [options] <file1>...",
 	        description="Generates .h file state tables and pointer indices from KLL .kll files.",
-	        epilog="Example: {0} TODO".format( os.path.basename( sys.argv[0] ) ),
+	        epilog="Example: {0} mykeyboard.kll -d colemak.kll -p hhkbpro2.kll -p symbols.kll".format( os.path.basename( sys.argv[0] ) ),
 	        formatter_class=argparse.RawTextHelpFormatter,
 	        add_help=False,
 )
@@ -79,6 +84,8 @@ def processCommandLineArgs():
 	pArgs.add_argument( '-b', '--backend', type=str, default="kiibohd",
 		help="Specify target backend for the KLL compiler.\n"
 		"Default: kiibohd" )
+	pArgs.add_argument( '-d', '--default', type=str, nargs='+',
+		help="Specify .kll files to layer on top of the default map to create a combined map." )
 	pArgs.add_argument( '-p', '--partial', type=str, nargs='+', action='append',
 		help="Specify .kll files to generate partial map, multiple files per flag.\n"
 		"Each -p defines another partial map.\n"
@@ -96,24 +103,26 @@ def processCommandLineArgs():
 	args = pArgs.parse_args()
 
 	# Parameters
-	defaultFiles = args.files
+	baseFiles = args.files
+	defaultFiles = args.default
 	partialFileSets = args.partial
+	if defaultFiles is None:
+		partialFileSets = []
 	if partialFileSets is None:
 		partialFileSets = [[]]
 
 	# Check file existance
+	for filename in baseFiles:
+		checkFileExists( filename )
+
 	for filename in defaultFiles:
-		if not os.path.isfile( filename ):
-			print ( "{0} {1} does not exist...".format( ERROR, filename ) )
-			sys.exit( 1 )
+		checkFileExists( filename )
 
 	for partial in partialFileSets:
 		for filename in partial:
-			if not os.path.isfile( filename ):
-				print ( "{0} {1} does not exist...".format( ERROR, filename ) )
-				sys.exit( 1 )
+			checkFileExists( filename )
 
-	return (defaultFiles, partialFileSets, args.backend, args.template, args.output)
+	return (baseFiles, defaultFiles, partialFileSets, args.backend, args.template, args.output)
 
 
 
@@ -514,33 +523,40 @@ def processKLLFile( filename ):
 		#print ( pformat( tokenSequence ) ) # Display tokenization
 		tree = parse( tokenSequence )
 
-	# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
-	macros_map.replayCachedAssignments()
-
 
 
 ### Main Entry Point ###
 
 if __name__ == '__main__':
-	(defaultFiles, partialFileSets, backend_name, template, output) = processCommandLineArgs()
+	(baseFiles, defaultFiles, partialFileSets, backend_name, template, output) = processCommandLineArgs()
 
 	# Load backend module
 	global backend
 	backend_import = importlib.import_module( "backends.{0}".format( backend_name ) )
 	backend = backend_import.Backend( template )
 
+	# Process base layout files
+	for filename in baseFiles:
+		processKLLFile( filename )
+	macros_map.completeBaseLayout() # Indicates to macros_map that the base layout is complete
+
 	# Default combined layer
 	for filename in defaultFiles:
 		processKLLFile( filename )
+	# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
+	macros_map.replayCachedAssignments()
 
 	# Iterate through additional layers
 	for partial in partialFileSets:
 		# Increment layer for each -p option
 		macros_map.addLayer()
-
 		# Iterate and process each of the file in the layer
 		for filename in partial:
 			processKLLFile( filename )
+		# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
+		macros_map.replayCachedAssignments()
+		# Remove un-marked keys to complete the partial layer
+		macros_map.removeUnmarked()
 
 	# Do macro correlation and transformation
 	macros_map.generate()

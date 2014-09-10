@@ -193,13 +193,13 @@ class Backend:
 			# Iterate over triggerList and generate a C trigger array for the layer
 			for triggerList in range( 0, len( macros.triggerList[ layer ] ) ):
 				# Generate ScanCode index and triggerList length
-				self.fill_dict['PartialLayerTriggerLists'] += "Define_TL( layer{0}, 0x{1:02X} ) = {{ {2}".format( layer, triggerList, len( macros.triggerList[ 0 ][ triggerList ] ) )
+				self.fill_dict['PartialLayerTriggerLists'] += "Define_TL( layer{0}, 0x{1:02X} ) = {{ {2}".format( layer, triggerList, len( macros.triggerList[ layer ][ triggerList ] ) )
 
 				# Add scanCode trigger list to Default Layer Scan Map
 				self.fill_dict['PartialLayerScanMaps'] += "layer{0}_tl_0x{1:02X}, ".format( layer, triggerList )
 
 				# Add each item of the trigger list
-				for trigger in macros.triggerList[ 0 ][ triggerList ]:
+				for trigger in macros.triggerList[ layer ][ triggerList ]:
 					self.fill_dict['PartialLayerTriggerLists'] += ", {0}".format( trigger )
 
 				self.fill_dict['PartialLayerTriggerLists'] += " };\n"
