@@ -159,7 +159,7 @@ class Backend:
 
 		## Default Layer and Default Layer Scan Map ##
 		self.fill_dict['DefaultLayerTriggerList'] = ""
-		self.fill_dict['DefaultLayerScanMap'] = "const unsigned int *default_scanMap[] = {\n"
+		self.fill_dict['DefaultLayerScanMap'] = "const nat_ptr_t *default_scanMap[] = {\n"
 
 		# Iterate over triggerList and generate a C trigger array for the default map and default map array
 		for triggerList in range( 0, len( macros.triggerList[ 0 ] ) ):
@@ -187,7 +187,7 @@ class Backend:
 		for layer in range( 1, len( macros.triggerList ) ):
 			# Prepare each layer
 			self.fill_dict['PartialLayerScanMaps'] += "// Partial Layer {0}\n".format( layer )
-			self.fill_dict['PartialLayerScanMaps'] += "const unsigned int *layer{0}_scanMap[] = {{\n".format( layer )
+			self.fill_dict['PartialLayerScanMaps'] += "const nat_ptr_t *layer{0}_scanMap[] = {{\n".format( layer )
 			self.fill_dict['PartialLayerTriggerLists'] += "// Partial Layer {0}\n".format( layer )
 
 			# Iterate over triggerList and generate a C trigger array for the layer
