@@ -107,7 +107,7 @@ def processCommandLineArgs():
 	defaultFiles = args.default
 	partialFileSets = args.partial
 	if defaultFiles is None:
-		partialFileSets = []
+		defaultFiles = []
 	if partialFileSets is None:
 		partialFileSets = [[]]
 
@@ -321,6 +321,21 @@ def oneLayerFlatten( items ):
 
 	return mainList
 
+  # Capability arguments may need to be expanded (e.g. 1 16 bit argument needs to be 2 8 bit arguments for the state machine)
+def capArgExpander( items ):
+	newArgs = []
+	# For each defined argument in the capability definition
+	for arg in range( 0, len( capabilities_dict[ items[0] ][1] ) ):
+		argLen = capabilities_dict[ items[0] ][1][ arg ][1]
+		num = items[1][ arg ]
+		byteForm = num.to_bytes( argLen, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
+
+		# For each sub-argument, split into byte-sized chunks
+		for byte in range( 0, argLen ):
+			newArgs.append( byteForm[ byte ] )
+
+	return tuple( [ items[0], tuple( newArgs ) ] )
+
   # Expand ranges of values in the 3rd dimension of the list, to a list of 2nd lists
   # i.e. [ sequence, [ combo, [ range ] ] ] --> [ [ sequence, [ combo ] ], <option 2>, <option 3> ]
 def optionExpansion( sequences ):
@@ -478,7 +493,7 @@ usbCode_sequence    = oneplus( ( usbCode_combo | seqString ) + skip( maybe( comm
 
   # Capabilities
 capFunc_arguments = many( number + skip( maybe( comma ) ) ) >> listToTuple
-capFunc_elem      = name + skip( parenthesis('(') ) + capFunc_arguments + skip( parenthesis(')') ) >> listElem
+capFunc_elem      = name + skip( parenthesis('(') ) + capFunc_arguments + skip( parenthesis(')') ) >> capArgExpander >> listElem
 capFunc_combo     = oneplus( ( usbCode_expanded | usbCode_elem | capFunc_elem ) + skip( maybe( plus ) ) ) >> listElem
 capFunc_sequence  = oneplus( ( capFunc_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 

@@ -8,8 +8,11 @@ Date = 2014-09-07;
 
 
 # MOVE THIS SECTION to another file
-usbKeyOut => Output_usbCodeSend_capability( usbCode : 1 );
-layerState => Macro_layerState_capability( layer: 2, state : 1 );
+usbKeyOut  => Output_usbCodeSend_capability( usbCode : 1 );
+layerState => Macro_layerState_capability( layer : 2, state : 1 );
+layerLatch => Macro_layerLatch_capability( layer : 2 );
+layerLock  => Macro_layerLock_capability( layer : 2 );
+layerShift => Macro_layerShift_capability( layer : 2 );
 # END SECTION
 
 
@@ -76,4 +79,11 @@ S0x3B : U"RAlt";
 S0x3C : U"Function3"; # Right Blank Key 1
 S0x3D : U"Function4"; # Right Blank Key 2
 S0x3E : U"BackTick";
+
+# TODO MOVE
+# Function Layer Assignments
+U"Function1" : layerShift( 1 );
+U"Function2" : layerShift( 1 );
+U"Function3" : layerShift( 1 );
+U"Function4" : layerShift( 1 );
 
