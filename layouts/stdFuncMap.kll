@@ -1,0 +1,28 @@
+Name = stdFuncMap;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+
+# Modified Date
+Date = 2014-09-14;
+
+# Maps each Function key incrementally to each layer
+# Unused layers and functions are ignored
+
+U"Function1" : layerShift( 1 );
+U"Function2" : layerShift( 2 );
+U"Function3" : layerShift( 3 );
+U"Function4" : layerShift( 4 );
+U"Function5" : layerShift( 5 );
+U"Function6" : layerShift( 6 );
+U"Function7" : layerShift( 7 );
+U"Function8" : layerShift( 8 );
+U"Function9" : layerShift( 9 );
+U"Function10" : layerShift( 10 );
+U"Function11" : layerShift( 11 );
+U"Function12" : layerShift( 12 );
+U"Function13" : layerShift( 13 );
+U"Function14" : layerShift( 14 );
+U"Function15" : layerShift( 15 );
+U"Function16" : layerShift( 16 );
+

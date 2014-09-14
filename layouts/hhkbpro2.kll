@@ -1,0 +1,53 @@
+Name = hhkbpro2;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+
+# Modified Date
+Date = 2014-09-07;
+
+# Number Row
+U"1" : U"F1";
+U"2" : U"F2";
+U"3" : U"F3";
+U"4" : U"F4";
+U"5" : U"F5";
+U"6" : U"F6";
+U"7" : U"F7";
+U"8" : U"F8";
+U"9" : U"F9";
+U"0" : U"F10";
+U"-" : U"F11";
+U"=" : U"F12";
+U"Backslash" : U"Insert";
+U"Backtick" : U"Delete";
+
+# Top Row
+U"Tab" : U"Capslock";
+U"I" : U"PrintScreen";
+U"O" : U"ScrollLock";
+U"P" : U"Pause";
+U"{" : U"Up";
+
+# Middle Row
+U"A" : U"VolumeDown";
+U"S" : U"VolumeUp";
+U"D" : U"Mute";
+#U"F" : U"Eject"; # TODO Requires additional firmware support for media keys -HaaTa
+U"H" : U"Keypad Asterix";
+U"J" : U"Keypad Slash";
+U"K" : U"Home";
+U"L" : U"PageUp";
+U";" : U"Left";
+U"Quote" : U"Right";
+
+# Bottom Row
+U"N" : U"Keypad Plus";
+U"M" : U"Keypad Minus";
+U"Comma" : U"End";
+U"Period" : U"PageDown";
+U"Slash" : U"Down";
+
+# Space Row
+# N/A
+

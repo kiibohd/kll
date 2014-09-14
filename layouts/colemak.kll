@@ -1,0 +1,31 @@
+Name = colemak;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+
+# Modified Date
+Date = 2014-09-07;
+
+# Top Row
+'e' : 'f';
+'r' : 'p';
+'t' : 'g';
+'y' : 'j';
+'u' : 'l';
+'i' : 'u';
+'o' : 'y';
+'p' : ';';
+
+# Middle Row
+'s' : 'r';
+'d' : 's';
+'f' : 't';
+'g' : 'd';
+'j' : 'n';
+'k' : 'e';
+'l' : 'i';
+';' : 'o';
+
+# Bottom Row
+'n' : 'k';
+
