@@ -32,9 +32,9 @@ class LexerError(Exception):
         self.msg = msg
 
     def __str__(self):
-        s = u'cannot tokenize data'
+        s = 'cannot tokenize data'
         line, pos = self.place
-        return u'%s: %d,%d: "%s"' % (s, line, pos, self.msg)
+        return '%s: %d,%d: "%s"' % (s, line, pos, self.msg)
 
 
 class Token(object):
@@ -45,7 +45,7 @@ class Token(object):
         self.end = end
 
     def __repr__(self):
-        return u'Token(%r, %r)' % (self.type, self.value)
+        return 'Token(%r, %r)' % (self.type, self.value)
 
     def __eq__(self, other):
         # FIXME: Case sensitivity is assumed here
@@ -57,10 +57,10 @@ class Token(object):
         else:
             sl, sp = self.start
             el, ep = self.end
-            return u'%d,%d-%d,%d:' % (sl, sp, el, ep)
+            return '%d,%d-%d,%d:' % (sl, sp, el, ep)
 
     def __str__(self):
-        s = u"%s %s '%s'" % (self._pos_str(), self.type, self.value)
+        s = "%s %s '%s'" % (self._pos_str(), self.type, self.value)
         return s.strip()
 
     @property
@@ -68,7 +68,7 @@ class Token(object):
         return self.value
 
     def pformat(self):
-        return u"%s %s '%s'" % (self._pos_str().ljust(20),
+        return "%s %s '%s'" % (self._pos_str().ljust(20),
                                 self.type.ljust(14),
                                 self.value)
 
@@ -88,12 +88,12 @@ def make_tokenizer(specs):
             m = regexp.match(str, i)
             if m is not None:
                 value = m.group()
-                nls = value.count(u'\n')
+                nls = value.count('\n')
                 n_line = line + nls
                 if nls == 0:
                     n_pos = pos + len(value)
                 else:
-                    n_pos = len(value) - value.rfind(u'\n') - 1
+                    n_pos = len(value) - value.rfind('\n') - 1
                 return Token(type, value, (line, pos + 1), (n_line, n_pos))
         else:
             errline = str.splitlines()[line - 1]
