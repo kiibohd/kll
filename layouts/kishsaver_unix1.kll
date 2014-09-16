@@ -1,0 +1,31 @@
+Name = kishsaver_unix1;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+
+# Modified Date
+Date = 2014-09-16;
+
+# Row 1
+U"Backtick"  : U"Esc";
+U"Inter2"    : U"Backtick";
+U"Backspace" : U"Delete";
+
+# Row 2
+U"Delete" : U"Backspace";
+
+# Row 3
+U"CapsLock" : U"Ctrl";
+
+# Row 4
+U"Inter3" : U"RShift";
+U"RShift" : U"Function1";
+
+# Row 5
+U"LCtrl" : U"Function2";
+U"LGui"  : U"LAlt";
+U"LAlt"  : U"LGui";
+U"RAlt"  : U"RGui";
+U"RGui"  : U"RAlt";
+U"RCtrl" : U"Function3";
+
