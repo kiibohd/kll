@@ -146,7 +146,8 @@ class Macros:
 		self.macros[ self.layer ][ trigger ] = [ result ]
 
 		# Mark layer scan code, so it won't be removed later
-		if not self.baseLayout is None:
+		# Also check to see if it hasn't already been removed before
+		if not self.baseLayout is None and trigger in self.layerLayoutMarkers[ self.layer ]:
 			del self.layerLayoutMarkers[ self.layer ][ trigger ]
 
 	# Return a list of ScanCode triggers with the given USB Code trigger

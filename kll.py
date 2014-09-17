@@ -558,8 +558,8 @@ if __name__ == '__main__':
 	# Default combined layer
 	for filename in defaultFiles:
 		processKLLFile( filename )
-	# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
-	macros_map.replayCachedAssignments()
+		# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
+		macros_map.replayCachedAssignments()
 
 	# Iterate through additional layers
 	for partial in partialFileSets:
