@@ -129,12 +129,16 @@ class Backend:
 
 
 		## Result Macro List ##
-		self.fill_dict['ResultMacroList'] = "ResultMacro ResultMacroList[] = {\n"
+		self.fill_dict['ResultMacroList'] = "const ResultMacro ResultMacroList[] = {\n"
 
 		# Iterate through each of the result macros
 		for result in range( 0, len( macros.resultsIndexSorted ) ):
 			self.fill_dict['ResultMacroList'] += "\tDefine_RM( {0} ),\n".format( result )
 		self.fill_dict['ResultMacroList'] += "};"
+
+
+		## Result Macro Record ##
+		self.fill_dict['ResultMacroRecord'] = "ResultMacroRecord ResultMacroRecordList[ ResultMacroNum ];"
 
 
 		## Trigger Macros ##
@@ -164,13 +168,17 @@ class Backend:
 
 
 		## Trigger Macro List ##
-		self.fill_dict['TriggerMacroList'] = "TriggerMacro TriggerMacroList[] = {\n"
+		self.fill_dict['TriggerMacroList'] = "const TriggerMacro TriggerMacroList[] = {\n"
 
 		# Iterate through each of the trigger macros
 		for trigger in range( 0, len( macros.triggersIndexSorted ) ):
 			# Use TriggerMacro Index, and the corresponding ResultMacro Index
 			self.fill_dict['TriggerMacroList'] += "\tDefine_TM( {0}, {1} ),\n".format( trigger, macros.triggersIndexSorted[ trigger ][1] )
 		self.fill_dict['TriggerMacroList'] += "};"
+
+
+		## Trigger Macro Record ##
+		self.fill_dict['TriggerMacroRecord'] = "TriggerMacroRecord TriggerMacroRecordList[ TriggerMacroNum ];"
 
 
 		## Max Scan Code ##
