@@ -14,7 +14,8 @@
  * along with this file.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Generated MSG /w timestamp and compiler information
+<|Information|>
+
 
 #ifndef __generatedKeymap_h
 #define __generatedKeymap_h
@@ -108,6 +109,10 @@
 // Index 0: Default map
 // Index n: Additional layers
 <|LayerIndexList|>
+
+
+// - Layer State
+<|LayerState|>
 
 
 

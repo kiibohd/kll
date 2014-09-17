@@ -31,7 +31,9 @@ ERROR = '\033[5;1;31mERROR\033[0m:'
 
 ### Parsing ###
 
+
  ## Containers
+
 class Capabilities:
 	# Container for capabilities dictionary and convenience functions
 	def __init__( self ):
@@ -99,6 +101,7 @@ class Macros:
 		self.triggersIndexSorted = []
 		self.triggerList = []
 		self.maxScanCode = []
+		self.firstScanCode = []
 
 		# USBCode Assignment Cache
 		self.assignmentCache = []
@@ -252,9 +255,40 @@ class Macros:
 			# Shrink triggerList to actual max size
 			self.triggerList[ layer ] = self.triggerList[ layer ][ : self.maxScanCode[ layer ] + 1 ]
 
+			# Calculate first scan code for layer, useful for uC implementations trying to save RAM
+			firstScanCode = 0
+			for triggerList in range( 0, len( self.triggerList[ layer ] ) ):
+				firstScanCode = triggerList
+
+				# Break if triggerList has items
+				if len( self.triggerList[ layer ][ triggerList ] ) > 0:
+					break;
+			self.firstScanCode.append( firstScanCode )
+
 		# Determine overall maxScanCode
 		self.overallMaxScanCode = 0x00
 		for maxVal in self.maxScanCode:
 			if maxVal > self.overallMaxScanCode:
 				self.overallMaxScanCode = maxVal
+
+
+class Variables:
+	# Container for variables
+	# Stores three sets of variables, the overall combined set, per layer, and per file
+	def __init__( self ):
+		pass
+
+	def baseLayerFinished( self ):
+		pass
+
+	def setCurrentFile( self, name ):
+		# Store using filename and current layer
+		pass
+
+	def setCurrentLayer( self, layer ):
+		# Store using layer index
+		pass
+
+	def assignVariable( self, key, value ):
+		pass
 
