@@ -109,6 +109,12 @@ class Backend:
 			# Add the result macro capability index guide (including capability arguments)
 			# See kiibohd controller Macros/PartialMap/kll.h for exact formatting details
 			for sequence in range( 0, len( macros.resultsIndexSorted[ result ] ) ):
+				# If the sequence is longer than 1, prepend a sequence spacer
+				# Needed for USB behaviour, otherwise, repeated keys will not work
+				if sequence > 0:
+					# <single element>, <usbCodeSend capability>, <USB Code 0x00>
+					self.fill_dict['ResultMacros'] += "1, {0}, 0x00, ".format( capabilities.getIndex( self.usbCodeCapability() ) )
+
 				# For each combo in the sequence, add the length of the combo
 				self.fill_dict['ResultMacros'] += "{0}, ".format( len( macros.resultsIndexSorted[ result ][ sequence ] ) )
 
@@ -122,6 +128,12 @@ class Backend:
 					# Add each of the arguments of the capability
 					for arg in range( 0, len( resultItem[1] ) ):
 						self.fill_dict['ResultMacros'] += "0x{0:02X}, ".format( resultItem[1][ arg ] )
+
+			# If sequence is longer than 1, append a sequence spacer at the end of the sequence
+			# Required by USB to end at sequence without holding the key down
+			if len( macros.resultsIndexSorted[ result ] ) > 1:
+				# <single element>, <usbCodeSend capability>, <USB Code 0x00>
+				self.fill_dict['ResultMacros'] += "1, {0}, 0x00, ".format( capabilities.getIndex( self.usbCodeCapability() ) )
 
 			# Add list ending 0 and end of list
 			self.fill_dict['ResultMacros'] += "0 };\n"
