@@ -1,0 +1,12 @@
+Name = md1Overlay;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+
+# Modified Date
+Date = 2014-11-12;
+
+U"Function2" : layerLock( 1 );
+U"Function3" : layerLatch( 1 );
+U"Function4" : U"CapsLock";
+
