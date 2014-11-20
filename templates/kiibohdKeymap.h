@@ -17,8 +17,8 @@
 <|Information|>
 
 
-#ifndef __generatedKeymap_h
-#define __generatedKeymap_h
+#ifndef __kiibohdKeymap_h
+#define __kiibohdKeymap_h
 
 // ----- Includes -----
 

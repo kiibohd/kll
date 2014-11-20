@@ -277,19 +277,48 @@ class Variables:
 	# Container for variables
 	# Stores three sets of variables, the overall combined set, per layer, and per file
 	def __init__( self ):
-		pass
+		# Dictionaries of variables
+		self.baseLayout       = dict()
+		self.fileVariables    = dict()
+		self.layerVariables   = [ dict() ]
+		self.overallVariables = dict()
+		self.defines          = dict()
 
-	def baseLayerFinished( self ):
-		pass
+		self.currentFile = ""
+		self.currentLayer = 0
+		self.baseLayoutEnabled = True
+
+	def baseLayoutFinished( self ):
+		self.baseLayoutEnabled = False
 
 	def setCurrentFile( self, name ):
 		# Store using filename and current layer
-		pass
+		self.currentFile = name
+		self.fileVariables[ name ] = dict()
 
-	def setCurrentLayer( self, layer ):
+		# If still processing BaseLayout
+		if self.baseLayoutEnabled:
+			self.baseLayout['*LayerFiles'] = name
+		# Set for the current layer
+		else:
+			self.layerVariables[ self.currentLayer ]['*LayerFiles'] = name
+
+	def incrementLayer( self ):
 		# Store using layer index
-		pass
+		self.currentLayer += 1
+		self.layerVariables.append( dict() )
 
 	def assignVariable( self, key, value ):
-		pass
+		# Overall set of variables
+		self.overallVariables[ key ] = value
+
+		# If still processing BaseLayout
+		if self.baseLayoutEnabled:
+			self.baseLayout[ key ] = value
+		# Set for the current layer
+		else:
+			self.layerVariables[ self.currentLayer ][ key ] = value
+
+		# File context variables
+		self.fileVariables[ self.currentFile ][ key ] = value
 

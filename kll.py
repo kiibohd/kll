@@ -93,9 +93,15 @@ def processCommandLineArgs():
 	pArgs.add_argument( '-t', '--template', type=str, default="templates/kiibohdKeymap.h",
 		help="Specify template used to generate the keymap.\n"
 		"Default: templates/kiibohdKeymap.h" )
-	pArgs.add_argument( '-o', '--output', type=str, default="templateKeymap.h",
+	pArgs.add_argument( '--defines-template', type=str, default="templates/kiibohdDefs.h",
+		help="Specify template used to generate kll_defs.h.\n"
+		"Default: templates/kiibohdDefs.h" )
+	pArgs.add_argument( '-o', '--output', type=str, default="generatedKeymap.h",
 		help="Specify output file. Writes to current working directory by default.\n"
 		"Default: generatedKeymap.h" )
+	pArgs.add_argument( '--defines-output', type=str, default="kll_defs.h",
+		help="Specify output path for kll_defs.h. Writes to current working directory by default.\n"
+		"Default: kll_defs.h" )
 	pArgs.add_argument( '-h', '--help', action="help",
 		help="This message." )
 
@@ -122,7 +128,7 @@ def processCommandLineArgs():
 		for filename in partial:
 			checkFileExists( filename )
 
-	return (baseFiles, defaultFiles, partialFileSets, args.backend, args.template, args.output)
+	return (baseFiles, defaultFiles, partialFileSets, args.backend, args.template, args.defines_template, args.output, args.defines_output)
 
 
 
@@ -165,7 +171,7 @@ def tokenize( string ):
 
  ## Map Arrays
 macros_map        = Macros()
-variable_dict     = dict()
+variables_dict    = Variables()
 capabilities_dict = Capabilities()
 
 
@@ -253,6 +259,9 @@ def make_seqString( token ):
 	return listOfLists
 
 def make_string( token ):
+	return token[1:-1]
+
+def make_unseqString( token ):
 	return token[1:-1]
 
 def make_number( token ):
@@ -441,31 +450,36 @@ def eval_variable( name, content ):
 	for item in content:
 		assigned_content += str( item )
 
-	variable_dict[ name ] = assigned_content
+	variables_dict.assignVariable( name, assigned_content )
 
 def eval_capability( name, function, args ):
 	capabilities_dict[ name ] = [ function, args ]
+
+def eval_define( name, cdefine_name ):
+	variables_dict.defines[ name ] = cdefine_name
 
 map_scanCode   = unarg( eval_scanCode )
 map_usbCode    = unarg( eval_usbCode )
 
 set_variable   = unarg( eval_variable )
 set_capability = unarg( eval_capability )
+set_define     = unarg( eval_define )
 
 
  ## Sub Rules
 
-usbCode   = tokenType('USBCode') >> make_usbCode
-scanCode  = tokenType('ScanCode') >> make_scanCode
-name      = tokenType('Name')
-number    = tokenType('Number') >> make_number
-comma     = tokenType('Comma')
-dash      = tokenType('Dash')
-plus      = tokenType('Plus')
-content   = tokenType('VariableContents')
-string    = tokenType('String') >> make_string
-unString  = tokenType('String') # When the double quotes are still needed for internal processing
-seqString = tokenType('SequenceString') >> make_seqString
+usbCode     = tokenType('USBCode') >> make_usbCode
+scanCode    = tokenType('ScanCode') >> make_scanCode
+name        = tokenType('Name')
+number      = tokenType('Number') >> make_number
+comma       = tokenType('Comma')
+dash        = tokenType('Dash')
+plus        = tokenType('Plus')
+content     = tokenType('VariableContents')
+string      = tokenType('String') >> make_string
+unString    = tokenType('String') # When the double quotes are still needed for internal processing
+seqString   = tokenType('SequenceString') >> make_seqString
+unseqString = tokenType('SequenceString') >> make_unseqString # For use with variables
 
   # Code variants
 code_end = tokenType('CodeEnd')
@@ -506,12 +520,15 @@ resultCode_outerList     = capFunc_sequence >> optionExpansion >> usbCodeToCapab
  ## Main Rules
 
 #| <variable> = <variable contents>;
-variable_contents   = name | content | string | number | comma | dash
+variable_contents   = name | content | string | number | comma | dash | unseqString
 variable_expression = name + skip( operator('=') ) + oneplus( variable_contents ) + skip( eol ) >> set_variable
 
 #| <capability name> => <c function>;
 capability_arguments  = name + skip( operator(':') ) + number + skip( maybe( comma ) )
 capability_expression = name + skip( operator('=>') ) + name + skip( parenthesis('(') ) + many( capability_arguments ) + skip( parenthesis(')') ) + skip( eol ) >> set_capability
+
+#| <define name> => <c define>;
+define_expression = name + skip( operator('=>') ) + name + skip( eol ) >> set_define
 
 #| <trigger> : <result>;
 operatorTriggerResult = operator(':') | operator(':+') | operator(':-')
@@ -522,7 +539,7 @@ def parse( tokenSequence ):
 	"""Sequence(Token) -> object"""
 
 	# Top-level Parser
-	expression = scanCode_expression | usbCode_expression | variable_expression | capability_expression
+	expression = scanCode_expression | usbCode_expression | variable_expression | capability_expression | define_expression
 
 	kll_text = many( expression )
 	kll_file = maybe( kll_text ) + skip( finished )
@@ -543,20 +560,23 @@ def processKLLFile( filename ):
 ### Main Entry Point ###
 
 if __name__ == '__main__':
-	(baseFiles, defaultFiles, partialFileSets, backend_name, template, output) = processCommandLineArgs()
+	(baseFiles, defaultFiles, partialFileSets, backend_name, template, defines_template, output, defines_output) = processCommandLineArgs()
 
 	# Load backend module
 	global backend
 	backend_import = importlib.import_module( "backends.{0}".format( backend_name ) )
-	backend = backend_import.Backend( template )
+	backend = backend_import.Backend( template, defines_template )
 
 	# Process base layout files
 	for filename in baseFiles:
+		variables_dict.setCurrentFile( filename )
 		processKLLFile( filename )
 	macros_map.completeBaseLayout() # Indicates to macros_map that the base layout is complete
+	variables_dict.baseLayoutFinished()
 
 	# Default combined layer
 	for filename in defaultFiles:
+		variables_dict.setCurrentFile( filename )
 		processKLLFile( filename )
 		# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
 		macros_map.replayCachedAssignments()
@@ -565,9 +585,13 @@ if __name__ == '__main__':
 	for partial in partialFileSets:
 		# Increment layer for each -p option
 		macros_map.addLayer()
+		variables_dict.incrementLayer() # DefaultLayer is layer 0
+
 		# Iterate and process each of the file in the layer
 		for filename in partial:
+			variables_dict.setCurrentFile( filename )
 			processKLLFile( filename )
+
 		# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
 		macros_map.replayCachedAssignments()
 		# Remove un-marked keys to complete the partial layer
@@ -577,10 +601,10 @@ if __name__ == '__main__':
 	macros_map.generate()
 
 	# Process needed templating variables using backend
-	backend.process( capabilities_dict, macros_map )
+	backend.process( capabilities_dict, macros_map, variables_dict )
 
 	# Generate output file using template and backend
-	backend.generate( output )
+	backend.generate( output, defines_output )
 
 	# Successful Execution
 	sys.exit( 0 )
