@@ -387,7 +387,6 @@ def optionExpansion( sequences ):
 				curLeafList[ leaf ] = 0
 				if leaf + 1 < len( curLeafList ):
 					curLeafList[ leaf + 1 ] += 1
-				break
 
 	return expandedSequences
 
