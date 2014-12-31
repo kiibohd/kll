@@ -552,9 +552,11 @@ def processKLLFile( filename ):
 		data = file.read()
 		tokenSequence = tokenize( data )
 		#print ( pformat( tokenSequence ) ) # Display tokenization
-		tree = parse( tokenSequence )
-
-
+		try:
+			tree = parse( tokenSequence )
+		except NoParseError as e:
+			print("Error parsing %s. %s" % (filename, e.msg), file=sys.stderr)
+			sys.exit(1)
 
 ### Main Entry Point ###
 
