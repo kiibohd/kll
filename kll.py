@@ -2,7 +2,7 @@
 # KLL Compiler
 # Keyboard Layout Langauge
 #
-# Copyright (C) 2014 by Jacob Alexander
+# Copyright (C) 2014-2015 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -558,10 +558,40 @@ def processKLLFile( filename ):
 			print("Error parsing %s. %s" % (filename, e.msg), file=sys.stderr)
 			sys.exit(1)
 
+
+### Misc Utility Functions ###
+
+def gitRevision( kllPath ):
+	import subprocess
+
+	# Change the path to where kll.py is
+	origPath = os.getcwd()
+	os.chdir( kllPath )
+
+	# Just in case git can't be found
+	try:
+		# Get hash of the latest git commit
+		revision = subprocess.check_output( ['git', 'rev-parse', 'HEAD'] ).decode()[:-1]
+
+		# Get list of files that have changed since the commit
+		changed = subprocess.check_output( ['git', 'diff-index', '--name-only', 'HEAD', '--'] ).decode().splitlines()
+	except:
+		revision = "<no git>"
+		changed = []
+
+	# Change back to the old working directory
+	os.chdir( origPath )
+
+	return revision, changed
+
+
 ### Main Entry Point ###
 
 if __name__ == '__main__':
 	(baseFiles, defaultFiles, partialFileSets, backend_name, template, defines_template, output, defines_output) = processCommandLineArgs()
+
+	# Look up git information on the compiler
+	gitRev, gitChanges = gitRevision( os.path.dirname( os.path.realpath( __file__ ) ) )
 
 	# Load backend module
 	global backend
@@ -602,7 +632,13 @@ if __name__ == '__main__':
 	macros_map.generate()
 
 	# Process needed templating variables using backend
-	backend.process( capabilities_dict, macros_map, variables_dict )
+	backend.process(
+		capabilities_dict,
+		macros_map,
+		variables_dict,
+		gitRev,
+		gitChanges
+	)
 
 	# Generate output file using template and backend
 	backend.generate( output, defines_output )
