@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # KLL Compiler Containers
 #
-# Copyright (C) 2014 by Jacob Alexander
+# Copyright (C) 2014-2015 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -298,10 +298,16 @@ class Variables:
 
 		# If still processing BaseLayout
 		if self.baseLayoutEnabled:
-			self.baseLayout['*LayerFiles'] = name
+			if '*LayerFiles' in self.baseLayout.keys():
+				self.baseLayout['*LayerFiles'] += [ name ]
+			else:
+				self.baseLayout['*LayerFiles'] = [ name ]
 		# Set for the current layer
 		else:
-			self.layerVariables[ self.currentLayer ]['*LayerFiles'] = name
+			if '*LayerFiles' in self.layerVariables[ self.currentLayer ].keys():
+				self.layerVariables[ self.currentLayer ]['*LayerFiles'] += [ name ]
+			else:
+				self.layerVariables[ self.currentLayer ]['*LayerFiles'] = [ name ]
 
 	def incrementLayer( self ):
 		# Store using layer index
@@ -311,6 +317,21 @@ class Variables:
 	def assignVariable( self, key, value ):
 		# Overall set of variables
 		self.overallVariables[ key ] = value
+
+		# The Name variable is a special accumulation case
+		if key == 'Name':
+			# BaseLayout still being processed
+			if self.baseLayoutEnabled:
+				if '*NameStack' in self.baseLayout.keys():
+					self.baseLayout['*NameStack'] += [ value ]
+				else:
+					self.baseLayout['*NameStack'] = [ value ]
+			# Layers
+			else:
+				if '*NameStack' in self.layerVariables[ self.currentLayer ].keys():
+					self.layerVariables[ self.currentLayer ]['*NameStack'] += [ value ]
+				else:
+					self.layerVariables[ self.currentLayer ]['*NameStack'] = [ value ]
 
 		# If still processing BaseLayout
 		if self.baseLayoutEnabled:
