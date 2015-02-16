@@ -14,11 +14,15 @@ Usage
 -----
 
 ### General Usage
-```kll.py <kll files>
+
+```bash
+kll.py <kll files>
 ```
 
 ### Kiibohd Controller Usage
-```kll.py <basemap kll files> --default <default layer kll files> --partial <partial layer 1 kll files> --partial <partial layer 2 kll files> --backend kiibohd --template templates/kiibohdKeymap.h --output generatedKeymap.h --defines-template templates/kiibohdDefs.h --defines-output kll_defs.h
+
+```bash
+kll.py <basemap kll files> --default <default layer kll files> --partial <partial layer 1 kll files> --partial <partial layer 2 kll files> --backend kiibohd --template templates/kiibohdKeymap.h --output generatedKeymap.h --defines-template templates/kiibohdDefs.h --defines-output kll_defs.h
 ```
 
 See `kll.py --help` for the most up to date documentation
