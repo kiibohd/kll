@@ -106,12 +106,15 @@ class Backend:
 		partialLayersInfo = ""
 		for file, name in zip( variables.baseLayout['*LayerFiles'], variables.baseLayout['*NameStack'] ):
 			baseLayoutInfo += "//    {0}\n//      {1}\n".format( name, file )
-		for file, name in zip( variables.layerVariables[0]['*LayerFiles'], variables.layerVariables[0]['*NameStack'] ):
-			defaultLayerInfo += "//    {0}\n//      {1}\n".format( name, file )
-		for layer in range( 1, len( variables.layerVariables ) ):
-			partialLayersInfo += "//    Layer {0}\n".format( layer )
-			for file, name in zip( variables.layerVariables[ layer ]['*LayerFiles'], variables.layerVariables[ layer ]['*NameStack'] ):
-				partialLayersInfo += "//     {0}\n//       {1}\n".format( name, file )
+		if '*LayerFiles' in variables.layerVariables[0].keys():
+			for file, name in zip( variables.layerVariables[0]['*LayerFiles'], variables.layerVariables[0]['*NameStack'] ):
+				defaultLayerInfo += "//    {0}\n//      {1}\n".format( name, file )
+		if '*LayerFiles' in variables.layerVariables[1].keys():
+			for layer in range( 1, len( variables.layerVariables ) ):
+				partialLayersInfo += "//    Layer {0}\n".format( layer )
+				if len( variables.layerVariables[ layer ]['*LayerFiles'] ) > 0:
+					for file, name in zip( variables.layerVariables[ layer ]['*LayerFiles'], variables.layerVariables[ layer ]['*NameStack'] ):
+						partialLayersInfo += "//     {0}\n//       {1}\n".format( name, file )
 
 
 		## Information ##
@@ -319,9 +322,10 @@ class Backend:
 
 			# Generate stacked name
 			stackName = ""
-			for name in range( 0, len( variables.layerVariables[ layer ]['*NameStack'] ) ):
-				stackName += "{0} + ".format( variables.layerVariables[ layer ]['*NameStack'][ name ] )
-			stackName = stackName[:-3]
+			if '*NameStack' in variables.layerVariables[ layer ].keys():
+				for name in range( 0, len( variables.layerVariables[ layer ]['*NameStack'] ) ):
+					stackName += "{0} + ".format( variables.layerVariables[ layer ]['*NameStack'][ name ] )
+				stackName = stackName[:-3]
 
 			# Default map is a special case, always the first index
 			if layer == 0:
