@@ -3,7 +3,7 @@
 #
 # USB Code Lookup Dictionary
 #
-# Copyright (C) 2014 by Jacob Alexander
+# Copyright (C) 2014-2015 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ hid_lookup_dictionary = dict([
 	( 0x52, 'KEY_UP' ),
 	( 0x53, 'KEY_NUM_LOCK' ),
 	( 0x54, 'KEYPAD_SLASH' ),
-	( 0x55, 'KEYPAD_ASTERIX' ),
+	( 0x55, 'KEYPAD_ASTERISK' ),
 	( 0x56, 'KEYPAD_MINUS' ),
 	( 0x57, 'KEYPAD_PLUS' ),
 	( 0x58, 'KEYPAD_ENTER' ),
@@ -345,7 +345,7 @@ kll_hid_lookup_dictionary = dict([
 	( 'UP', 0x52 ),
 	( 'NUMLOCK', 0x53 ),
 	( 'P/', 0x54 ), ( 'KEYPAD SLASH', 0x54 ),
-	( 'P*', 0x55 ), ( 'KEYPAD ASTERIX', 0x55 ),
+	( 'P*', 0x55 ), ( 'KEYPAD ASTERIX', 0x55 ), ( 'KEYPAD ASTERISK', 0x55 ),
 	( 'P-', 0x56 ), ( 'KEYPAD MINUS', 0x56 ),
 	( 'P+', 0x57 ), ( 'KEYPAD PLUS', 0x57 ),
 	( 'PENTER', 0x58 ), ( 'KEYPAD ENTER', 0x58 ),

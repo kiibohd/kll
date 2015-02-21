@@ -186,7 +186,7 @@ class Backend:
 
 					# Add each of the arguments of the capability
 					for arg in range( 0, len( resultItem[1] ) ):
-						self.fill_dict['ResultMacros'] += "0x{0:02X}, ".format( resultItem[1][ arg ] )
+						self.fill_dict['ResultMacros'] += "{0}, ".format( resultItem[1][ arg ] )
 
 			# If sequence is longer than 1, append a sequence spacer at the end of the sequence
 			# Required by USB to end at sequence without holding the key down

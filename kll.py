@@ -401,7 +401,7 @@ def usbCodeToCapability( items ):
 				# Only convert if an integer, otherwise USB Code doesn't need converting
 				if isinstance( items[ variant ][ sequence ][ combo ], int ):
 					# Use backend capability name and a single argument
-					items[ variant ][ sequence ][ combo ] = tuple( [ backend.usbCodeCapability(), tuple( [ items[ variant ][ sequence ][ combo ] ] ) ] )
+					items[ variant ][ sequence ][ combo ] = tuple( [ backend.usbCodeCapability(), tuple( [ hid_lookup_dictionary[ items[ variant ][ sequence ][ combo ] ] ] ) ] )
 
 	return items
 
