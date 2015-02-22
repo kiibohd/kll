@@ -83,7 +83,8 @@ def processCommandLineArgs():
 	# Optional Arguments
 	pArgs.add_argument( '-b', '--backend', type=str, default="kiibohd",
 		help="Specify target backend for the KLL compiler.\n"
-		"Default: kiibohd" )
+		"Default: kiibohd\n"
+		"Options: kiibohd, json" )
 	pArgs.add_argument( '-d', '--default', type=str, nargs='+',
 		help="Specify .kll files to layer on top of the default map to create a combined map." )
 	pArgs.add_argument( '-p', '--partial', type=str, nargs='+', action='append',
@@ -91,13 +92,11 @@ def processCommandLineArgs():
 		"Each -p defines another partial map.\n"
 		"Base .kll files (that define the scan code maps) must be defined for each partial map." )
 	pArgs.add_argument( '-t', '--templates', type=str, nargs='+',
-		default=["templates/kiibohdKeymap.h", "templates/kiibohdDefs.h"],
 		help="Specify template used to generate the keymap.\n"
-		"Default: templates/kiibohdKeymap.h templates/kiibohdDefs.h" )
+		"Default: <backend specific>" )
 	pArgs.add_argument( '-o', '--outputs', type=str, nargs='+',
-		default=["generatedKeymap.h", "kll_defs.h"],
 		help="Specify output file. Writes to current working directory by default.\n"
-		"Default: generatedKeymap.h kll_defs.h" )
+		"Default: <backend specific>" )
 	pArgs.add_argument( '-h', '--help', action="help",
 		help="This message." )
 

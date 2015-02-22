@@ -36,15 +36,22 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 ### Classes ###
 
 class BackendBase:
+	# Default templates and output files
+	templatePaths = []
+	outputPaths = []
+
 	# Initializes backend
 	# Looks for template file and builds list of fill tags
-	def __init__( self, templatePaths=[] ):
-		self.templatePaths = templatePaths
+	def __init__( self, templatePaths ):
+		# Use defaults if no template is specified
+		if templatePaths is not None:
+			self.templatePaths = templatePaths
+
 		self.fill_dict = dict()
 
 		# Process each template and add to tagList
 		self.tagList = []
-		for templatePath in templatePaths:
+		for templatePath in self.templatePaths:
 			# Does template exist?
 			if not os.path.isfile( templatePath ):
 				print ( "{0} '{1}' does not exist...".format( ERROR, templatePath ) )
@@ -73,6 +80,10 @@ class BackendBase:
 
 	# Generates the output keymap with fill tags filled
 	def generate( self, outputPaths ):
+		# Use default if not specified
+		if outputPaths is None:
+			outputPaths = self.outputPaths
+
 		for templatePath, outputPath in zip( self.templatePaths, outputPaths ):
 			# Process each line of the template, outputting to the target path
 			with open( outputPath, 'w' ) as outputFile:

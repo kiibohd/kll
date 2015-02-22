@@ -36,6 +36,10 @@ from kll_lib.backends import *
 ### Classes ###
 
 class Backend( BackendBase ):
+	# Default templates and output files
+	templatePaths = ["templates/kiibohdKeymap.h", "templates/kiibohdDefs.h"]
+	outputPaths = ["generatedKeymap.h", "kll_defs.h"]
+
 	# USB Code Capability Name
 	def usbCodeCapability( self ):
 		return "usbKeyOut";
