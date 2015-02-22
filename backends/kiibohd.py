@@ -30,45 +30,12 @@ from datetime import date
 sys.path.append( os.path.expanduser('..') )
 
 from kll_lib.containers import *
-
-
-### Decorators ###
-
- ## Print Decorator Variables
-ERROR = '\033[5;1;31mERROR\033[0m:'
-WARNING = '\033[5;1;33mWARNING\033[0m:'
-
+from kll_lib.backends import *
 
 
 ### Classes ###
 
-class Backend:
-	# Initializes backend
-	# Looks for template file and builds list of fill tags
-	def __init__( self, templatePath, definesTemplatePath ):
-		# Does template exist?
-		if not os.path.isfile( templatePath ):
-			print ( "{0} '{1}' does not exist...".format( ERROR, templatePath ) )
-			sys.exit( 1 )
-
-		self.definesTemplatePath = definesTemplatePath
-		self.templatePath = templatePath
-		self.fill_dict = dict()
-
-		# Generate list of fill tags
-		self.tagList = []
-		with open( templatePath, 'r' ) as openFile:
-			for line in openFile:
-				match = re.findall( '<\|([^|>]+)\|>', line )
-				for item in match:
-					self.tagList.append( item )
-		with open( definesTemplatePath, 'r' ) as openFile:
-			for line in openFile:
-				match = re.findall( '<\|([^|>]+)\|>', line )
-				for item in match:
-					self.tagList.append( item )
-
-
+class Backend( BackendBase ):
 	# USB Code Capability Name
 	def usbCodeCapability( self ):
 		return "usbKeyOut";
@@ -337,41 +304,4 @@ class Backend:
 
 		## Layer State ##
 		self.fill_dict['LayerState'] = "uint8_t LayerState[ LayerNum ];"
-
-
-	# Generates the output keymap with fill tags filled
-	def generate( self, outputPath, definesOutputPath ):
-		# Process each line of the template, outputting to the target path
-		with open( outputPath, 'w' ) as outputFile:
-			with open( self.templatePath, 'r' ) as templateFile:
-				for line in templateFile:
-					# TODO Support multiple replacements per line
-					# TODO Support replacement with other text inline
-					match = re.findall( '<\|([^|>]+)\|>', line )
-
-					# If match, replace with processed variable
-					if match:
-						outputFile.write( self.fill_dict[ match[ 0 ] ] )
-						outputFile.write("\n")
-
-					# Otherwise, just append template to output file
-					else:
-						outputFile.write( line )
-
-		# Process each line of the defines template, outputting to the target path
-		with open( definesOutputPath, 'w' ) as outputFile:
-			with open( self.definesTemplatePath, 'r' ) as templateFile:
-				for line in templateFile:
-					# TODO Support multiple replacements per line
-					# TODO Support replacement with other text inline
-					match = re.findall( '<\|([^|>]+)\|>', line )
-
-					# If match, replace with processed variable
-					if match:
-						outputFile.write( self.fill_dict[ match[ 0 ] ] )
-						outputFile.write("\n")
-
-					# Otherwise, just append template to output file
-					else:
-						outputFile.write( line )
 
