@@ -83,25 +83,20 @@ def processCommandLineArgs():
 	# Optional Arguments
 	pArgs.add_argument( '-b', '--backend', type=str, default="kiibohd",
 		help="Specify target backend for the KLL compiler.\n"
-		"Default: kiibohd" )
+		"Default: kiibohd\n"
+		"Options: kiibohd, json" )
 	pArgs.add_argument( '-d', '--default', type=str, nargs='+',
 		help="Specify .kll files to layer on top of the default map to create a combined map." )
 	pArgs.add_argument( '-p', '--partial', type=str, nargs='+', action='append',
 		help="Specify .kll files to generate partial map, multiple files per flag.\n"
 		"Each -p defines another partial map.\n"
 		"Base .kll files (that define the scan code maps) must be defined for each partial map." )
-	pArgs.add_argument( '-t', '--template', type=str, default="templates/kiibohdKeymap.h",
+	pArgs.add_argument( '-t', '--templates', type=str, nargs='+',
 		help="Specify template used to generate the keymap.\n"
-		"Default: templates/kiibohdKeymap.h" )
-	pArgs.add_argument( '--defines-template', type=str, default="templates/kiibohdDefs.h",
-		help="Specify template used to generate kll_defs.h.\n"
-		"Default: templates/kiibohdDefs.h" )
-	pArgs.add_argument( '-o', '--output', type=str, default="generatedKeymap.h",
+		"Default: <backend specific>" )
+	pArgs.add_argument( '-o', '--outputs', type=str, nargs='+',
 		help="Specify output file. Writes to current working directory by default.\n"
-		"Default: generatedKeymap.h" )
-	pArgs.add_argument( '--defines-output', type=str, default="kll_defs.h",
-		help="Specify output path for kll_defs.h. Writes to current working directory by default.\n"
-		"Default: kll_defs.h" )
+		"Default: <backend specific>" )
 	pArgs.add_argument( '-h', '--help', action="help",
 		help="This message." )
 
@@ -128,7 +123,7 @@ def processCommandLineArgs():
 		for filename in partial:
 			checkFileExists( filename )
 
-	return (baseFiles, defaultFiles, partialFileSets, args.backend, args.template, args.defines_template, args.output, args.defines_output)
+	return (baseFiles, defaultFiles, partialFileSets, args.backend, args.templates, args.outputs)
 
 
 
@@ -401,7 +396,7 @@ def usbCodeToCapability( items ):
 				# Only convert if an integer, otherwise USB Code doesn't need converting
 				if isinstance( items[ variant ][ sequence ][ combo ], int ):
 					# Use backend capability name and a single argument
-					items[ variant ][ sequence ][ combo ] = tuple( [ backend.usbCodeCapability(), tuple( [ items[ variant ][ sequence ][ combo ] ] ) ] )
+					items[ variant ][ sequence ][ combo ] = tuple( [ backend.usbCodeCapability(), tuple( [ hid_lookup_dictionary[ items[ variant ][ sequence ][ combo ] ] ] ) ] )
 
 	return items
 
@@ -588,7 +583,7 @@ def gitRevision( kllPath ):
 ### Main Entry Point ###
 
 if __name__ == '__main__':
-	(baseFiles, defaultFiles, partialFileSets, backend_name, template, defines_template, output, defines_output) = processCommandLineArgs()
+	(baseFiles, defaultFiles, partialFileSets, backend_name, templates, outputs) = processCommandLineArgs()
 
 	# Look up git information on the compiler
 	gitRev, gitChanges = gitRevision( os.path.dirname( os.path.realpath( __file__ ) ) )
@@ -596,7 +591,7 @@ if __name__ == '__main__':
 	# Load backend module
 	global backend
 	backend_import = importlib.import_module( "backends.{0}".format( backend_name ) )
-	backend = backend_import.Backend( template, defines_template )
+	backend = backend_import.Backend( templates )
 
 	# Process base layout files
 	for filename in baseFiles:
@@ -641,7 +636,7 @@ if __name__ == '__main__':
 	)
 
 	# Generate output file using template and backend
-	backend.generate( output, defines_output )
+	backend.generate( outputs )
 
 	# Successful Execution
 	sys.exit( 0 )

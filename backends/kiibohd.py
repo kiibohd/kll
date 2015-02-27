@@ -30,44 +30,15 @@ from datetime import date
 sys.path.append( os.path.expanduser('..') )
 
 from kll_lib.containers import *
-
-
-### Decorators ###
-
- ## Print Decorator Variables
-ERROR = '\033[5;1;31mERROR\033[0m:'
-WARNING = '\033[5;1;33mWARNING\033[0m:'
-
+from kll_lib.backends import *
 
 
 ### Classes ###
 
-class Backend:
-	# Initializes backend
-	# Looks for template file and builds list of fill tags
-	def __init__( self, templatePath, definesTemplatePath ):
-		# Does template exist?
-		if not os.path.isfile( templatePath ):
-			print ( "{0} '{1}' does not exist...".format( ERROR, templatePath ) )
-			sys.exit( 1 )
-
-		self.definesTemplatePath = definesTemplatePath
-		self.templatePath = templatePath
-		self.fill_dict = dict()
-
-		# Generate list of fill tags
-		self.tagList = []
-		with open( templatePath, 'r' ) as openFile:
-			for line in openFile:
-				match = re.findall( '<\|([^|>]+)\|>', line )
-				for item in match:
-					self.tagList.append( item )
-		with open( definesTemplatePath, 'r' ) as openFile:
-			for line in openFile:
-				match = re.findall( '<\|([^|>]+)\|>', line )
-				for item in match:
-					self.tagList.append( item )
-
+class Backend( BackendBase ):
+	# Default templates and output files
+	templatePaths = ["templates/kiibohdKeymap.h", "templates/kiibohdDefs.h"]
+	outputPaths = ["generatedKeymap.h", "kll_defs.h"]
 
 	# USB Code Capability Name
 	def usbCodeCapability( self ):
@@ -106,12 +77,15 @@ class Backend:
 		partialLayersInfo = ""
 		for file, name in zip( variables.baseLayout['*LayerFiles'], variables.baseLayout['*NameStack'] ):
 			baseLayoutInfo += "//    {0}\n//      {1}\n".format( name, file )
-		for file, name in zip( variables.layerVariables[0]['*LayerFiles'], variables.layerVariables[0]['*NameStack'] ):
-			defaultLayerInfo += "//    {0}\n//      {1}\n".format( name, file )
-		for layer in range( 1, len( variables.layerVariables ) ):
-			partialLayersInfo += "//    Layer {0}\n".format( layer )
-			for file, name in zip( variables.layerVariables[ layer ]['*LayerFiles'], variables.layerVariables[ layer ]['*NameStack'] ):
-				partialLayersInfo += "//     {0}\n//       {1}\n".format( name, file )
+		if '*LayerFiles' in variables.layerVariables[0].keys():
+			for file, name in zip( variables.layerVariables[0]['*LayerFiles'], variables.layerVariables[0]['*NameStack'] ):
+				defaultLayerInfo += "//    {0}\n//      {1}\n".format( name, file )
+		if '*LayerFiles' in variables.layerVariables[1].keys():
+			for layer in range( 1, len( variables.layerVariables ) ):
+				partialLayersInfo += "//    Layer {0}\n".format( layer )
+				if len( variables.layerVariables[ layer ]['*LayerFiles'] ) > 0:
+					for file, name in zip( variables.layerVariables[ layer ]['*LayerFiles'], variables.layerVariables[ layer ]['*NameStack'] ):
+						partialLayersInfo += "//     {0}\n//       {1}\n".format( name, file )
 
 
 		## Information ##
@@ -186,7 +160,7 @@ class Backend:
 
 					# Add each of the arguments of the capability
 					for arg in range( 0, len( resultItem[1] ) ):
-						self.fill_dict['ResultMacros'] += "0x{0:02X}, ".format( resultItem[1][ arg ] )
+						self.fill_dict['ResultMacros'] += "{0}, ".format( resultItem[1][ arg ] )
 
 			# If sequence is longer than 1, append a sequence spacer at the end of the sequence
 			# Required by USB to end at sequence without holding the key down
@@ -319,9 +293,10 @@ class Backend:
 
 			# Generate stacked name
 			stackName = ""
-			for name in range( 0, len( variables.layerVariables[ layer ]['*NameStack'] ) ):
-				stackName += "{0} + ".format( variables.layerVariables[ layer ]['*NameStack'][ name ] )
-			stackName = stackName[:-3]
+			if '*NameStack' in variables.layerVariables[ layer ].keys():
+				for name in range( 0, len( variables.layerVariables[ layer ]['*NameStack'] ) ):
+					stackName += "{0} + ".format( variables.layerVariables[ layer ]['*NameStack'][ name ] )
+				stackName = stackName[:-3]
 
 			# Default map is a special case, always the first index
 			if layer == 0:
@@ -333,41 +308,4 @@ class Backend:
 
 		## Layer State ##
 		self.fill_dict['LayerState'] = "uint8_t LayerState[ LayerNum ];"
-
-
-	# Generates the output keymap with fill tags filled
-	def generate( self, outputPath, definesOutputPath ):
-		# Process each line of the template, outputting to the target path
-		with open( outputPath, 'w' ) as outputFile:
-			with open( self.templatePath, 'r' ) as templateFile:
-				for line in templateFile:
-					# TODO Support multiple replacements per line
-					# TODO Support replacement with other text inline
-					match = re.findall( '<\|([^|>]+)\|>', line )
-
-					# If match, replace with processed variable
-					if match:
-						outputFile.write( self.fill_dict[ match[ 0 ] ] )
-						outputFile.write("\n")
-
-					# Otherwise, just append template to output file
-					else:
-						outputFile.write( line )
-
-		# Process each line of the defines template, outputting to the target path
-		with open( definesOutputPath, 'w' ) as outputFile:
-			with open( self.definesTemplatePath, 'r' ) as templateFile:
-				for line in templateFile:
-					# TODO Support multiple replacements per line
-					# TODO Support replacement with other text inline
-					match = re.findall( '<\|([^|>]+)\|>', line )
-
-					# If match, replace with processed variable
-					if match:
-						outputFile.write( self.fill_dict[ match[ 0 ] ] )
-						outputFile.write("\n")
-
-					# Otherwise, just append template to output file
-					else:
-						outputFile.write( line )
 
