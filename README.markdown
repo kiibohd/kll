@@ -22,7 +22,7 @@ kll.py <kll files>
 ### Kiibohd Controller Usage
 
 ```bash
-kll.py <basemap kll files> --default <default layer kll files> --partial <partial layer 1 kll files> --partial <partial layer 2 kll files> --backend kiibohd --template templates/kiibohdKeymap.h --output generatedKeymap.h --defines-template templates/kiibohdDefs.h --defines-output kll_defs.h
+kll.py <basemap kll files> --default <default layer kll files> --partial <partial layer 1 kll files> --partial <partial layer 2 kll files> --backend kiibohd --templates templates/kiibohdKeymap.h templates/kiibohdDefs.h --outputs generatedKeymap.h kll_defs.h
 ```
 
 See `kll.py --help` for the most up to date documentation
