@@ -159,6 +159,16 @@ class Macros:
 			if usbCode in self.macros[ self.layer ][ macro ]:
 				scanCodeList.append( macro )
 
+		if len(scanCodeList) == 0:
+			if len(usbCode) > 1 or len(usbCode[0]) > 1:
+				for combo in usbCode:
+					comboCodes = list()
+					for key in combo:
+						scanCode = self.lookupUSBCodes(((key,),))
+						comboCodes.append(scanCode[0][0][0])
+					scanCodeList.append(tuple(code for code in comboCodes))
+				scanCodeList = [tuple(scanCodeList)]
+
 		return scanCodeList
 
 	# Cache USBCode Assignment
