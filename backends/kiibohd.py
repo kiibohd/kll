@@ -29,8 +29,9 @@ from datetime import date
 # Modifying Python Path, which is dumb, but the only way to import up one directory...
 sys.path.append( os.path.expanduser('..') )
 
-from kll_lib.containers import *
 from kll_lib.backends import *
+from kll_lib.containers import *
+from kll_lib.hid_dict   import *
 
 
 ### Classes ###
@@ -40,9 +41,16 @@ class Backend( BackendBase ):
 	templatePaths = ["templates/kiibohdKeymap.h", "templates/kiibohdDefs.h"]
 	outputPaths = ["generatedKeymap.h", "kll_defs.h"]
 
-	# USB Code Capability Name
-	def usbCodeCapability( self ):
-		return "usbKeyOut";
+	requiredCapabilities = {
+		'CONS' : 'consCtrlOut',
+		'NONE' : 'noneOut',
+		'SYS'  : 'sysCtrlOut',
+		'USB'  : 'usbKeyOut',
+	}
+
+	# Capability Lookup
+	def capabilityLookup( self, type ):
+		return self.requiredCapabilities[ type ];
 
 
 	# TODO
@@ -146,7 +154,7 @@ class Backend( BackendBase ):
 				# Needed for USB behaviour, otherwise, repeated keys will not work
 				if sequence > 0:
 					# <single element>, <usbCodeSend capability>, <USB Code 0x00>
-					self.fill_dict['ResultMacros'] += "1, {0}, 0x00, ".format( capabilities.getIndex( self.usbCodeCapability() ) )
+					self.fill_dict['ResultMacros'] += "1, {0}, 0x00, ".format( capabilities.getIndex( self.capabilityLookup('USB') ) )
 
 				# For each combo in the sequence, add the length of the combo
 				self.fill_dict['ResultMacros'] += "{0}, ".format( len( macros.resultsIndexSorted[ result ][ sequence ] ) )
@@ -160,13 +168,22 @@ class Backend( BackendBase ):
 
 					# Add each of the arguments of the capability
 					for arg in range( 0, len( resultItem[1] ) ):
-						self.fill_dict['ResultMacros'] += "{0}, ".format( resultItem[1][ arg ] )
+						# If this is a CONSUMER_ element, needs to be split into 2 elements
+						if isinstance( resultItem[1][ arg ], str ) and re.match( '^CONSUMER_', resultItem[1][ arg ] ):
+							tag = resultItem[1][ arg ].split( '_', 1 )[1]
+							if '_' in tag:
+								tag = tag.replace( '_', '' )
+							lookupNum = kll_hid_lookup_dictionary['ConsCode'][ tag ][1]
+							byteForm = lookupNum.to_bytes( 2, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
+							self.fill_dict['ResultMacros'] += "{0}, {1}, ".format( *byteForm )
+						else:
+							self.fill_dict['ResultMacros'] += "{0}, ".format( resultItem[1][ arg ] )
 
 			# If sequence is longer than 1, append a sequence spacer at the end of the sequence
 			# Required by USB to end at sequence without holding the key down
 			if len( macros.resultsIndexSorted[ result ] ) > 1:
 				# <single element>, <usbCodeSend capability>, <USB Code 0x00>
-				self.fill_dict['ResultMacros'] += "1, {0}, 0x00, ".format( capabilities.getIndex( self.usbCodeCapability() ) )
+				self.fill_dict['ResultMacros'] += "1, {0}, 0x00, ".format( capabilities.getIndex( self.capabilityLookup('USB') ) )
 
 			# Add list ending 0 and end of list
 			self.fill_dict['ResultMacros'] += "0 };\n"

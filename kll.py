@@ -20,19 +20,19 @@
 ### Imports ###
 
 import argparse
+import importlib
 import io
 import os
 import re
 import sys
 import token
-import importlib
 
-from tokenize import generate_tokens
-from re       import VERBOSE
 from pprint   import pformat
+from re       import VERBOSE
+from tokenize import generate_tokens
 
-from kll_lib.hid_dict   import *
 from kll_lib.containers import *
+from kll_lib.hid_dict   import *
 
 from funcparserlib.lexer  import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, many, oneplus, skip, finished, maybe, skip, forward_decl, NoParseError)
@@ -138,6 +138,12 @@ def tokenize( string ):
 		( 'Space',            ( r'[ \t\r\n]+', ) ),
 		( 'USBCode',          ( r'U(("[^"]+")|(0x[0-9a-fA-F]+)|([0-9]+))', ) ),
 		( 'USBCodeStart',     ( r'U\[', ) ),
+		( 'ConsCode',         ( r'CONS(("[^"]+")|(0x[0-9a-fA-F]+)|([0-9]+))', ) ),
+		( 'ConsCodeStart',    ( r'CONS\[', ) ),
+		( 'SysCode',          ( r'SYS(("[^"]+")|(0x[0-9a-fA-F]+)|([0-9]+))', ) ),
+		( 'SysCodeStart',     ( r'SYS\[', ) ),
+		( 'LedCode',          ( r'LED(("[^"]+")|(0x[0-9a-fA-F]+)|([0-9]+))', ) ),
+		( 'LedCodeStart',     ( r'LED\[', ) ),
 		( 'ScanCode',         ( r'S((0x[0-9a-fA-F]+)|([0-9]+))', ) ),
 		( 'ScanCodeStart',    ( r'S\[', ) ),
 		( 'CodeEnd',          ( r'\]', ) ),
@@ -148,6 +154,7 @@ def tokenize( string ):
 		( 'Dash',             ( r'-', ) ),
 		( 'Plus',             ( r'\+', ) ),
 		( 'Parenthesis',      ( r'\(|\)', ) ),
+		( 'None',             ( r'None', ) ),
 		( 'Number',           ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', VERBOSE ) ),
 		( 'Name',             ( r'[A-Za-z_][A-Za-z_0-9]*', ) ),
 		( 'VariableContents', ( r'''[^"' ;:=>()]+''', ) ),
@@ -180,26 +187,73 @@ def make_scanCode( token ):
 		raise
 	return scanCode
 
-def make_usbCode( token ):
+def make_hidCode( type, token ):
 	# If first character is a U, strip
 	if token[0] == "U":
 		token = token[1:]
+	# CONS specifier
+	elif 'CONS' in token:
+		token = token[4:]
+	# SYS specifier
+	elif 'SYS' in token:
+		token = token[3:]
 
 	# If using string representation of USB Code, do lookup, case-insensitive
 	if '"' in token:
 		try:
-			usbCode = kll_hid_lookup_dictionary[ token[1:-1].upper() ]
+			hidCode = kll_hid_lookup_dictionary[ type ][ token[1:-1].upper() ][1]
 		except LookupError as err:
-			print ( "{0} {1} is an invalid USB Code Lookup...".format( ERROR, err ) )
+			print ( "{0} {1} is an invalid USB HID Code Lookup...".format( ERROR, err ) )
 			raise
 	else:
-		usbCode = int( token, 0 )
+		# Already tokenized
+		if type == 'USBCode' and token[0] == 'USB' or type == 'SysCode' and token[0] == 'SYS' or type == 'ConsCode' and token[0] == 'CONS':
+			hidCode = token[1]
+		# Convert
+		else:
+			hidCode = int( token, 0 )
 
-	# Check size, to make sure it's valid
-	if usbCode > 0xFF:
-		print ( "{0} USBCode value {1} is larger than 255".format( ERROR, usbCode ) )
+	# Check size if a USB Code, to make sure it's valid
+	if type == 'USBCode' and hidCode > 0xFF:
+		print ( "{0} USBCode value {1} is larger than 255".format( ERROR, hidCode ) )
 		raise
-	return usbCode
+
+	# Return a tuple, identifying which type it is
+	if type == 'USBCode':
+		return make_usbCode_number( hidCode )
+	elif type == 'ConsCode':
+		return make_consCode_number( hidCode )
+	elif type == 'SysCode':
+		return make_sysCode_number( hidCode )
+
+	print ( "{0} Unknown HID Specifier '{1}'".format( ERROR, type ) )
+	raise
+
+def make_usbCode( token ):
+	return make_hidCode( 'USBCode', token )
+
+def make_consCode( token ):
+	return make_hidCode( 'ConsCode', token )
+
+def make_sysCode( token ):
+	return make_hidCode( 'SysCode', token )
+
+def make_hidCode_number( type, token ):
+	lookup = {
+		'ConsCode' : 'CONS',
+		'SysCode'  : 'SYS',
+		'USBCode'  : 'USB',
+	}
+	return ( lookup[ type ], token )
+
+def make_usbCode_number( token ):
+	return make_hidCode_number( 'USBCode', token )
+
+def make_consCode_number( token ):
+	return make_hidCode_number( 'ConsCode', token )
+
+def make_sysCode_number( token ):
+	return make_hidCode_number( 'SysCode', token )
 
 def make_seqString( token ):
 	# Shifted Characters, and amount to move by to get non-shifted version
@@ -222,7 +276,7 @@ def make_seqString( token ):
 	)
 
 	listOfLists = []
-	shiftKey = kll_hid_lookup_dictionary["SHIFT"]
+	shiftKey = kll_hid_lookup_dictionary['USBCode']["SHIFT"]
 
 	# Creates a list of USB codes from the string: sequence (list) of combos (lists)
 	for char in token[1:-1]:
@@ -240,7 +294,7 @@ def make_seqString( token ):
 
 		# Do KLL HID Lookup on non-shifted character
 		# NOTE: Case-insensitive, which is why the shift must be pre-computed
-		usbCode = kll_hid_lookup_dictionary[ processedChar.upper() ]
+		usbCode = kll_hid_lookup_dictionary['USBCode'][ processedChar.upper() ]
 
 		# Create Combo for this character, add shift key if shifted
 		charCombo = []
@@ -275,27 +329,40 @@ def make_scanCode_range( rangeVals ):
 	return list( range( start, end + 1 ) )
 
   # Range can go from high to low or low to high
-  # Warn on 0-9 (as this does not do what one would expect) TODO
+  # Warn on 0-9 for USBCodes (as this does not do what one would expect) TODO
   # Lookup USB HID tags and convert to a number
-def make_usbCode_range( rangeVals ):
+def make_hidCode_range( type, rangeVals ):
 	# Check if already integers
 	if isinstance( rangeVals[0], int ):
 		start = rangeVals[0]
 	else:
-		start = make_usbCode( rangeVals[0] )
+		start = make_hidCode( type, rangeVals[0] )[1]
 
 	if isinstance( rangeVals[1], int ):
 		end = rangeVals[1]
 	else:
-		end = make_usbCode( rangeVals[1] )
+		end = make_hidCode( type, rangeVals[1] )[1]
 
 	# Swap start, end if start is greater than end
 	if start > end:
 		start, end = end, start
 
 	# Iterate from start to end, and generate the range
-	return list( range( start, end + 1 ) )
-	pass
+	listRange = list( range( start, end + 1 ) )
+
+	# Convert each item in the list to a tuple
+	for item in range( len( listRange ) ):
+		listRange[ item ] = make_hidCode_number( type, listRange[ item ] )
+	return listRange
+
+def make_usbCode_range( rangeVals ):
+	return make_hidCode_range( 'USBCode', rangeVals )
+
+def make_sysCode_range( rangeVals ):
+	return make_hidCode_range( 'SysCode', rangeVals )
+
+def make_consCode_range( rangeVals ):
+	return make_hidCode_range( 'ConsCode', rangeVals )
 
 
  ## Base Rules
@@ -387,17 +454,19 @@ def optionExpansion( sequences ):
 
 
 # Converts USB Codes into Capabilities
-def usbCodeToCapability( items ):
+# These are tuples (<type>, <integer>)
+def hidCodeToCapability( items ):
 	# Items already converted to variants using optionExpansion
 	for variant in range( 0, len( items ) ):
 		# Sequence of Combos
 		for sequence in range( 0, len( items[ variant ] ) ):
 			for combo in range( 0, len( items[ variant ][ sequence ] ) ):
-				# Only convert if an integer, otherwise USB Code doesn't need converting
-				if isinstance( items[ variant ][ sequence ][ combo ], int ):
+				if items[ variant ][ sequence ][ combo ][0] in backend.requiredCapabilities.keys():
 					# Use backend capability name and a single argument
-					items[ variant ][ sequence ][ combo ] = tuple( [ backend.usbCodeCapability(), tuple( [ hid_lookup_dictionary[ items[ variant ][ sequence ][ combo ] ] ] ) ] )
-
+					items[ variant ][ sequence ][ combo ] = tuple(
+						[ backend.capabilityLookup( items[ variant ][ sequence ][ combo ][0] ),
+						tuple( [ hid_lookup_dictionary[ items[ variant ][ sequence ][ combo ] ] ] ) ]
+					)
 	return items
 
 
@@ -464,6 +533,8 @@ set_define     = unarg( eval_define )
 
 usbCode     = tokenType('USBCode') >> make_usbCode
 scanCode    = tokenType('ScanCode') >> make_scanCode
+consCode    = tokenType('ConsCode') >> make_consCode
+sysCode     = tokenType('SysCode') >> make_sysCode
 name        = tokenType('Name')
 number      = tokenType('Number') >> make_number
 comma       = tokenType('Comma')
@@ -490,25 +561,49 @@ scanCode_sequence  = oneplus( scanCode_combo + skip( maybe( comma ) ) )
 
   # USB Codes
 usbCode_start       = tokenType('USBCodeStart')
-usbCode_range       = ( number | unString ) + skip( dash ) + ( number | unString ) >> make_usbCode_range
+usbCode_number      = number >> make_usbCode_number
+usbCode_range       = ( usbCode_number | unString ) + skip( dash ) + ( number | unString ) >> make_usbCode_range
 usbCode_listElemTag = unString >> make_usbCode
-usbCode_listElem    = ( number | usbCode_listElemTag ) >> listElem
+usbCode_listElem    = ( usbCode_number | usbCode_listElemTag ) >> listElem
 usbCode_innerList   = oneplus( ( usbCode_range | usbCode_listElem ) + skip( maybe( comma ) ) ) >> flatten
 usbCode_expanded    = skip( usbCode_start ) + usbCode_innerList + skip( code_end )
 usbCode_elem        = usbCode >> listElem
 usbCode_combo       = oneplus( ( usbCode_expanded | usbCode_elem ) + skip( maybe( plus ) ) ) >> listElem
 usbCode_sequence    = oneplus( ( usbCode_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
+  # Cons Codes
+consCode_start       = tokenType('ConsCodeStart')
+consCode_number      = number >> make_consCode_number
+consCode_range       = ( consCode_number | unString ) + skip( dash ) + ( number | unString ) >> make_consCode_range
+consCode_listElemTag = unString >> make_consCode
+consCode_listElem    = ( consCode_number | consCode_listElemTag ) >> listElem
+consCode_innerList   = oneplus( ( consCode_range | consCode_listElem ) + skip( maybe( comma ) ) ) >> flatten
+consCode_expanded    = skip( consCode_start ) + consCode_innerList + skip( code_end )
+consCode_elem        = consCode >> listElem
+
+  # Sys Codes
+sysCode_start       = tokenType('SysCodeStart')
+sysCode_number      = number >> make_sysCode_number
+sysCode_range       = ( sysCode_number | unString ) + skip( dash ) + ( number | unString ) >> make_sysCode_range
+sysCode_listElemTag = unString >> make_sysCode
+sysCode_listElem    = ( sysCode_number | sysCode_listElemTag ) >> listElem
+sysCode_innerList   = oneplus( ( sysCode_range | sysCode_listElem ) + skip( maybe( comma ) ) ) >> flatten
+sysCode_expanded    = skip( sysCode_start ) + sysCode_innerList + skip( code_end )
+sysCode_elem        = sysCode >> listElem
+
+  # HID Codes
+hidCode_elem        = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem
+
   # Capabilities
 capFunc_arguments = many( number + skip( maybe( comma ) ) ) >> listToTuple
 capFunc_elem      = name + skip( parenthesis('(') ) + capFunc_arguments + skip( parenthesis(')') ) >> capArgExpander >> listElem
-capFunc_combo     = oneplus( ( usbCode_expanded | usbCode_elem | capFunc_elem ) + skip( maybe( plus ) ) ) >> listElem
+capFunc_combo     = oneplus( ( hidCode_elem | capFunc_elem ) + skip( maybe( plus ) ) ) >> listElem
 capFunc_sequence  = oneplus( ( capFunc_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
   # Trigger / Result Codes
 triggerCode_outerList    = scanCode_sequence >> optionExpansion
-triggerUSBCode_outerList = usbCode_sequence >> optionExpansion >> usbCodeToCapability
-resultCode_outerList     = capFunc_sequence >> optionExpansion >> usbCodeToCapability
+triggerUSBCode_outerList = usbCode_sequence >> optionExpansion >> hidCodeToCapability
+resultCode_outerList     = capFunc_sequence >> optionExpansion >> hidCodeToCapability
 
 
  ## Main Rules
