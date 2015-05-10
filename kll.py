@@ -466,11 +466,15 @@ def hidCodeToCapability( items ):
 		for sequence in range( 0, len( items[ variant ] ) ):
 			for combo in range( 0, len( items[ variant ][ sequence ] ) ):
 				if items[ variant ][ sequence ][ combo ][0] in backend.requiredCapabilities.keys():
-					# Use backend capability name and a single argument
-					items[ variant ][ sequence ][ combo ] = tuple(
-						[ backend.capabilityLookup( items[ variant ][ sequence ][ combo ][0] ),
-						tuple( [ hid_lookup_dictionary[ items[ variant ][ sequence ][ combo ] ] ] ) ]
-					)
+					try:
+						# Use backend capability name and a single argument
+						items[ variant ][ sequence ][ combo ] = tuple(
+							[ backend.capabilityLookup( items[ variant ][ sequence ][ combo ][0] ),
+							tuple( [ hid_lookup_dictionary[ items[ variant ][ sequence ][ combo ] ] ] ) ]
+						)
+					except KeyError:
+						print ( "{0} {1} is an invalid HID lookup value".format( ERROR, items[ variant ][ sequence ][ combo ] ) )
+						sys.exit( 1 )
 	return items
 
 
