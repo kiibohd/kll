@@ -168,16 +168,23 @@ class Backend( BackendBase ):
 
 					# Add each of the arguments of the capability
 					for arg in range( 0, len( resultItem[1] ) ):
-						# If this is a CONSUMER_ element, needs to be split into 2 elements
-						if isinstance( resultItem[1][ arg ], str ) and re.match( '^CONSUMER_', resultItem[1][ arg ] ):
-							tag = resultItem[1][ arg ].split( '_', 1 )[1]
-							if '_' in tag:
-								tag = tag.replace( '_', '' )
-							lookupNum = kll_hid_lookup_dictionary['ConsCode'][ tag ][1]
-							byteForm = lookupNum.to_bytes( 2, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
-							self.fill_dict['ResultMacros'] += "{0}, {1}, ".format( *byteForm )
-						else:
-							self.fill_dict['ResultMacros'] += "{0}, ".format( resultItem[1][ arg ] )
+						# Special cases
+						if isinstance( resultItem[1][ arg ], str ):
+							# If this is a CONSUMER_ element, needs to be split into 2 elements
+							if re.match( '^CONSUMER_', resultItem[1][ arg ] ):
+								tag = resultItem[1][ arg ].split( '_', 1 )[1]
+								if '_' in tag:
+									tag = tag.replace( '_', '' )
+								lookupNum = kll_hid_lookup_dictionary['ConsCode'][ tag ][1]
+								byteForm = lookupNum.to_bytes( 2, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
+								self.fill_dict['ResultMacros'] += "{0}, {1}, ".format( *byteForm )
+								continue
+
+							# None, fall-through disable
+							elif resultItem[0] is self.capabilityLookup('NONE'):
+								continue
+
+						self.fill_dict['ResultMacros'] += "{0}, ".format( resultItem[1][ arg ] )
 
 			# If sequence is longer than 1, append a sequence spacer at the end of the sequence
 			# Required by USB to end at sequence without holding the key down

@@ -255,6 +255,10 @@ def make_consCode_number( token ):
 def make_sysCode_number( token ):
 	return make_hidCode_number( 'SysCode', token )
 
+   # Replace key-word with None specifier (which indicates a noneOut capability)
+def make_none( token ):
+	return [[[('NONE', 0)]]]
+
 def make_seqString( token ):
 	# Shifted Characters, and amount to move by to get non-shifted version
 	# US ANSI
@@ -535,6 +539,7 @@ usbCode     = tokenType('USBCode') >> make_usbCode
 scanCode    = tokenType('ScanCode') >> make_scanCode
 consCode    = tokenType('ConsCode') >> make_consCode
 sysCode     = tokenType('SysCode') >> make_sysCode
+none        = tokenType('None') >> make_none
 name        = tokenType('Name')
 number      = tokenType('Number') >> make_number
 comma       = tokenType('Comma')
@@ -603,7 +608,7 @@ capFunc_sequence  = oneplus( ( capFunc_combo | seqString ) + skip( maybe( comma 
   # Trigger / Result Codes
 triggerCode_outerList    = scanCode_sequence >> optionExpansion
 triggerUSBCode_outerList = usbCode_sequence >> optionExpansion >> hidCodeToCapability
-resultCode_outerList     = capFunc_sequence >> optionExpansion >> hidCodeToCapability
+resultCode_outerList     = ( ( capFunc_sequence >> optionExpansion ) | none ) >> hidCodeToCapability
 
 
  ## Main Rules

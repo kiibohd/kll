@@ -20,6 +20,9 @@
 
 # Rather than generating tables of hex USB codes for the keymapping tables, readable defines are used (which correspond to usb_hid.h)
 hid_lookup_dictionary = dict([
+	# Fall-through block
+	( ('NONE', 0), '' ), # Special case, there are no arguments
+
 	# USB HID Keyboard Codes
 	( ('USB', 0x00), 'KEY_NOEVENT' ), # Event, not a physical key
 	( ('USB', 0x01), 'KEY_ERRORROLLOVER' ), # Event, not a physical key
