@@ -17,8 +17,7 @@
 <|Information|>
 
 
-#ifndef __kiibohdKeymap_h
-#define __kiibohdKeymap_h
+#pragma once
 
 // ----- Includes -----
 
@@ -125,8 +124,4 @@
 
 // - Layer State
 <|LayerState|>
-
-
-
-#endif // __generatedKeymap_h
 

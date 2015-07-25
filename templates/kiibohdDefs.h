@@ -17,8 +17,7 @@
 <|Information|>
 
 
-#ifndef __kll_defs_h
-#define __kll_defs_h
+#pragma once
 
 // ----- KLL Variables -----
 <|VariableInformation|>
@@ -27,8 +26,4 @@
 
 // ----- Defines -----
 <|Defines|>
-
-
-
-#endif // __kll_defs_h
 
