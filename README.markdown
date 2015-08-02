@@ -4,8 +4,7 @@ kll - keyboard layout language
 KLL Compiler
 ------------
 
-Most current version of the [KLL Spec](https://www.writelatex.com/read/zzqbdwqjfwwf).
-Or visit [kiibohd.com](http://kiibohd.com)
+Most current version of the [KLL Spec](http://input.club/kll).
 
 Uses [funcparserlib](https://code.google.com/p/funcparserlib/)
 
