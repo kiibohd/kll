@@ -123,7 +123,7 @@ class Backend( BackendBase ):
 		# Iterate through defines and lookup the variables
 		for define in variables.defines.keys():
 			if define in variables.overallVariables.keys():
-				self.fill_dict['Defines'] += "\n#define {0} {1}".format( variables.defines[ define ], variables.overallVariables[ define ] )
+				self.fill_dict['Defines'] += "\n#define {0} {1}".format( variables.defines[ define ], variables.overallVariables[ define ].replace( '\n', ' \\\n' ) )
 			else:
 				print( "{0} '{1}' not defined...".format( WARNING, define ) )
 
