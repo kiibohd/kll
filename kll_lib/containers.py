@@ -34,6 +34,67 @@ ERROR = '\033[5;1;31mERROR\033[0m:'
 
  ## Containers
 
+class ScanCode:
+	# Container for ScanCodes
+	#
+	# scancode        - Non-interconnect adjusted scan code
+	# interconnect_id - Unique id for the interconnect node
+	def __init__( self, scancode, interconnect_id ):
+		self.scancode = scancode
+		self.interconnect_id = interconnect_id
+
+	def __eq__( self, other ):
+		return self.dict() == other.dict()
+
+	def __repr__( self ):
+		return repr( self.dict() )
+
+	def dict( self ):
+		return {
+			'ScanCode' : self.scancode,
+			'Id'       : self.interconnect_id,
+		}
+
+	# Calculate the actual scancode using the offset list
+	def offset( self, offsetList ):
+		if self.interconnect_id > 0:
+			return self.scancode + offsetList[ self.interconnect_id - 1 ]
+		else:
+			return self.scancode
+
+
+class ScanCodeStore:
+	# Unique lookup for ScanCodes
+	def __init__( self ):
+		self.scancodes = []
+
+	def __getitem__( self, name ):
+		# First check if this is a ScanCode object
+		if isinstance( name, ScanCode ):
+			# Do a reverse lookup
+			for idx, scancode in enumerate( self.scancodes ):
+				if scancode == name:
+					return idx
+
+			# Could not find scancode
+			return None
+
+		# Return scancode using unique id
+		return self.scancodes[ name ]
+
+	# Attempt add ScanCode to list, return unique id
+	def append( self, new_scancode ):
+		# Iterate through list to make sure this is a unique ScanCode
+		for idx, scancode in enumerate( self.scancodes ):
+			if new_scancode == scancode:
+				return idx
+
+		# Unique entry, add to the list
+		self.scancodes.append( new_scancode )
+
+		return len( self.scancodes ) - 1
+
+
 class Capabilities:
 	# Container for capabilities dictionary and convenience functions
 	def __init__( self ):
@@ -87,6 +148,9 @@ class Macros:
 		# Default layer (0)
 		self.layer = 0
 
+		# Unique ScanCode Hash Id Lookup
+		self.scanCodeStore = ScanCodeStore()
+
 		# Macro Storage
 		self.macros = [ dict() ]
 
@@ -102,6 +166,7 @@ class Macros:
 		self.triggerList = []
 		self.maxScanCode = []
 		self.firstScanCode = []
+		self.interconnectOffset = []
 
 		# USBCode Assignment Cache
 		self.assignmentCache = []
@@ -199,6 +264,7 @@ class Macros:
 	def generate( self ):
 		self.generateIndices()
 		self.sortIndexLists()
+		self.generateOffsetTable()
 		self.generateTriggerLists()
 
 	# Generates Index of Results and Triggers
@@ -229,6 +295,34 @@ class Macros:
 		for trigger in self.triggersIndex.keys():
 			self.triggersIndexSorted[ self.triggersIndex[ trigger ] ] = trigger
 
+	# Generates list of offsets for each of the interconnect ids
+	def generateOffsetTable( self ):
+		idMaxScanCode = [ 0 ]
+
+		# Iterate over each layer to get list of max scancodes associated with each interconnect id
+		for layer in range( 0, len( self.macros ) ):
+			# Iterate through each trigger/sequence in the layer
+			for sequence in self.macros[ layer ].keys():
+				# Iterate over the trigger to locate the ScanCodes
+				for combo in sequence:
+					# Iterate over each scancode id in the combo
+					for scancode_id in combo:
+						# Lookup ScanCode
+						scancode_obj = self.scanCodeStore[ scancode_id ]
+
+						# Extend list if not large enough
+						if scancode_obj.interconnect_id >= len( idMaxScanCode ):
+							idMaxScanCode.extend( [ 0 ] * ( scancode_obj.interconnect_id - len( idMaxScanCode ) + 1 ) )
+
+						# Determine if the max seen id for this interconnect id
+						if scancode_obj.scancode > idMaxScanCode[ scancode_obj.interconnect_id ]:
+							idMaxScanCode[ scancode_obj.interconnect_id ] = scancode_obj.scancode
+
+		# Generate interconnect offsets
+		self.interconnectOffset = [ idMaxScanCode[0] + 1 ]
+		for index in range( 1, len( idMaxScanCode ) ):
+			self.interconnectOffset.append( self.interconnectOffset[ index - 1 ] + idMaxScanCode[ index ] )
+
 	# Generates Trigger Lists per layer using index lists
 	def generateTriggerLists( self ):
 		for layer in range( 0, len( self.macros ) ):
@@ -248,7 +342,8 @@ class Macros:
 
 					# Iterate over the trigger to locate the ScanCodes
 					for sequence in trigger:
-						for combo in sequence:
+						for combo_id in sequence:
+							combo = self.scanCodeStore[ combo_id ].offset( self.interconnectOffset )
 							# Append triggerIndex for each found scanCode of the Trigger List
 							# Do not re-add if triggerIndex is already in the Trigger List
 							if not triggerIndex in self.triggerList[ layer ][ combo ]:

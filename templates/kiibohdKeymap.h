@@ -91,6 +91,13 @@
 <|PartialLayerTriggerLists|>
 
 
+// -- ScanCode Offset Map
+// Maps interconnect ids to scancode offsets
+//
+// Only used for keyboards with an interconnect
+<|ScanCodeInterconnectOffsetList|>
+
+
 // -- ScanCode Indexed Maps
 // Maps to a trigger list of macro pointers
 //                 _

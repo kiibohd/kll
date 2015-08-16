@@ -478,6 +478,15 @@ def hidCodeToCapability( items ):
 	return items
 
 
+# Convert tuple of tuples to list of lists
+def listit( t ):
+	return list( map( listit, t ) ) if isinstance( t, ( list, tuple ) ) else t
+
+# Convert list of lists to tuple of tuples
+def tupleit( t ):
+	return tuple( map( tupleit, t ) ) if isinstance( t, ( tuple, list ) ) else t
+
+
  ## Evaluation Rules
 
 def eval_scanCode( triggers, operator, results ):
@@ -486,8 +495,26 @@ def eval_scanCode( triggers, operator, results ):
 	triggers = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in triggers )
 	results  = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in results )
 
+	# Lookup interconnect id (Current file scope)
+	# Default to 0 if not specified
+	if 'ConnectId' not in variables_dict.overallVariables.keys():
+		id_num = 0
+	else:
+		id_num = int( variables_dict.overallVariables['ConnectId'] )
+
 	# Iterate over all combinations of triggers and results
-	for trigger in triggers:
+	for sequence in triggers:
+		# Convert tuple of tuples to list of lists so each element can be modified
+		trigger = listit( sequence )
+
+		# Create ScanCode entries for trigger
+		for seq_index, combo in enumerate( sequence ):
+			for com_index, scancode in enumerate( combo ):
+				trigger[ seq_index ][ com_index ] = macros_map.scanCodeStore.append( ScanCode( scancode, id_num ) )
+
+		# Convert back to a tuple of tuples
+		trigger = tupleit( trigger )
+
 		for result in results:
 			# Append Case
 			if operator == ":+":

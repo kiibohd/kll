@@ -219,13 +219,17 @@ class Backend( BackendBase ):
 
 			# Add the trigger macro scan code guide
 			# See kiibohd controller Macros/PartialMap/kll.h for exact formatting details
-			for sequence in range( 0, len( macros.triggersIndexSorted[ trigger ][ 0 ] ) ):
+			for sequence in range( 0, len( macros.triggersIndexSorted[ trigger ][0] ) ):
 				# For each combo in the sequence, add the length of the combo
 				self.fill_dict['TriggerMacros'] += "{0}, ".format( len( macros.triggersIndexSorted[ trigger ][0][ sequence ] ) )
 
 				# For each combo, add the key type, key state and scan code
-				for combo in range( 0, len( macros.triggersIndexSorted[ trigger ][ 0 ][ sequence ] ) ):
-					triggerItem = macros.triggersIndexSorted[ trigger ][ 0 ][ sequence ][ combo ]
+				for combo in range( 0, len( macros.triggersIndexSorted[ trigger ][0][ sequence ] ) ):
+					triggerItemId = macros.triggersIndexSorted[ trigger ][0][ sequence ][ combo ]
+
+					# Lookup triggerItem in ScanCodeStore
+					triggerItemObj = macros.scanCodeStore[ triggerItemId ]
+					triggerItem = triggerItemObj.offset( macros.interconnectOffset )
 
 					# TODO Add support for Analog keys
 					# TODO Add support for LED states
@@ -254,21 +258,32 @@ class Backend( BackendBase ):
 		self.fill_dict['MaxScanCode'] = "#define MaxScanCode 0x{0:X}".format( macros.overallMaxScanCode )
 
 
+		## Interconnect ScanCode Offset List ##
+		self.fill_dict['ScanCodeInterconnectOffsetList'] = "const uint8_t InterconnectOffsetList[] = {\n"
+		for offset in range( 0, len( macros.interconnectOffset ) ):
+			self.fill_dict['ScanCodeInterconnectOffsetList'] += "\t0x{0:02X},\n".format( macros.interconnectOffset[ offset ] )
+		self.fill_dict['ScanCodeInterconnectOffsetList'] += "};"
+
+
+		## Max Interconnect Nodes ##
+		self.fill_dict['InterconnectNodeMax'] = "#define InterconnectNodeMax 0x{0:X}\n".format( len( macros.interconnectOffset ) )
+
+
 		## Default Layer and Default Layer Scan Map ##
 		self.fill_dict['DefaultLayerTriggerList'] = ""
 		self.fill_dict['DefaultLayerScanMap'] = "const nat_ptr_t *default_scanMap[] = {\n"
 
 		# Iterate over triggerList and generate a C trigger array for the default map and default map array
-		for triggerList in range( macros.firstScanCode[ 0 ], len( macros.triggerList[ 0 ] ) ):
+		for triggerList in range( macros.firstScanCode[0], len( macros.triggerList[0] ) ):
 			# Generate ScanCode index and triggerList length
-			self.fill_dict['DefaultLayerTriggerList'] += "Define_TL( default, 0x{0:02X} ) = {{ {1}".format( triggerList, len( macros.triggerList[ 0 ][ triggerList ] ) )
+			self.fill_dict['DefaultLayerTriggerList'] += "Define_TL( default, 0x{0:02X} ) = {{ {1}".format( triggerList, len( macros.triggerList[0][ triggerList ] ) )
 
 			# Add scanCode trigger list to Default Layer Scan Map
 			self.fill_dict['DefaultLayerScanMap'] += "default_tl_0x{0:02X}, ".format( triggerList )
 
 			# Add each item of the trigger list
-			for trigger in macros.triggerList[ 0 ][ triggerList ]:
-				self.fill_dict['DefaultLayerTriggerList'] += ", {0}".format( trigger )
+			for triggerItem in macros.triggerList[0][ triggerList ]:
+				self.fill_dict['DefaultLayerTriggerList'] += ", {0}".format( triggerItem )
 
 			self.fill_dict['DefaultLayerTriggerList'] += " };\n"
 		self.fill_dict['DefaultLayerTriggerList'] = self.fill_dict['DefaultLayerTriggerList'][:-1] # Remove last newline

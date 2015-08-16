@@ -25,5 +25,9 @@
 
 
 // ----- Defines -----
+
+// -- Interconnect Node Maximum --
+<|InterconnectNodeMax|>
+
 <|Defines|>
 
