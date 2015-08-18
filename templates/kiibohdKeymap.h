@@ -28,6 +28,10 @@
 
 // ----- Capabilities -----
 
+// Capability function declarations
+<|CapabilitiesFuncDecl|>
+
+
 // Indexed Capabilities Table
 <|CapabilitiesList|>
 
