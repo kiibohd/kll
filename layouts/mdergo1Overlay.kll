@@ -7,7 +7,7 @@ KLL = 0.3c;
 Date = 2015-08-21;
 
 # Make default layout more like the original ErgoDox default layout
-# https://keyboard-configurator.massdrop.com/ext/ergodox/?referer=NJD4SS&hash=f4bc8609bda446b3ac6cfc317eb3ed6a
+# https://keyboard-configurator.massdrop.com/ext/ergodox/
 #
 # The defaultMap.kll in BaseMap cannot have any duplicate keys (or they cannot be fully remapped later)
 # But, the DefaultMap can start to duplicate keys without any issues
