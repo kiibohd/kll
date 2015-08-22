@@ -1,0 +1,43 @@
+Name = ICED Numpad Layer;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2015";
+KLL = 0.3c;
+
+# Modified Date
+Date = 2015-08-21;
+
+# Top Row - Left
+U"Equals" : flashMode(); # Requires the following line un-commented
+#flashModeEnabled = 1;
+
+# Top Row - Right
+U"7" : U"Numlock";
+U"8" : U"Keypad Slash";
+U"9" : U"Keypad Asterisk";
+U"0" : U"Keypad Minus";
+
+# Top-Middle Row - Right
+U"U" : U"Keypad 7";
+U"I" : U"Keypad 8";
+U"O" : U"Keypad 9";
+U"P" : U"Keypad Plus";
+
+# Middle Row - Right
+U"J"         : U"Keypad 4";
+U"K"         : U"Keypad 5";
+U"L"         : U"Keypad 6";
+U"Semicolon" : U"Keypad Plus";
+
+# Bottom-Middle Row - Right
+U"M"      : U"Keypad 1";
+U"Comma"  : U"Keypad 2";
+U"Period" : U"Keypad 3";
+U"Slash"  : U"Keypad Enter";
+
+# Bottom Row - Right
+U"Up"    : U"Keypad Period";
+U"Right" : U"Keypad Enter";
+
+# Bottom Thumb Cluster - Right
+U"Space" : U"Keypad 0";
+
