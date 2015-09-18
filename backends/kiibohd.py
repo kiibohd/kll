@@ -131,6 +131,7 @@ class Backend( BackendBase ):
 		## Capabilities ##
 		self.fill_dict['CapabilitiesFuncDecl'] = ""
 		self.fill_dict['CapabilitiesList'] = "const Capability CapabilitiesList[] = {\n"
+		self.fill_dict['CapabilitiesIndices'] = "typedef enum CapabilityIndex {\n"
 
 		# Keys are pre-sorted
 		for key in capabilities.keys():
@@ -138,8 +139,10 @@ class Backend( BackendBase ):
 			argByteWidth = capabilities.totalArgBytes( key )
 			self.fill_dict['CapabilitiesList'] += "\t{{ {0}, {1} }},\n".format( funcName, argByteWidth )
 			self.fill_dict['CapabilitiesFuncDecl'] += "void {0}( uint8_t state, uint8_t stateType, uint8_t *args );\n".format( funcName )
+			self.fill_dict['CapabilitiesIndices'] += "\t{0}_index,\n".format( funcName )
 
 		self.fill_dict['CapabilitiesList'] += "};"
+		self.fill_dict['CapabilitiesIndices'] += "} CapabilityIndex;"
 
 
 		## Results Macros ##

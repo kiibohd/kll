@@ -19,6 +19,13 @@
 
 #pragma once
 
+// ----- Enums -----
+
+// Capability Indices
+<|CapabilitiesIndices|>
+
+
+
 // ----- KLL Variables -----
 <|VariableInformation|>
 
