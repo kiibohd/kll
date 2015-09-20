@@ -182,9 +182,10 @@ capabilities_dict = Capabilities()
 def make_scanCode( token ):
 	scanCode = int( token[1:], 0 )
 	# Check size, to make sure it's valid
-	if scanCode > 0xFF:
-		print ( "{0} ScanCode value {1} is larger than 255".format( ERROR, scanCode ) )
-		raise
+	# XXX Add better check that takes symbolic names into account (i.e. U"Latch5")
+	#if scanCode > 0xFF:
+	#	print ( "{0} ScanCode value {1} is larger than 255".format( ERROR, scanCode ) )
+	#	raise
 	return scanCode
 
 def make_hidCode( type, token ):
@@ -214,9 +215,10 @@ def make_hidCode( type, token ):
 			hidCode = int( token, 0 )
 
 	# Check size if a USB Code, to make sure it's valid
-	if type == 'USBCode' and hidCode > 0xFF:
-		print ( "{0} USBCode value {1} is larger than 255".format( ERROR, hidCode ) )
-		raise
+	# XXX Add better check that takes symbolic names into account (i.e. U"Latch5")
+	#if type == 'USBCode' and hidCode > 0xFF:
+	#	print ( "{0} USBCode value {1} is larger than 255".format( ERROR, hidCode ) )
+	#	raise
 
 	# Return a tuple, identifying which type it is
 	if type == 'USBCode':

@@ -1,10 +1,10 @@
 Name = mdergo1Overlay;
-Version = 0.1;
+Version = 0.2;
 Author = "HaaTa (Jacob Alexander) 2015";
 KLL = 0.3c;
 
 # Modified Date
-Date = 2015-08-21;
+Date = 2015-09-20;
 
 # Make default layout more like the original ErgoDox default layout
 # https://keyboard-configurator.massdrop.com/ext/ergodox/
@@ -13,13 +13,10 @@ Date = 2015-08-21;
 # But, the DefaultMap can start to duplicate keys without any issues
 
 # Top Row - Right
-# XXX Currently there are no "convenience" Function symbolic names for layerLock
-#     This means the LCDLayerDisplay has to be applied here
-#     Adding more symbolic names is possible, but it's not super straight-forward
-U"Function6" : layerLock( 2 ) + LCDLayerDisplay(); # Lock layer 2, and LCD update
+U"Function6" : U"Lock2";
 
 # Top-Middle Row - Left
-U"Function1" : layerLock( 1 ) + LCDLayerDisplay(); # Lock layer 1, and LCD update
+U"Function1" : U"Lock1";
 
 # Bottom-Middle Row - Left
 U"Function2" : U"Function1"; # Set Function2 to be layer shift 1
