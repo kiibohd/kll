@@ -4,7 +4,7 @@ Author = "HaaTa (Jacob Alexander) 2014-2015";
 KLL = 0.3;
 
 # Modified Date
-Date = 2015-09-20;
+Date = 2015-09-24;
 
 # Maps each Function key incrementally to each layer
 # Unused layers and functions are ignored
@@ -59,4 +59,8 @@ U"Latch13" : layerLatch( 13 );
 U"Latch14" : layerLatch( 14 );
 U"Latch15" : layerLatch( 15 );
 U"Latch16" : layerLatch( 16 );
+
+# Layer rotation
+U"Next Layer" : layerRotate( 0 ); # 0 is Next
+U"Prev Layer" : layerRotate( 1 ); # 1 is Previous
 

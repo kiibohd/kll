@@ -262,7 +262,7 @@ hid_lookup_dictionary = dict([
 	( ('USB', 0xFD), 'KEY_FUN14' ),
 	( ('USB', 0xFE), 'KEY_FUN15' ),
 	( ('USB', 0xFF), 'KEY_FUN16' ),
-# ('USB', 0x100) to ('USB', 0x11F) for function key placeholders, not valid usb codes (must use a translation .kll file before firmware compilation)
+# ('USB', 0x100) to ('USB', 0x121) for function key placeholders, not valid usb codes (must use a translation .kll file before firmware compilation)
 	( ('USB', 0x100), 'KEY_LCK1' ),
 	( ('USB', 0x101), 'KEY_LCK2' ),
 	( ('USB', 0x102), 'KEY_LCK3' ),
@@ -295,6 +295,8 @@ hid_lookup_dictionary = dict([
 	( ('USB', 0x11D), 'KEY_LAT14' ),
 	( ('USB', 0x11E), 'KEY_LAT15' ),
 	( ('USB', 0x11F), 'KEY_LAT16' ),
+	( ('USB', 0x120), 'KEY_NEXT_LAYER' ),
+	( ('USB', 0x121), 'KEY_PREV_LAYER' ),
 
 	# USB HID Consumer Control Codes
 # List of Consumer Codes - USB HID 1.12v2
@@ -1057,6 +1059,8 @@ kll_hid_lookup_dictionary['USBCode'] = dict([
 	( 'LAT14', ('USB', 0x11D) ), ( 'LATCH14', ('USB', 0x11D) ),
 	( 'LAT15', ('USB', 0x11E) ), ( 'LATCH15', ('USB', 0x11E) ),
 	( 'LAT16', ('USB', 0x11F) ), ( 'LATCH16', ('USB', 0x11F) ),
+	( 'NLAYER', ('USB', 0x120) ), ( 'NEXT LAYER', ('USB', 0x120) ),
+	( 'PLAYER', ('USB', 0x121) ), ( 'PREV LAYER', ('USB', 0x121) ),
 ])
 
 
