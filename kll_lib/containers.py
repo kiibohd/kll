@@ -236,6 +236,19 @@ class Macros:
 
 		return scanCodeList
 
+	# Check whether we should do soft replacement
+	def softReplaceCheck( self, scanCode ):
+		# First check if not the default layer
+		if self.layer == 0:
+			return True
+
+		# Check if current layer is set the same as the BaseMap
+		if not self.baseLayout is None and scanCode in self.layerLayoutMarkers[ self.layer ]:
+			return False
+
+		# Otherwise, allow replacement
+		return True
+
 	# Cache USBCode Assignment
 	def cacheAssignment( self, operator, scanCode, result ):
 		self.assignmentCache.append( [ operator, scanCode, result ] )
@@ -254,7 +267,7 @@ class Macros:
 				self.removeScanCode( item[1], item[2] )
 
 			# Replace Case
-			elif item[0] == ":":
+			elif item[0] == ":" or item[0] == "::":
 				self.replaceScanCode( item[1], item[2] )
 
 		# Clear assignment cache

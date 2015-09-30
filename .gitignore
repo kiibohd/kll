@@ -61,3 +61,7 @@ cmake_install.cmake
 __pycache__/
 *.py[cod]
 
+# Dropbox #
+###########
+*.attr
+

@@ -69,12 +69,12 @@ def checkFileExists( filename ):
 def processCommandLineArgs():
 	# Setup argument processor
 	pArgs = argparse.ArgumentParser(
-	        usage="%(prog)s [options] <file1>...",
-	        description="Generates .h file state tables and pointer indices from KLL .kll files.",
-	        epilog="Example: {0} mykeyboard.kll -d colemak.kll -p hhkbpro2.kll -p symbols.kll".format( os.path.basename( sys.argv[0] ) ),
-	        formatter_class=argparse.RawTextHelpFormatter,
-	        add_help=False,
-)
+		usage="%(prog)s [options] <file1>...",
+		description="Generates .h file state tables and pointer indices from KLL .kll files.",
+		epilog="Example: {0} mykeyboard.kll -d colemak.kll -p hhkbpro2.kll -p symbols.kll".format( os.path.basename( sys.argv[0] ) ),
+		formatter_class=argparse.RawTextHelpFormatter,
+		add_help=False,
+	)
 
 	# Positional Arguments
 	pArgs.add_argument( 'files', type=str, nargs='+',
@@ -149,7 +149,7 @@ def tokenize( string ):
 		( 'CodeEnd',          ( r'\]', ) ),
 		( 'String',           ( r'"[^"]*"', VERBOSE ) ),
 		( 'SequenceString',   ( r"'[^']*'", ) ),
-		( 'Operator',         ( r'=>|:\+|:-|:|=', ) ),
+		( 'Operator',         ( r'=>|:\+|:-|::|:|=', ) ),
 		( 'Comma',            ( r',', ) ),
 		( 'Dash',             ( r'-', ) ),
 		( 'Plus',             ( r'\+', ) ),
@@ -526,7 +526,8 @@ def eval_scanCode( triggers, operator, results ):
 				macros_map.removeScanCode( trigger, result )
 
 			# Replace Case
-			elif operator == ":":
+			# Soft Replace Case is the same for Scan Codes
+			elif operator == ":" or operator == "::":
 				macros_map.replaceScanCode( trigger, result )
 
 def eval_usbCode( triggers, operator, results ):
@@ -540,6 +541,10 @@ def eval_usbCode( triggers, operator, results ):
 		scanCodes = macros_map.lookupUSBCodes( trigger )
 		for scanCode in scanCodes:
 			for result in results:
+				# Soft Replace needs additional checking to see if replacement is necessary
+				if operator == "::" and not macros_map.softReplaceCheck( scanCode ):
+					continue
+
 				# Cache assignment until file finishes processing
 				macros_map.cacheAssignment( operator, scanCode, result )
 
@@ -657,7 +662,7 @@ capability_expression = name + skip( operator('=>') ) + name + skip( parenthesis
 define_expression = name + skip( operator('=>') ) + name + skip( eol ) >> set_define
 
 #| <trigger> : <result>;
-operatorTriggerResult = operator(':') | operator(':+') | operator(':-')
+operatorTriggerResult = operator(':') | operator(':+') | operator(':-') | operator('::')
 scanCode_expression   = triggerCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> map_scanCode
 usbCode_expression    = triggerUSBCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> map_usbCode
 
