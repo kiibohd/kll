@@ -176,7 +176,8 @@ class Backend( BackendBase ):
 						# Special cases
 						if isinstance( resultItem[1][ arg ], str ):
 							# If this is a CONSUMER_ element, needs to be split into 2 elements
-							if re.match( '^CONSUMER_', resultItem[1][ arg ] ):
+							# AC_ and AL_ are other sections of consumer control
+							if re.match( '^(CONSUMER|AC|AL)_', resultItem[1][ arg ] ):
 								tag = resultItem[1][ arg ].split( '_', 1 )[1]
 								if '_' in tag:
 									tag = tag.replace( '_', '' )
