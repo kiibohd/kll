@@ -683,13 +683,17 @@ def parse( tokenSequence ):
 def processKLLFile( filename ):
 	with open( filename ) as file:
 		data = file.read()
-		tokenSequence = tokenize( data )
+		try:
+			tokenSequence = tokenize( data )
+		except LexerError as e:
+			print ( "{0} Tokenization error in '{1}' - {2}".format( ERROR, filename, e ) )
+			sys.exit( 1 )
 		#print ( pformat( tokenSequence ) ) # Display tokenization
 		try:
 			tree = parse( tokenSequence )
 		except NoParseError as e:
-			print("Error parsing %s. %s" % (filename, e.msg), file=sys.stderr)
-			sys.exit(1)
+			print ( "{0} Parsing error in '{1}' - {2}".format( ERROR, filename, e ) )
+			sys.exit( 1 )
 
 
 ### Misc Utility Functions ###
