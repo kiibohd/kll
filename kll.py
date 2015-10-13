@@ -685,14 +685,14 @@ def processKLLFile( filename ):
 		data = file.read()
 		try:
 			tokenSequence = tokenize( data )
-		except LexerError as e:
-			print ( "{0} Tokenization error in '{1}' - {2}".format( ERROR, filename, e ) )
+		except LexerError as err:
+			print ( "{0} Tokenization error in '{1}' - {2}".format( ERROR, filename, err ) )
 			sys.exit( 1 )
 		#print ( pformat( tokenSequence ) ) # Display tokenization
 		try:
 			tree = parse( tokenSequence )
-		except NoParseError as e:
-			print ( "{0} Parsing error in '{1}' - {2}".format( ERROR, filename, e ) )
+		except (NoParseError, KeyError) as err:
+			print ( "{0} Parsing error in '{1}' - {2}".format( ERROR, filename, err ) )
 			sys.exit( 1 )
 
 
