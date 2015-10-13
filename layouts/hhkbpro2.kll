@@ -1,10 +1,10 @@
 Name = hhkbpro2;
-Version = 0.1;
+Version = 0.2;
 Author = "HaaTa (Jacob Alexander) 2014";
 KLL = 0.3c;
 
 # Modified Date
-Date = 2015-08-21;
+Date = 2015-10-12;
 
 # Number Row
 U"1" : U"F1";
@@ -24,10 +24,11 @@ U"Backtick" : U"Delete";
 
 # Top Row
 U"Tab" : U"Capslock";
+U"W" : flashMode();
 U"I" : U"PrintScreen";
 U"O" : U"ScrollLock";
 U"P" : U"Pause";
-U"{" : U"Up";
+U"[" : U"Up";
 
 # Middle Row
 U"A" : CONS"VolumeDown";
