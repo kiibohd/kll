@@ -759,9 +759,8 @@ if __name__ == '__main__':
 		for filename in partial:
 			variables_dict.setCurrentFile( filename )
 			processKLLFile( filename )
-
-		# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
-		macros_map.replayCachedAssignments()
+			# Apply assignment cache, see 5.1.2 USB Codes for why this is necessary
+			macros_map.replayCachedAssignments()
 		# Remove un-marked keys to complete the partial layer
 		macros_map.removeUnmarked()
 
