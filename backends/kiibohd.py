@@ -181,7 +181,11 @@ class Backend( BackendBase ):
 								tag = resultItem[1][ arg ].split( '_', 1 )[1]
 								if '_' in tag:
 									tag = tag.replace( '_', '' )
-								lookupNum = kll_hid_lookup_dictionary['ConsCode'][ tag ][1]
+								try:
+									lookupNum = kll_hid_lookup_dictionary['ConsCode'][ tag ][1]
+								except KeyError as err:
+									print ( "{0} {1} Consumer HID kll bug...please report.".format( ERROR, err ) )
+									raise
 								byteForm = lookupNum.to_bytes( 2, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
 								self.fill_dict['ResultMacros'] += "{0}, {1}, ".format( *byteForm )
 								continue

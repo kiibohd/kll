@@ -331,7 +331,15 @@ hid_lookup_dictionary = dict([
 	( ('CONS', 0x064), 'CONSUMER_BROADCAST_MODE' ),
 	( ('CONS', 0x065), 'CONSUMER_SNAPSHOT' ),
 	( ('CONS', 0x066), 'CONSUMER_STILL' ),
-# 0x067 - 0x07F Reserved
+# 0x067 - 0x06E Reserved?
+	( ('CONS', 0x06F), 'CONSUMER_BRIGHTNESS_INCREMENT' ),
+	( ('CONS', 0x070), 'CONSUMER_BRIGHTNESS_DECREMENT' ),
+
+	( ('CONS', 0x072), 'CONSUMER_BACKLIGHT_TOGGLE' ),
+	( ('CONS', 0x073), 'CONSUMER_BRIGHTNESS_MIN' ),
+	( ('CONS', 0x074), 'CONSUMER_BRIGHTNESS_MAX' ),
+	( ('CONS', 0x075), 'CONSUMER_BRIGHTNESS_AUTO' ),
+# 0x076 - 0x07F Reserved
 
 	( ('CONS', 0x081), 'CONSUMER_ASSIGN_SELECTION' ),
 	( ('CONS', 0x082), 'CONSUMER_MODE_STEP' ),
@@ -659,7 +667,8 @@ hid_lookup_dictionary = dict([
 	( ('CONS', 0x29A), 'AC_SPLIT' ),
 	( ('CONS', 0x29B), 'AC_DISTRIBUTE_HORIZONTALLY' ),
 	( ('CONS', 0x29C), 'AC_DISTRIBUTE_VERTICALLY' ),
-# 0x29D-0xFFFF Reserved
+	( ('CONS', 0x29D), 'AC_NEXT_KEYBOARD_LAYOUT_SEL' ),
+# 0x29E-0xFFFF Reserved
 
 	# USB HID LED Codes
 	( ('LED', 0x00), 'LED_UNDEFINED' ),
@@ -1227,7 +1236,15 @@ kll_hid_lookup_dictionary['ConsCode'] = dict([
 	( 'BROADCASTMODE', ('CONS', 0x064) ),
 	( 'SNAPSHOT', ('CONS', 0x065) ),
 	( 'STILL', ('CONS', 0x066) ),
-# 0x067 - 0x07F Reserved
+# 0x067 - 0x06E Reserved?
+	( 'BRIGHTNESSINCREMENT', ('CONS', 0x06F) ),
+	( 'BRIGHTNESSDECREMENT', ('CONS', 0x070) ),
+
+	( 'BACKLIGHTTOGGLE', ('CONS', 0x072) ),
+	( 'BRIGHTNESSMIN', ('CONS', 0x073) ),
+	( 'BRIGHTNESSMAX', ('CONS', 0x074) ),
+	( 'BRIGHTNESSAUTO', ('CONS', 0x075) ),
+# 0x076 - 0x07F Reserved
 
 	( 'ASSIGNSELECTION', ('CONS', 0x081) ),
 	( 'MODESTEP', ('CONS', 0x082) ),
@@ -1557,6 +1574,7 @@ kll_hid_lookup_dictionary['ConsCode'] = dict([
 	( 'SPLIT', ('CONS', 0x29A) ),
 	( 'DISTRIBUTEHORIZONTALLY', ('CONS', 0x29B) ),
 	( 'DISTRIBUTEVERTICALLY', ('CONS', 0x29C) ),
-# 0x29D-0xFFFF Reserved
+	( 'NEXTKEYBOARDLAYOUTSELECT', ('CONS', 0x29D) ),
+# 0x29E-0xFFFF Reserved
 ])
 
