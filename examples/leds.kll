@@ -1,0 +1,50 @@
+Name = leds;
+Author = "HaaTa (Jacob Alexander) 2016";
+KLL = 0.5;
+mydefine = "stuffs here";
+mydefine2 = '"stuffs here"'; # For outputting c define strings
+mynumber = 414;
+
+# Array variables
+myarray[] = elem0 elem1 "elem 2";
+myarray[4] = test;
+
+# Key Positioning
+S120 <= x:20, rx:15;
+S121 <= x:20, y:10, z:2, rx:15, ry:12, rz:39;
+
+# Pixel Positioning
+P[20] <= x:20, rx:15;
+P[21] <= x:20, y:10, z:2, rx:15, ry:12, rz:39;
+
+# Pixel Channel Mapping
+P[5](4:8, 5:8, 12:8) : None;
+P[4](3:8) : S0x31;
+P[12](40:8, 50:8, 120:8) : S59;
+
+# Animation
+A[BLEEdsing] <= loop:3,frame:2;
+A[BLEEdsing2] <= loop,div:2;
+
+# Animation Frames
+A[BLEEdsing, 0] <= P[4](+32);
+A[BLEEdsing, 1] <= P[4](42);
+A[BLEEdsing, 2] <= P[4](-12);
+A[BLEEdsing, 3] <= P[4](-:32);
+A[BLEEdsing, 4] <= P[4](+:400);
+A[BLEEdsing, 5] <= P[4](<<2);
+A[BLEEdsing, 6] <= P[4](>>1);
+
+A[BLEEdsing2, 0] <= PL[0](127, 30, 40), P[5](20, 30, 40);
+A[BLEEdsing2, 1] <= P[1-20,40](40,50,0x60);
+
+# Animation Triggers
+myCapability  => myFunc( myArg1 : 1, myArg2 : 4 );
+A[BLEEdsing, 3] : myCapability( 0x8, 0x25 );
+A[BLEEdsing2] : myCapability( 0x8, 0x25 );
+
+# Animation Results
+U0x40 : A[BLEEdsing];
+S0x41 : A[BLEEdsing](loop:2);
+S0x43 : PL[0](0xFF,0xFF,244), P[1-3](20,40,60);
+
