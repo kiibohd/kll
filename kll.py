@@ -164,6 +164,7 @@ def tokenize( string ):
 		( 'Plus',             ( r'\+', ) ),
 		( 'Parenthesis',      ( r'\(|\)', ) ),
 		( 'None',             ( r'None', ) ),
+		( 'Timing',           ( r'[0-9]+(.[0-9]+)?((s)|(ms)|(us))', ) ),
 		( 'Number',           ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', VERBOSE ) ),
 		( 'Name',             ( r'[A-Za-z_][A-Za-z_0-9]*', ) ),
 		( 'VariableContents', ( r'''[^"' ;:=>()]+''', ) ),
@@ -199,8 +200,8 @@ class Make:
 		return scanCode
 
 	def hidCode( type, token ):
-		# If first character is a U, strip
-		if token[0] == "U":
+		# If first character is a U or I, strip
+		if token[0] == "U" or token[0] == "I":
 			token = token[1:]
 		# CONS specifier
 		elif 'CONS' in token:
@@ -237,6 +238,8 @@ class Make:
 			return Make.consCode_number( hidCode )
 		elif type == 'SysCode':
 			return Make.sysCode_number( hidCode )
+		elif type == 'IndCode':
+			return Make.indCode_number( hidCode )
 
 		print ( "{0} Unknown HID Specifier '{1}'".format( ERROR, type ) )
 		raise
@@ -249,6 +252,9 @@ class Make:
 
 	def sysCode( token ):
 		return Make.hidCode( 'SysCode', token )
+
+	def indCode( token ):
+		return Make.hidCode( 'IndCode', token )
 
 	def animation( token ):
 		# TODO
@@ -311,6 +317,7 @@ class Make:
 			'ConsCode' : 'CONS',
 			'SysCode'  : 'SYS',
 			'USBCode'  : 'USB',
+			'IndCode'  : 'LED',
 		}
 		return ( lookup[ type ], token )
 
@@ -322,6 +329,9 @@ class Make:
 
 	def sysCode_number( token ):
 		return Make.hidCode_number( 'SysCode', token )
+
+	def indCode_number( token ):
+		return Make.hidCode_number( 'IndCode', token )
 
 	   # Replace key-word with None specifier (which indicates a noneOut capability)
 	def none( token ):
@@ -388,6 +398,44 @@ class Make:
 	def number( token ):
 		return int( token, 0 )
 
+	def timing( token ):
+		# Find ms, us, or s
+		if 'ms' in token:
+			unit = 'ms'
+			num = token.split('m')[0]
+			print (token.split('m'))
+		elif 'us' in token:
+			unit = 'us'
+			num = token.split('u')[0]
+		elif 's' in token:
+			unit = 's'
+			num = token.split('s')[0]
+		else:
+			print ( "{0} cannot find timing unit in token '{1}'".format( ERROR, token ) )
+			return "NULL"
+
+		print ( num, unit )
+		ret = {
+			'time' : float( num ),
+			'unit' : unit,
+		}
+		return ret
+
+	def specifierState( values ):
+		# TODO
+		print ( values )
+		return "SPECSTATE"
+
+	def specifierAnalog( value ):
+		# TODO
+		print( value )
+		return "SPECANALOG"
+
+	def specifierUnroll( value ):
+		# TODO
+		print( value )
+		return [ value[0] ]
+
 	  # Range can go from high to low or low to high
 	def scanCode_range( rangeVals ):
 		start = rangeVals[0]
@@ -435,6 +483,9 @@ class Make:
 
 	def consCode_range( rangeVals ):
 		return Make.hidCode_range( 'ConsCode', rangeVals )
+
+	def indCode_range( rangeVals ):
+		return Make.hidCode_range( 'IndCode', rangeVals )
 
 	def range( rangeVals ):
 		# TODO
@@ -565,6 +616,7 @@ def tupleit( t ):
 
 class Eval:
 	def scanCode( triggers, operator, results ):
+		print ( triggers, operator, results )
 		# Convert to lists of lists of lists to tuples of tuples of tuples
 		# Tuples are non-mutable, and can be used has index items
 		triggers = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in triggers )
@@ -605,6 +657,8 @@ class Eval:
 					macros_map.replaceScanCode( trigger, result )
 
 	def usbCode( triggers, operator, results ):
+		# TODO
+		return
 		# Convert to lists of lists of lists to tuples of tuples of tuples
 		# Tuples are non-mutable, and can be used has index items
 		triggers = tuple( tuple( tuple( sequence ) for sequence in variant ) for variant in triggers )
@@ -698,6 +752,7 @@ usbCode       = tokenType('USBCode') >> Make.usbCode
 scanCode      = tokenType('ScanCode') >> Make.scanCode
 consCode      = tokenType('ConsCode') >> Make.consCode
 sysCode       = tokenType('SysCode') >> Make.sysCode
+indCode       = tokenType('Indicator') >> Make.indCode
 animation     = tokenType('Animation') >> Make.animation
 pixel         = tokenType('Pixel') >> Make.pixel
 pixelLayer    = tokenType('PixelLayer') >> Make.pixelLayer
@@ -705,6 +760,7 @@ none          = tokenType('None') >> Make.none
 position      = tokenType('Position') >> Make.position
 name          = tokenType('Name')
 number        = tokenType('Number') >> Make.number
+timing        = tokenType('Timing') >> Make.timing
 comma         = tokenType('Comma')
 dash          = tokenType('Dash')
 plus          = tokenType('Plus')
@@ -719,27 +775,21 @@ pixelOperator = tokenType('PixelOperator')
 code_begin = tokenType('CodeBegin')
 code_end   = tokenType('CodeEnd')
 
+  # Specifier
+specifier_state  = ( name + skip( operator(':') ) + timing ) | ( name + skip( operator(':') ) + timing ) | timing | name >> Make.specifierState
+specifier_analog = number >> Make.specifierAnalog
+specifier_list   = skip( parenthesis('(') ) + many( ( specifier_state | specifier_analog ) + skip( maybe( comma ) ) ) + skip( parenthesis(')') )
+
   # Scan Codes
 scanCode_start     = tokenType('ScanCodeStart')
 scanCode_range     = number + skip( dash ) + number >> Make.scanCode_range
 scanCode_listElem  = number >> listElem
-scanCode_innerList = oneplus( ( scanCode_range | scanCode_listElem ) + skip( maybe( comma ) ) ) >> flatten
+scanCode_specifier = ( scanCode_range | scanCode_listElem ) + maybe( specifier_list ) >> Make.specifierUnroll >> flatten
+scanCode_innerList = many( scanCode_specifier + skip( maybe( comma ) ) ) >> flatten
 scanCode_expanded  = skip( scanCode_start ) + scanCode_innerList + skip( code_end )
-scanCode_elem      = scanCode >> listElem
+scanCode_elem      = scanCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
 scanCode_combo     = oneplus( ( scanCode_expanded | scanCode_elem ) + skip( maybe( plus ) ) )
 scanCode_sequence  = oneplus( scanCode_combo + skip( maybe( comma ) ) )
-
-  # USB Codes
-usbCode_start       = tokenType('USBCodeStart')
-usbCode_number      = number >> Make.usbCode_number
-usbCode_range       = ( usbCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.usbCode_range
-usbCode_listElemTag = unString >> Make.usbCode
-usbCode_listElem    = ( usbCode_number | usbCode_listElemTag ) >> listElem
-usbCode_innerList   = oneplus( ( usbCode_range | usbCode_listElem ) + skip( maybe( comma ) ) ) >> flatten
-usbCode_expanded    = skip( usbCode_start ) + usbCode_innerList + skip( code_end )
-usbCode_elem        = usbCode >> listElem
-usbCode_combo       = oneplus( ( usbCode_expanded | usbCode_elem ) + skip( maybe( plus ) ) ) >> listElem
-usbCode_sequence    = oneplus( ( usbCode_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
   # Cons Codes
 consCode_start       = tokenType('ConsCodeStart')
@@ -747,9 +797,10 @@ consCode_number      = number >> Make.consCode_number
 consCode_range       = ( consCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.consCode_range
 consCode_listElemTag = unString >> Make.consCode
 consCode_listElem    = ( consCode_number | consCode_listElemTag ) >> listElem
-consCode_innerList   = oneplus( ( consCode_range | consCode_listElem ) + skip( maybe( comma ) ) ) >> flatten
+consCode_specifier   = ( consCode_range | consCode_listElem ) + maybe( specifier_list ) >> Make.specifierUnroll >> flatten
+consCode_innerList   = oneplus( consCode_specifier + skip( maybe( comma ) ) ) >> flatten
 consCode_expanded    = skip( consCode_start ) + consCode_innerList + skip( code_end )
-consCode_elem        = consCode >> listElem
+consCode_elem        = consCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
 
   # Sys Codes
 sysCode_start       = tokenType('SysCodeStart')
@@ -757,12 +808,38 @@ sysCode_number      = number >> Make.sysCode_number
 sysCode_range       = ( sysCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.sysCode_range
 sysCode_listElemTag = unString >> Make.sysCode
 sysCode_listElem    = ( sysCode_number | sysCode_listElemTag ) >> listElem
-sysCode_innerList   = oneplus( ( sysCode_range | sysCode_listElem ) + skip( maybe( comma ) ) ) >> flatten
+sysCode_specifier   = ( sysCode_range | sysCode_listElem ) + maybe( specifier_list ) >> Make.specifierUnroll >> flatten
+sysCode_innerList   = oneplus( sysCode_specifier + skip( maybe( comma ) ) ) >> flatten
 sysCode_expanded    = skip( sysCode_start ) + sysCode_innerList + skip( code_end )
-sysCode_elem        = sysCode >> listElem
+sysCode_elem        = sysCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
+
+  # Indicator Codes
+indCode_start       = tokenType('IndicatorStart')
+indCode_number      = number >> Make.indCode_number
+indCode_range       = ( indCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.indCode_range
+indCode_listElemTag = unString >> Make.indCode
+indCode_listElem    = ( indCode_number | indCode_listElemTag ) >> listElem
+indCode_specifier   = ( indCode_range | indCode_listElem ) + maybe( specifier_list ) >> Make.specifierUnroll >> flatten
+indCode_innerList   = oneplus( indCode_specifier + skip( maybe( comma ) ) ) >> flatten
+indCode_expanded    = skip( indCode_start ) + indCode_innerList + skip( code_end )
+indCode_elem        = indCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
+
+  # USB Codes
+usbCode_start       = tokenType('USBCodeStart')
+usbCode_number      = number >> Make.usbCode_number
+usbCode_range       = ( usbCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.usbCode_range
+usbCode_listElemTag = unString >> Make.usbCode
+usbCode_listElem    = ( usbCode_number | usbCode_listElemTag ) >> listElem
+usbCode_specifier   = ( usbCode_range | usbCode_listElem ) + maybe( specifier_list ) >> Make.specifierUnroll >> flatten
+usbCode_innerList   = oneplus( usbCode_specifier + skip( maybe( comma ) ) ) >> flatten
+usbCode_expanded    = skip( usbCode_start ) + usbCode_innerList + skip( code_end )
+usbCode_elem        = usbCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
 
   # HID Codes
-hidCode_elem        = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem
+hidCode_elem        = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem | indCode_expanded | indCode_elem
+
+usbCode_combo       = oneplus( hidCode_elem + skip( maybe( plus ) ) ) >> listElem
+usbCode_sequence    = oneplus( ( usbCode_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
   # Pixels
 pixel_start       = tokenType('PixelStart')
@@ -862,11 +939,11 @@ scanCodePosition_expression = triggerCode_outerList + skip( operator('<=') ) + p
 
 #| Mapping
 #| <trigger> : <result>;
-operatorTriggerResult  = operator(':') | operator(':+') | operator(':-') | operator('::')
-scanCode_expression    = triggerCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> Map.scanCode
-usbCode_expression     = triggerUSBCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> Map.usbCode
-animation_trigger      = ( animation_elem | animation_def ) + operatorTriggerResult + resultCode_outerList + skip( eol ) >> Map.animationTrigger
-animation_triggerFrame = animation_expanded + operatorTriggerResult + resultCode_outerList + skip( eol ) >> Map.animationTriggerFrame
+operatorTriggerResult    = operator(':') | operator(':+') | operator(':-') | operator('::')
+scanCode_expression      = triggerCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> Map.scanCode
+usbCode_expression       = triggerUSBCode_outerList + operatorTriggerResult + resultCode_outerList + skip( eol ) >> Map.usbCode
+animation_trigger        = ( animation_elem | animation_def ) + operatorTriggerResult + resultCode_outerList + skip( eol ) >> Map.animationTrigger
+animation_triggerFrame   = animation_expanded + operatorTriggerResult + resultCode_outerList + skip( eol ) >> Map.animationTriggerFrame
 
 def parse( tokenSequence ):
 	"""Sequence(Token) -> object"""

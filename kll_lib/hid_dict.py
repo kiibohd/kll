@@ -1074,7 +1074,7 @@ kll_hid_lookup_dictionary['USBCode'] = dict([
 
 
 	# USB HID LED Codes
-kll_hid_lookup_dictionary['LEDCode'] = dict([
+kll_hid_lookup_dictionary['IndCode'] = dict([
 	( 'UNDEFINED', ('LED', 0x00) ),
 	( 'NUMLOCK', ('LED', 0x01) ),
 	( 'CAPSLOCK', ('LED', 0x02) ),
