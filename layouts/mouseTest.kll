@@ -1,0 +1,17 @@
+Name = mouseTest;
+Version = 0.3d;
+Author = "HaaTa (Jacob Alexander) 2016";
+KLL = 0.3d;
+
+# Modified Date
+Date = 2016-03-20;
+
+U"1" : mouseOut( 1 );
+U"2" : mouseOut( 2 );
+U"3" : mouseOut( 3 );
+U"4" : mouseOut( 4 );
+U"5" : mouseOut( 5 );
+U"6" : mouseOut( 6 );
+U"7" : mouseOut( 7 );
+U"8" : mouseOut( 8 );
+
