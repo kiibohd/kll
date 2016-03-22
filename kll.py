@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-# KLL Compiler
-# Keyboard Layout Langauge
-#
-# Copyright (C) 2014-2015 by Jacob Alexander
+'''
+KLL Compiler
+Keyboard Layout Langauge
+'''
+
+# Copyright (C) 2014-2016 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,32 +23,27 @@
 
 import argparse
 import importlib
-import io
 import os
-import re
 import sys
-import token
 
-from pprint   import pformat
 from re       import VERBOSE
-from tokenize import generate_tokens
 
 from kll_lib.containers import *
 from kll_lib.hid_dict   import *
 
 from funcparserlib.lexer  import make_tokenizer, Token, LexerError
-from funcparserlib.parser import (some, a, many, oneplus, skip, finished, maybe, skip, forward_decl, NoParseError)
+from funcparserlib.parser import (some, a, many, oneplus, finished, maybe, skip, NoParseError)
 
 
 
 ### Decorators ###
 
- ## Print Decorator Variables
+## Print Decorator Variables
 ERROR = '\033[5;1;31mERROR\033[0m:'
 
 
- ## Python Text Formatting Fixer...
- ##  Because the creators of Python are averse to proper capitalization.
+## Python Text Formatting Fixer...
+##  Because the creators of Python are averse to proper capitalization.
 textFormatter_lookup = {
 	"usage: "            : "Usage: ",
 	"optional arguments" : "Optional Arguments",
@@ -150,12 +147,12 @@ def tokenize( string ):
 		( 'String',           ( r'"[^"]*"', ) ),
 		( 'SequenceString',   ( r"'[^']*'", ) ),
 		( 'Operator',         ( r'=>|:\+|:-|::|:|=', ) ),
+		( 'Number',           ( r'(-[ \t]*)?((0x[0-9a-fA-F]+)|(0|([1-9][0-9]*)))', VERBOSE ) ),
 		( 'Comma',            ( r',', ) ),
 		( 'Dash',             ( r'-', ) ),
 		( 'Plus',             ( r'\+', ) ),
 		( 'Parenthesis',      ( r'\(|\)', ) ),
 		( 'None',             ( r'None', ) ),
-		( 'Number',           ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', VERBOSE ) ),
 		( 'Name',             ( r'[A-Za-z_][A-Za-z_0-9]*', ) ),
 		( 'VariableContents', ( r'''[^"' ;:=>()]+''', ) ),
 		( 'EndOfLine',        ( r';', ) ),
@@ -171,13 +168,13 @@ def tokenize( string ):
 
 ### Parsing ###
 
- ## Map Arrays
+## Map Arrays
 macros_map        = Macros()
 variables_dict    = Variables()
 capabilities_dict = Capabilities()
 
 
- ## Parsing Functions
+## Parsing Functions
 
 def make_scanCode( token ):
 	scanCode = int( token[1:], 0 )
@@ -257,7 +254,7 @@ def make_consCode_number( token ):
 def make_sysCode_number( token ):
 	return make_hidCode_number( 'SysCode', token )
 
-   # Replace key-word with None specifier (which indicates a noneOut capability)
+ # Replace key-word with None specifier (which indicates a noneOut capability)
 def make_none( token ):
 	return [[[('NONE', 0)]]]
 
@@ -322,7 +319,7 @@ def make_unseqString( token ):
 def make_number( token ):
 	return int( token, 0 )
 
-  # Range can go from high to low or low to high
+# Range can go from high to low or low to high
 def make_scanCode_range( rangeVals ):
 	start = rangeVals[0]
 	end   = rangeVals[1]
@@ -334,9 +331,9 @@ def make_scanCode_range( rangeVals ):
 	# Iterate from start to end, and generate the range
 	return list( range( start, end + 1 ) )
 
-  # Range can go from high to low or low to high
-  # Warn on 0-9 for USBCodes (as this does not do what one would expect) TODO
-  # Lookup USB HID tags and convert to a number
+# Range can go from high to low or low to high
+# Warn on 0-9 for USBCodes (as this does not do what one would expect) TODO
+# Lookup USB HID tags and convert to a number
 def make_hidCode_range( type, rangeVals ):
 	# Check if already integers
 	if isinstance( rangeVals[0], int ):
@@ -371,7 +368,7 @@ def make_consCode_range( rangeVals ):
 	return make_hidCode_range( 'ConsCode', rangeVals )
 
 
- ## Base Rules
+## Base Rules
 
 const       = lambda x: lambda _: x
 unarg       = lambda f: lambda x: f(*x)
@@ -389,7 +386,7 @@ def listElem( item ):
 def listToTuple( items ):
 	return tuple( items )
 
-  # Flatten only the top layer (list of lists of ...)
+# Flatten only the top layer (list of lists of ...)
 def oneLayerFlatten( items ):
 	mainList = []
 	for sublist in items:
@@ -398,14 +395,27 @@ def oneLayerFlatten( items ):
 
 	return mainList
 
-  # Capability arguments may need to be expanded (e.g. 1 16 bit argument needs to be 2 8 bit arguments for the state machine)
 def capArgExpander( items ):
+	'''
+	Capability arguments may need to be expanded
+	(e.g. 1 16 bit argument needs to be 2 8 bit arguments for the state machine)
+
+	If the number is negative, determine width of the final value, mask to max, subtract,
+	then convert to multiple bytes
+	'''
 	newArgs = []
 	# For each defined argument in the capability definition
 	for arg in range( 0, len( capabilities_dict[ items[0] ][1] ) ):
 		argLen = capabilities_dict[ items[0] ][1][ arg ][1]
 		num = items[1][ arg ]
-		byteForm = num.to_bytes( argLen, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
+
+		# Set last bit if value is negative
+		if num < 0:
+			max_val = 2 ** (argLen * 8)
+			num += max_val
+
+		# XXX Yes, little endian from how the uC structs work
+		byteForm = num.to_bytes( argLen, byteorder='little' )
 
 		# For each sub-argument, split into byte-sized chunks
 		for byte in range( 0, argLen ):
@@ -413,8 +423,8 @@ def capArgExpander( items ):
 
 	return tuple( [ items[0], tuple( newArgs ) ] )
 
-  # Expand ranges of values in the 3rd dimension of the list, to a list of 2nd lists
-  # i.e. [ sequence, [ combo, [ range ] ] ] --> [ [ sequence, [ combo ] ], <option 2>, <option 3> ]
+# Expand ranges of values in the 3rd dimension of the list, to a list of 2nd lists
+# i.e. [ sequence, [ combo, [ range ] ] ] --> [ [ sequence, [ combo ] ], <option 2>, <option 3> ]
 def optionExpansion( sequences ):
 	expandedSequences = []
 
@@ -489,7 +499,7 @@ def tupleit( t ):
 	return tuple( map( tupleit, t ) ) if isinstance( t, ( tuple, list ) ) else t
 
 
- ## Evaluation Rules
+## Evaluation Rules
 
 def eval_scanCode( triggers, operator, results ):
 	# Convert to lists of lists of lists to tuples of tuples of tuples
@@ -571,7 +581,7 @@ set_capability = unarg( eval_capability )
 set_define     = unarg( eval_define )
 
 
- ## Sub Rules
+## Sub Rules
 
 usbCode     = tokenType('USBCode') >> make_usbCode
 scanCode    = tokenType('ScanCode') >> make_scanCode
@@ -589,10 +599,10 @@ unString    = tokenType('String') # When the double quotes are still needed for 
 seqString   = tokenType('SequenceString') >> make_seqString
 unseqString = tokenType('SequenceString') >> make_unseqString # For use with variables
 
-  # Code variants
+# Code variants
 code_end = tokenType('CodeEnd')
 
-  # Scan Codes
+# Scan Codes
 scanCode_start     = tokenType('ScanCodeStart')
 scanCode_range     = number + skip( dash ) + number >> make_scanCode_range
 scanCode_listElem  = number >> listElem
@@ -602,7 +612,7 @@ scanCode_elem      = scanCode >> listElem
 scanCode_combo     = oneplus( ( scanCode_expanded | scanCode_elem ) + skip( maybe( plus ) ) )
 scanCode_sequence  = oneplus( scanCode_combo + skip( maybe( comma ) ) )
 
-  # USB Codes
+# USB Codes
 usbCode_start       = tokenType('USBCodeStart')
 usbCode_number      = number >> make_usbCode_number
 usbCode_range       = ( usbCode_number | unString ) + skip( dash ) + ( number | unString ) >> make_usbCode_range
@@ -614,7 +624,7 @@ usbCode_elem        = usbCode >> listElem
 usbCode_combo       = oneplus( ( usbCode_expanded | usbCode_elem ) + skip( maybe( plus ) ) ) >> listElem
 usbCode_sequence    = oneplus( ( usbCode_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
-  # Cons Codes
+# Cons Codes
 consCode_start       = tokenType('ConsCodeStart')
 consCode_number      = number >> make_consCode_number
 consCode_range       = ( consCode_number | unString ) + skip( dash ) + ( number | unString ) >> make_consCode_range
@@ -624,7 +634,7 @@ consCode_innerList   = oneplus( ( consCode_range | consCode_listElem ) + skip( m
 consCode_expanded    = skip( consCode_start ) + consCode_innerList + skip( code_end )
 consCode_elem        = consCode >> listElem
 
-  # Sys Codes
+# Sys Codes
 sysCode_start       = tokenType('SysCodeStart')
 sysCode_number      = number >> make_sysCode_number
 sysCode_range       = ( sysCode_number | unString ) + skip( dash ) + ( number | unString ) >> make_sysCode_range
@@ -634,22 +644,22 @@ sysCode_innerList   = oneplus( ( sysCode_range | sysCode_listElem ) + skip( mayb
 sysCode_expanded    = skip( sysCode_start ) + sysCode_innerList + skip( code_end )
 sysCode_elem        = sysCode >> listElem
 
-  # HID Codes
+# HID Codes
 hidCode_elem        = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem
 
-  # Capabilities
+# Capabilities
 capFunc_arguments = many( number + skip( maybe( comma ) ) ) >> listToTuple
 capFunc_elem      = name + skip( parenthesis('(') ) + capFunc_arguments + skip( parenthesis(')') ) >> capArgExpander >> listElem
 capFunc_combo     = oneplus( ( hidCode_elem | capFunc_elem ) + skip( maybe( plus ) ) ) >> listElem
 capFunc_sequence  = oneplus( ( capFunc_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
-  # Trigger / Result Codes
+# Trigger / Result Codes
 triggerCode_outerList    = scanCode_sequence >> optionExpansion
 triggerUSBCode_outerList = usbCode_sequence >> optionExpansion >> hidCodeToCapability
 resultCode_outerList     = ( ( capFunc_sequence >> optionExpansion ) | none ) >> hidCodeToCapability
 
 
- ## Main Rules
+## Main Rules
 
 #| <variable> = <variable contents>;
 variable_contents   = name | content | string | number | comma | dash | unseqString
