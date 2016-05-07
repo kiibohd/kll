@@ -119,11 +119,14 @@ class Backend( BackendBase ):
 
 		## Defines ##
 		self.fill_dict['Defines'] = ""
+		stateWordSize = ""
 
 		# Iterate through defines and lookup the variables
 		for define in variables.defines.keys():
 			if define in variables.overallVariables.keys():
 				self.fill_dict['Defines'] += "\n#define {0} {1}".format( variables.defines[ define ], variables.overallVariables[ define ].replace( '\n', ' \\\n' ) )
+				if define == "stateWordSize":
+					stateWordSize = variables.overallVariables[ define ]
 			else:
 				print( "{0} '{1}' not defined...".format( WARNING, define ) )
 
@@ -214,6 +217,9 @@ class Backend( BackendBase ):
 		for result in range( 0, len( macros.resultsIndexSorted ) ):
 			self.fill_dict['ResultMacroList'] += "\tDefine_RM( {0} ),\n".format( result )
 		self.fill_dict['ResultMacroList'] += "};"
+		
+		results_count = len( macros.resultsIndexSorted );
+		print( "Results count: ", results_count )
 
 
 		## Result Macro Record ##
@@ -224,6 +230,7 @@ class Backend( BackendBase ):
 		self.fill_dict['TriggerMacros'] = ""
 
 		# Iterate through each of the trigger macros
+		triggers_count = 0;
 		for trigger in range( 0, len( macros.triggersIndexSorted ) ):
 			self.fill_dict['TriggerMacros'] += "Guide_TM( {0} ) = {{ ".format( trigger )
 
@@ -244,11 +251,20 @@ class Backend( BackendBase ):
 					# TODO Add support for Analog keys
 					# TODO Add support for LED states
 					self.fill_dict['TriggerMacros'] += "0x00, 0x01, 0x{0:02X}, ".format( triggerItem )
+					triggers_count += 1
 
 			# Add list ending 0 and end of list
 			self.fill_dict['TriggerMacros'] += "0 };\n"
 		self.fill_dict['TriggerMacros'] = self.fill_dict['TriggerMacros'][ :-1 ] # Remove last newline
 
+		print( "Triggers count:", triggers_count )
+
+		# check for too small stateWordSize
+		if stateWordSize == "8" and (triggers_count > 255 or results_count > 255):
+			print ("{0} Over 255 trigger or result macros, changing stateWordSize to 16.".format( WARNING ) )
+			stateWordSize == "16"
+			self.fill_dict['Defines'] = self.fill_dict['Defines'].replace("StateWordSize_define 8", "StateWordSize_define 16")
+			#print (self.fill_dict['Defines'])
 
 		## Trigger Macro List ##
 		self.fill_dict['TriggerMacroList'] = "const TriggerMacro TriggerMacroList[] = {\n"
