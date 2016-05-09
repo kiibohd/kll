@@ -691,7 +691,7 @@ def parse( tokenSequence ):
 
 
 def processKLLFile( filename ):
-	with open( filename ) as file:
+	with open( filename, encoding='utf-8' ) as file:
 		data = file.read()
 		try:
 			tokenSequence = tokenize( data )
