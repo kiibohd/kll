@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-# KLL Compiler - Kiibohd Backend
-#
-# Backend code generator for the Kiibohd Controller firmware.
-#
-# Copyright (C) 2014-2015 by Jacob Alexander
+'''
+KLL Compiler - Kiibohd Backend
+
+Backend code generator for the Kiibohd Controller firmware.
+'''
+# Copyright (C) 2014-2016 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,6 +38,11 @@ from kll_lib.hid_dict   import *
 ### Classes ###
 
 class Backend( BackendBase ):
+	'''
+	Kiibohd Code-Generation Backend
+
+	Kiibohd specific code generation.
+	'''
 	# Default templates and output files
 	templatePaths = ["templates/kiibohdKeymap.h", "templates/kiibohdDefs.h"]
 	outputPaths = ["generatedKeymap.h", "kll_defs.h"]
@@ -147,6 +153,9 @@ class Backend( BackendBase ):
 		self.fill_dict['CapabilitiesList'] += "};"
 		self.fill_dict['CapabilitiesIndices'] += "} CapabilityIndex;"
 
+		# Define for total number of capabilities
+		self.fill_dict['Defines'] += "\n#define CapabilitiesNum_KLL {0}".format( len( capabilities.keys() ) )
+
 
 		## Results Macros ##
 		self.fill_dict['ResultMacros'] = ""
@@ -217,12 +226,15 @@ class Backend( BackendBase ):
 		for result in range( 0, len( macros.resultsIndexSorted ) ):
 			self.fill_dict['ResultMacroList'] += "\tDefine_RM( {0} ),\n".format( result )
 		self.fill_dict['ResultMacroList'] += "};"
-		
-		results_count = len( macros.resultsIndexSorted );
+
+		results_count = len( macros.resultsIndexSorted )
 
 
 		## Result Macro Record ##
 		self.fill_dict['ResultMacroRecord'] = "ResultMacroRecord ResultMacroRecordList[ ResultMacroNum ];"
+
+		# Define for total number of Result Macros
+		self.fill_dict['Defines'] += "\n#define ResultMacroNum_KLL {0}".format( len( macros.resultsIndexSorted ) )
 
 
 		## Trigger Macros ##
@@ -259,10 +271,9 @@ class Backend( BackendBase ):
 		if stateWordSize == "8" and (triggers_count > 255 or results_count > 255):
 			print ("{0} Over 255 trigger or result macros, changing stateWordSize from {1} to 16.".format( WARNING, stateWordSize ) )
 			print( "Results count: ", results_count )
-			print( "Triggers count:", triggers_count )
+			print( "Triggers count: ", triggers_count )
 			stateWordSize == "16"
 			self.fill_dict['Defines'] = self.fill_dict['Defines'].replace("StateWordSize_define 8", "StateWordSize_define 16")
-			#print (self.fill_dict['Defines'])
 
 		## Trigger Macro List ##
 		self.fill_dict['TriggerMacroList'] = "const TriggerMacro TriggerMacroList[] = {\n"
@@ -276,6 +287,9 @@ class Backend( BackendBase ):
 
 		## Trigger Macro Record ##
 		self.fill_dict['TriggerMacroRecord'] = "TriggerMacroRecord TriggerMacroRecordList[ TriggerMacroNum ];"
+
+		# Define for total number of Trigger Macros
+		self.fill_dict['Defines'] += "\n#define TriggerMacroNum_KLL {0}".format( len( macros.triggersIndexSorted ) )
 
 
 		## Max Scan Code ##
@@ -367,6 +381,9 @@ class Backend( BackendBase ):
 			else:
 				self.fill_dict['LayerIndexList'] += '\tLayer_IN( layer{0}_scanMap, "{0}: {2}", 0x{1:02X} ),\n'.format( layer, firstScanCode, stackName )
 		self.fill_dict['LayerIndexList'] += "};"
+
+		# Define for total number of Trigger Macros
+		self.fill_dict['Defines'] += "\n#define LayerNum_KLL {0}".format( len( macros.triggerList ) )
 
 
 		## Layer State ##
