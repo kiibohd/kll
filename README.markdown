@@ -1,7 +1,7 @@
 kll - keyboard layout language
 ==============================
 
-![](https://travis-ci.org/kiibohd/kll.svg?branch=master)
+[![https://travis-ci.org/kiibohd/kll](https://travis-ci.org/kiibohd/kll.svg?branch=master)](https://travis-ci.org/kiibohd/kll)
 
 KLL Compiler
 ------------
