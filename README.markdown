@@ -3,6 +3,8 @@ kll - keyboard layout language
 
 [![https://travis-ci.org/kiibohd/kll](https://travis-ci.org/kiibohd/kll.svg?branch=master)](https://travis-ci.org/kiibohd/kll)
 
+## If you're trying to compile keyboard firmware, you want [THIS](https://github.com/kiibohd/controller/)
+
 KLL Compiler
 ------------
 
