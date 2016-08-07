@@ -22,17 +22,17 @@ Date = 2016-08-06;
 # Top Row
 U"BackTick" : '~';
 U"1" : '%';
-U"2" : '7' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"3" : '5' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"4" : '3' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"5" : '1' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"6" : '9' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"7" : '0' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"8" : '2' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"9" : '4' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"0" : '6' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"-" : '8' + blockKey( 0xE1 ) + blockKey( 0xE5 );
-U"=" : '`' + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"2" : U"7" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"3" : U"5" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"4" : U"3" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"5" : U"1" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"6" : U"9" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"7" : U"0" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"8" : U"2" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"9" : U"4" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"0" : U"6" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"-" : U"8" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"=" : U"Backtick" + blockKey( 0xE1 ) + blockKey( 0xE5 );
 
 # Top-Middle Row
 U"]" : '^';

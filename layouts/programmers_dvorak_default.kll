@@ -83,7 +83,7 @@ U"B" : 'x';
 ### M is in the same place
 U"N" : 'b';
 U"Comma" : 'w';
-U"Period" : v';
+#U"Period" : 'v';
 U"Slash" : 'z';
 
 U"RShift" :+ U"Function1"; # Do not replace RShift, just trigger Function1 in addition to RShift
