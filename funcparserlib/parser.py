@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2008/2013 Andrey Vlasovskikh
-# Small Python 3 modifications by Jacob Alexander 2014
+# Modifications by Jacob Alexander 2014, 2016
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -69,9 +69,28 @@ __all__ = [
 
 import logging
 
-log = logging.getLogger('funcparserlib')
 
+log = logging.getLogger('funcparserlib')
 debug = False
+
+
+def Parser_debug(enable, stream=None):
+    '''
+    Enables/Disables debug logger for parser.py
+
+    NOTE: This is not really multi-thread friendly
+
+    @param stream: StringIO stream to use
+    @param enable: Enable/disable debug stream
+    '''
+    global debug
+    debug = enable
+
+    if enable:
+        logging.raiseExceptions = False
+        log.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler(stream)
+        log.addHandler(ch)
 
 
 class Parser(object):
@@ -103,7 +122,12 @@ class Parser(object):
         Runs a parser wrapped into this object.
         """
         if debug:
-            log.debug('trying %s' % self.name)
+            # Truncate at 500 characters
+            # Any longer isn't that useful and makes the output hard to read
+            output = 'trying %s' % self.name
+            if len( output ) > 500:
+                output = output[:250] + '   ... [truncated] ...   ' + output[-250:]
+            log.debug(output)
         return self._run(tokens, s)
 
     def _run(self, tokens, s):
@@ -234,7 +258,7 @@ class State(object):
         self.max = max
 
     def __str__(self):
-        return unicode((self.pos, self.max))
+        return str((self.pos, self.max))
 
     def __repr__(self):
         return 'State(%r, %r)' % (self.pos, self.max)

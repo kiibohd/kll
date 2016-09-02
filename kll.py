@@ -41,12 +41,12 @@ from funcparserlib.parser import (some, a, many, oneplus, skip, finished, maybe,
 
 ### Decorators ###
 
- ## Print Decorator Variables
+## Print Decorator Variables
 ERROR = '\033[5;1;31mERROR\033[0m:'
 
 
- ## Python Text Formatting Fixer...
- ##  Because the creators of Python are averse to proper capitalization.
+## Python Text Formatting Fixer...
+##  Because the creators of Python are averse to proper capitalization.
 textFormatter_lookup = {
 	"usage: "            : "Usage: ",
 	"optional arguments" : "Optional Arguments",
@@ -181,13 +181,13 @@ def tokenize( string ):
 
 ### Parsing ###
 
- ## Map Arrays
+## Map Arrays
 macros_map        = Macros()
 variables_dict    = Variables()
 capabilities_dict = Capabilities()
 
 
- ## Parsing Functions
+## Parsing Functions
 
 class Make:
 	def scanCode( token ):
@@ -333,7 +333,7 @@ class Make:
 	def indCode_number( token ):
 		return Make.hidCode_number( 'IndCode', token )
 
-	   # Replace key-word with None specifier (which indicates a noneOut capability)
+	# Replace key-word with None specifier (which indicates a noneOut capability)
 	def none( token ):
 		return [[[('NONE', 0)]]]
 
@@ -436,7 +436,7 @@ class Make:
 		print( value )
 		return [ value[0] ]
 
-	  # Range can go from high to low or low to high
+	# Range can go from high to low or low to high
 	def scanCode_range( rangeVals ):
 		start = rangeVals[0]
 		end   = rangeVals[1]
@@ -448,9 +448,9 @@ class Make:
 		# Iterate from start to end, and generate the range
 		return list( range( start, end + 1 ) )
 
-	  # Range can go from high to low or low to high
-	  # Warn on 0-9 for USBCodes (as this does not do what one would expect) TODO
-	  # Lookup USB HID tags and convert to a number
+	# Range can go from high to low or low to high
+	# Warn on 0-9 for USBCodes (as this does not do what one would expect) TODO
+	# Lookup USB HID tags and convert to a number
 	def hidCode_range( type, rangeVals ):
 		# Check if already integers
 		if isinstance( rangeVals[0], int ):
@@ -493,7 +493,7 @@ class Make:
 		return ""
 
 
- ## Base Rules
+## Base Rules
 
 const       = lambda x: lambda _: x
 unarg       = lambda f: lambda x: f(*x)
@@ -512,7 +512,7 @@ def listElem( item ):
 def listToTuple( items ):
 	return tuple( items )
 
-  # Flatten only the top layer (list of lists of ...)
+# Flatten only the top layer (list of lists of ...)
 def oneLayerFlatten( items ):
 	mainList = []
 	for sublist in items:
@@ -521,7 +521,7 @@ def oneLayerFlatten( items ):
 
 	return mainList
 
-  # Capability arguments may need to be expanded (e.g. 1 16 bit argument needs to be 2 8 bit arguments for the state machine)
+# Capability arguments may need to be expanded (e.g. 1 16 bit argument needs to be 2 8 bit arguments for the state machine)
 def capArgExpander( items ):
 	newArgs = []
 	# For each defined argument in the capability definition
@@ -536,8 +536,8 @@ def capArgExpander( items ):
 
 	return tuple( [ items[0], tuple( newArgs ) ] )
 
-  # Expand ranges of values in the 3rd dimension of the list, to a list of 2nd lists
-  # i.e. [ sequence, [ combo, [ range ] ] ] --> [ [ sequence, [ combo ] ], <option 2>, <option 3> ]
+# Expand ranges of values in the 3rd dimension of the list, to a list of 2nd lists
+# i.e. [ sequence, [ combo, [ range ] ] ] --> [ [ sequence, [ combo ] ], <option 2>, <option 3> ]
 def optionExpansion( sequences ):
 	expandedSequences = []
 
@@ -612,7 +612,7 @@ def tupleit( t ):
 	return tuple( map( tupleit, t ) ) if isinstance( t, ( tuple, list ) ) else t
 
 
- ## Evaluation Rules
+## Evaluation Rules
 
 class Eval:
 	def scanCode( triggers, operator, results ):
@@ -746,7 +746,7 @@ class Set:
 	variable         = unarg( Eval.variable )
 
 
- ## Sub Rules
+## Sub Rules
 
 usbCode       = tokenType('USBCode') >> Make.usbCode
 scanCode      = tokenType('ScanCode') >> Make.scanCode
@@ -771,16 +771,16 @@ seqString     = tokenType('SequenceString') >> Make.seqString
 unseqString   = tokenType('SequenceString') >> Make.unseqString # For use with variables
 pixelOperator = tokenType('PixelOperator')
 
-  # Code variants
+# Code variants
 code_begin = tokenType('CodeBegin')
 code_end   = tokenType('CodeEnd')
 
-  # Specifier
+# Specifier
 specifier_state  = ( name + skip( operator(':') ) + timing ) | ( name + skip( operator(':') ) + timing ) | timing | name >> Make.specifierState
 specifier_analog = number >> Make.specifierAnalog
 specifier_list   = skip( parenthesis('(') ) + many( ( specifier_state | specifier_analog ) + skip( maybe( comma ) ) ) + skip( parenthesis(')') )
 
-  # Scan Codes
+# Scan Codes
 scanCode_start     = tokenType('ScanCodeStart')
 scanCode_range     = number + skip( dash ) + number >> Make.scanCode_range
 scanCode_listElem  = number >> listElem
@@ -791,7 +791,7 @@ scanCode_elem      = scanCode + maybe( specifier_list ) >> Make.specifierUnroll 
 scanCode_combo     = oneplus( ( scanCode_expanded | scanCode_elem ) + skip( maybe( plus ) ) )
 scanCode_sequence  = oneplus( scanCode_combo + skip( maybe( comma ) ) )
 
-  # Cons Codes
+# Cons Codes
 consCode_start       = tokenType('ConsCodeStart')
 consCode_number      = number >> Make.consCode_number
 consCode_range       = ( consCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.consCode_range
@@ -802,7 +802,7 @@ consCode_innerList   = oneplus( consCode_specifier + skip( maybe( comma ) ) ) >>
 consCode_expanded    = skip( consCode_start ) + consCode_innerList + skip( code_end )
 consCode_elem        = consCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
 
-  # Sys Codes
+# Sys Codes
 sysCode_start       = tokenType('SysCodeStart')
 sysCode_number      = number >> Make.sysCode_number
 sysCode_range       = ( sysCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.sysCode_range
@@ -813,7 +813,7 @@ sysCode_innerList   = oneplus( sysCode_specifier + skip( maybe( comma ) ) ) >> f
 sysCode_expanded    = skip( sysCode_start ) + sysCode_innerList + skip( code_end )
 sysCode_elem        = sysCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
 
-  # Indicator Codes
+# Indicator Codes
 indCode_start       = tokenType('IndicatorStart')
 indCode_number      = number >> Make.indCode_number
 indCode_range       = ( indCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.indCode_range
@@ -824,7 +824,7 @@ indCode_innerList   = oneplus( indCode_specifier + skip( maybe( comma ) ) ) >> f
 indCode_expanded    = skip( indCode_start ) + indCode_innerList + skip( code_end )
 indCode_elem        = indCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
 
-  # USB Codes
+# USB Codes
 usbCode_start       = tokenType('USBCodeStart')
 usbCode_number      = number >> Make.usbCode_number
 usbCode_range       = ( usbCode_number | unString ) + skip( dash ) + ( number | unString ) >> Make.usbCode_range
@@ -835,13 +835,13 @@ usbCode_innerList   = oneplus( usbCode_specifier + skip( maybe( comma ) ) ) >> f
 usbCode_expanded    = skip( usbCode_start ) + usbCode_innerList + skip( code_end )
 usbCode_elem        = usbCode + maybe( specifier_list ) >> Make.specifierUnroll >> listElem
 
-  # HID Codes
+# HID Codes
 hidCode_elem        = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem | indCode_expanded | indCode_elem
 
 usbCode_combo       = oneplus( hidCode_elem + skip( maybe( plus ) ) ) >> listElem
 usbCode_sequence    = oneplus( ( usbCode_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
-  # Pixels
+# Pixels
 pixel_start       = tokenType('PixelStart')
 pixel_number      = number
 pixel_range       = ( pixel_number ) + skip( dash ) + ( number ) >> Make.range
@@ -850,25 +850,25 @@ pixel_innerList   = many( ( pixel_range | pixel_listElem ) + skip( maybe( comma 
 pixel_expanded    = skip( pixel_start ) + pixel_innerList + skip( code_end )
 pixel_elem        = pixel >> listElem
 
-  # Pixel Layer
+# Pixel Layer
 pixellayer_start    = tokenType('PixelLayerStart')
 pixellayer_number   = number
 pixellayer_expanded = skip( pixellayer_start ) + pixellayer_number + skip( code_end )
 pixellayer_elem     = pixelLayer >> listElem
 
-  # Pixel Channels
+# Pixel Channels
 pixelchan_chans = many( number + skip( operator(':') ) + number + skip( maybe( comma ) ) ) >> Make.pixelchans
 pixelchan_elem  = ( pixel_expanded | pixel_elem ) + skip( parenthesis('(') ) + pixelchan_chans + skip( parenthesis(')') ) >> Make.pixelchan_elem
 
-  # Pixel Mods
+# Pixel Mods
 pixelmod_mods  = many( maybe( pixelOperator | plus | dash ) + number + skip( maybe( comma ) ) ) >> Make.pixelmods
 pixelmod_layer = ( pixellayer_expanded | pixellayer_elem ) >> Make.pixellayer
 pixelmod_elem  = ( pixel_expanded | pixel_elem | pixelmod_layer ) + skip( parenthesis('(') ) + pixelmod_mods + skip( parenthesis(')') )
 
-  # Pixel Capability
+# Pixel Capability
 pixel_capability = pixelmod_elem >> Make.pixelCapability
 
-  # Animations
+# Animations
 animation_start       = tokenType('AnimationStart')
 animation_name        = name
 animation_frame_range = ( number ) + skip( dash ) + ( number ) >> Make.range
@@ -877,28 +877,28 @@ animation_def         = skip( animation_start ) + animation_name + skip( code_en
 animation_expanded    = skip( animation_start ) + animation_name + skip( comma ) + animation_name_frame + skip( code_end )
 animation_elem        = animation >> listElem
 
-  # Animation Modifier
+# Animation Modifier
 animation_modifier = many( ( name | number ) + maybe( skip( operator(':') ) + number ) + skip( maybe( comma ) ) )
 
-  # Animation Capability
+# Animation Capability
 animation_capability = ( animation_def | animation_elem ) + maybe( skip( parenthesis('(') + animation_modifier + skip( parenthesis(')') ) ) ) >> Make.animationCapability
 
-  # Capabilities
+# Capabilities
 capFunc_arguments = many( number + skip( maybe( comma ) ) ) >> listToTuple
 capFunc_elem      = name + skip( parenthesis('(') ) + capFunc_arguments + skip( parenthesis(')') ) >> capArgExpander >> listElem
 capFunc_combo     = oneplus( ( hidCode_elem | capFunc_elem | animation_capability | pixel_capability ) + skip( maybe( plus ) ) ) >> listElem
 capFunc_sequence  = oneplus( ( capFunc_combo | seqString ) + skip( maybe( comma ) ) ) >> oneLayerFlatten
 
-  # Trigger / Result Codes
+# Trigger / Result Codes
 triggerCode_outerList    = scanCode_sequence >> optionExpansion
 triggerUSBCode_outerList = usbCode_sequence >> optionExpansion >> hidCodeToCapability
 resultCode_outerList     = ( ( capFunc_sequence >> optionExpansion ) | none ) >> hidCodeToCapability
 
-  # Positions
+# Positions
 position_list = oneplus( position + skip( maybe( comma ) ) )
 
 
- ## Main Rules
+## Main Rules
 
 #| Assignment
 #| <variable> = <variable contents>;

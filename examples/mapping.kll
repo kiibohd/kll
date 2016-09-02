@@ -1,0 +1,57 @@
+Name = mapping test;
+Author = "HaaTa (Jacob Alexander) 2016";
+KLL = 0.5b;
+
+# Mapping Operators ##
+
+S0x01 :  U"A";
+S0x01 :  U"A";
+
+# Must include file twice for this case to work
+S0x02 :  U"B";
+U"B"  :: U"C";
+
+S0x03 :+ U"D";
+
+S0x04 :  U"E";
+S0x04 :+ U"F";
+S0x04 :+ U"F";
+S0x04 :+ U"L";
+
+S0x06 :  U"G";
+S0x06 :+ U"H";
+S0x06 :- U"G";
+
+S0x07 + S0x08 : U"H";
+S0x09, S0x0A  : U"I";
+
+S[0x0B, 0x0B, 0x0C] : U"J";
+
+S0x0D :- U"K";
+
+
+## Isolation Mappings ##
+
+S0x10 i:  U"M";
+S0x10 i:  U"M";
+
+# Must include file twice for this case to work
+S0x11 i:  U"N";
+U"N"  i:: U"O";
+
+S0x12 i:+ U"P";
+
+S0x13 i:  U"Q";
+S0x13 i:+ U"R";
+
+S0x14 i:  U"S";
+S0x14 i:+ U"T";
+S0x14 i:- U"S";
+
+S0x15 + S0x16 i: U"U";
+S0x17, S0x18  i: U"V";
+
+S[0x19, 0x1A] i: U"W";
+
+S0x1B i:- U"X";
+

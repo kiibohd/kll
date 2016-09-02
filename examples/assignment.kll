@@ -1,0 +1,5 @@
+Variable = 1;
+Array[] = a b c "b c" 3;
+Index[5] = "this text" thing; # Single element
+Index[6] = moar;
+

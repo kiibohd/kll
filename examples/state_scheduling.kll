@@ -1,0 +1,53 @@
+Name = "State Scheduling";
+Author = "HaaTa (Jacob Alexander) 2016";
+KLL = 0.4;
+mydefine = "stuffs here";
+mydefine2 = '"stuffs here"'; # For outputting c define strings
+mynumber = 414;
+
+# State Scheduling
+S0x43 : U"Enter";
+S[0x43(P,UP,UR)] : U"Enter";
+S0x44(P) : U"Enter";
+S0x45(UP) : U"Enter";
+S0x46(UR) : U"Enter";
+S0x46(R) : U"Enter";
+
+S0x47(H) + S0x48 : U"Enter";
+S0x49(O) + S0x50 : U"Enter";
+
+# Timing Triggers
+U"t"(300ms) : 'duuude';
+U"t"(30.2ms) : 'duuude';
+U"i"(200) : 'duuude1';
+U"u"(1s) : 'duuud2e';
+U"m"(40us) : 'duuu3de';
+
+U"a" + U"b"(P:1s) : 'slow';
+U"a" + U"b"(P:50ms,H:100ms,R:200ms) : 'fast';
+
+# Timing Results
+U"x" : U"a"(300ms);
+U"v" : U"a"(P,H:300ms,R);
+
+# Analog
+S0x2A(10) : U"B";
+S0x2A(80) : U"C";
+S[34-52](22) : 'boo';
+S[34-52(88)](22) : 'beh';
+S[34-52(88), 78](30) : 'joe';
+U"A"(0)   : U"A"; # Pulse
+U"A"(42)  : U"Q";
+U["1"-"5"(42), "Tab"](30) : 'mac';
+
+
+# Indicators
+I"NumLock" : U"Space";
+I"NumLock"(A) : U"Space";
+I"NumLock"(D) : U"Z";
+I2 : U"G"; # CapsLock
+
+U"a" + I"NumLock"(Off) : U"Q";
+U"a" + I"NumLock"(On) : U"W";
+
+

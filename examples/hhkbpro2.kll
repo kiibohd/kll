@@ -27,7 +27,7 @@ U"Tab" : U"Capslock";
 U"I" : U"PrintScreen";
 U"O" : U"ScrollLock";
 U"P" : U"Pause";
-U"{" : U"Up";
+U"[" : U"Up";
 
 # Middle Row
 U"A" : U"VolumeDown";

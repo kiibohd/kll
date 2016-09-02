@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # KLL Compiler Containers
 #
-# Copyright (C) 2014-2015 by Jacob Alexander
+# Copyright (C) 2014-2016 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import copy
 
 ### Decorators ###
 
- ## Print Decorator Variables
+## Print Decorator Variables
 ERROR = '\033[5;1;31mERROR\033[0m:'
 
 
@@ -32,7 +32,7 @@ ERROR = '\033[5;1;31mERROR\033[0m:'
 ### Parsing ###
 
 
- ## Containers
+## Containers
 
 class ScanCode:
 	# Container for ScanCodes
