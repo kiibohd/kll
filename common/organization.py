@@ -20,6 +20,7 @@ KLL Data Organization
 
 ### Imports ###
 
+import copy
 import re
 
 
@@ -429,8 +430,8 @@ class MappingData( Data ):
 		# 2) 
 
 		#TODO
-		print("YAY")
-		print( scan_code_lookup )
+		#print("YAY")
+		#print( scan_code_lookup )
 
 
 class AnimationData( Data ):

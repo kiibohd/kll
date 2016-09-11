@@ -63,10 +63,12 @@ class Kiibohd( Emitter, TextEmitter ):
 		TextEmitter.__init__( self )
 
 		# Defaults
-		self.map_template = "templates/kiibohdKeymap.h"
-		self.def_template = "templates/kiibohdDefs.h"
-		self.map_output = "generatedKeymap.h"
-		self.def_output = "kll_defs.h"
+		self.map_template   = "templates/kiibohdKeymap.h"
+		self.pixel_template = "templates/kiibohdPixelmap.c"
+		self.def_template   = "templates/kiibohdDefs.h"
+		self.map_output     = "generatedKeymap.h"
+		self.pixel_output   = "generatedPixelmap.c"
+		self.def_output     = "kll_defs.h"
 
 		self.fill_dict = {}
 
@@ -78,8 +80,10 @@ class Kiibohd( Emitter, TextEmitter ):
 		'''
 		self.def_template = args.def_template
 		self.map_template = args.map_template
+		self.pixel_template = args.pixel_template
 		self.def_output = args.def_output
 		self.map_output = args.map_output
+		self.pixel_output = args.pixel_output
 
 	def command_line_flags( self, parser ):
 		'''
@@ -98,6 +102,10 @@ class Kiibohd( Emitter, TextEmitter ):
 			help="Specify KLL map .h file template.\n"
 			"\033[1mDefault\033[0m: {0}\n".format( self.map_template )
 		)
+		group.add_argument( '--pixel-template', type=str, default=self.pixel_template,
+			help="Specify KLL pixel map .c file template.\n"
+			"\033[1mDefault\033[0m: {0}\n".format( self.pixel_template )
+		)
 		group.add_argument( '--def-output', type=str, default=self.def_output,
 			help="Specify KLL define .h file output.\n"
 			"\033[1mDefault\033[0m: {0}\n".format( self.def_output )
@@ -105,6 +113,10 @@ class Kiibohd( Emitter, TextEmitter ):
 		group.add_argument( '--map-output', type=str, default=self.map_output,
 			help="Specify KLL map .h file output.\n"
 			"\033[1mDefault\033[0m: {0}\n".format( self.map_output )
+		)
+		group.add_argument( '--pixel-output', type=str, default=self.pixel_output,
+			help="Specify KLL map .h file output.\n"
+			"\033[1mDefault\033[0m: {0}\n".format( self.pixel_output )
 		)
 
 	def output( self ):
@@ -118,8 +130,13 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.generate( self.def_output )
 
 		# Load keymap template and generate
-		self.load_template( self.map_template )
-		self.generate( self.map_output )
+                # TODO
+		#self.load_template( self.map_template )
+		#self.generate( self.map_output )
+
+		# Load pixelmap template and generate
+		self.load_template( self.pixel_template )
+		self.generate( self.pixel_output )
 
 	def process( self ):
 		'''

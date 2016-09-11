@@ -96,6 +96,12 @@ def processCommandLineArgs():
 		"Default: <backend specific>" )
 	pArgs.add_argument( '-h', '--help', action="help",
 		help="This message." )
+	pArgs.add_argument(
+		'-v', '--version',
+		action="version",
+		version="%(prog)s {0}".format( version ),
+		help="Show program's version number and exit"
+	)
 
 	# Process Arguments
 	args = pArgs.parse_args()
@@ -722,23 +728,29 @@ def gitRevision( kllPath ):
 
 		# Get list of files that have changed since the commit
 		changed = subprocess.check_output( ['git', 'diff-index', '--name-only', 'HEAD', '--'] ).decode().splitlines()
+
+		# Get commit date
+		date = subprocess.check_output( ['git', 'show', '-s', '--format=%ci'] ).decode()[:-1]
 	except:
 		revision = "<no git>"
 		changed = []
+		date = "<no date>"
 
 	# Change back to the old working directory
 	os.chdir( origPath )
 
-	return revision, changed
+	return revision, changed, date
 
 
 ### Main Entry Point ###
 
 if __name__ == '__main__':
-	(baseFiles, defaultFiles, partialFileSets, backend_name, templates, outputs) = processCommandLineArgs()
-
 	# Look up git information on the compiler
-	gitRev, gitChanges = gitRevision( os.path.dirname( os.path.realpath( __file__ ) ) )
+	gitRev, gitChanges, gitDate = gitRevision( os.path.dirname( os.path.realpath( __file__ ) ) )
+	global version
+	version = "BACKPORT 0.3d.{0} - {1}".format( gitRev, gitDate )
+
+	(baseFiles, defaultFiles, partialFileSets, backend_name, templates, outputs) = processCommandLineArgs()
 
 	# Load backend module
 	global backend
