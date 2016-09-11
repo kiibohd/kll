@@ -1,0 +1,40 @@
+Name = mouseTest;
+Version = 0.2;
+Author = "HaaTa (Jacob Alexander) 2016";
+KLL = 0.3d;
+
+# Modified Date
+Date = 2016-03-21;
+
+# mouseOut
+# Arg1, button, 1-16
+# Arg2, mouse x relative axis -32 767 to 32 767
+# Arg3, mouse y relative axis -32 767 to 32 767
+
+U"1" : mouseOut( 1, 0, 0 );
+U"2" : mouseOut( 2, 0, 0 );
+U"3" : mouseOut( 3, 0, 0 );
+U"4" : mouseOut( 4, 0, 0 );
+U"5" : mouseOut( 5, 0, 0 );
+U"6" : mouseOut( 6, 0, 0 );
+U"7" : mouseOut( 7, 0, 0 );
+U"8" : mouseOut( 8, 0, 0 );
+U"Z" : mouseOut( 9, 0, 0 );
+U"X" : mouseOut( 10, 0, 0 );
+U"C" : mouseOut( 11, 0, 0 );
+U"V" : mouseOut( 12, 0, 0 );
+U"B" : mouseOut( 13, 0, 0 );
+U"N" : mouseOut( 14, 0, 0 );
+U"M" : mouseOut( 15, 0, 0 );
+U"Comma" : mouseOut( 16, 0, 0 );
+
+U"Up" : mouseOut( 0, 0, 1 );
+U"Down" : mouseOut( 0, 0, -1 );
+U"Left" : mouseOut( 0, -1, 0 );
+U"Right" : mouseOut( 0, 1, 0 );
+
+U"W" : mouseOut( 0, 0, 5 );
+U"S" : mouseOut( 0, 0, -5 );
+U"A" : mouseOut( 0, -5, 0 );
+U"D" : mouseOut( 0, 5, 0 );
+

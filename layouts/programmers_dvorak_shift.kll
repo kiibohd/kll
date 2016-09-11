@@ -1,0 +1,48 @@
+Name = programmers dvorak shift layer;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2016";
+KLL = 0.3d;
+
+#
+# NOTE: See programmers_dvorak_default.kll for more details on how to use this layout
+#       It relies on the semantics of the US ANSI layout
+#
+# This file relies heavily on the blockKey capability for LShift (0xE1)  and RShift (0xE5)
+# However, it is only used in the cases where it's necessary
+#
+# We also rely on "fall-through" to the previous layer
+# This means any normally shifted keys do not need to be redefined here
+#
+
+# Modified Date
+Date = 2016-08-06;
+
+### Mapping ###
+
+# Top Row
+U"BackTick" : '~';
+U"1" : '%';
+U"2" : U"7" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"3" : U"5" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"4" : U"3" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"5" : U"1" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"6" : U"9" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"7" : U"0" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"8" : U"2" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"9" : U"4" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"0" : U"6" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"-" : U"8" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+U"=" : U"Backtick" + blockKey( 0xE1 ) + blockKey( 0xE5 );
+
+# Top-Middle Row
+U"]" : '^';
+
+# Middle Row
+# N/A
+
+# Bottom-Middle Row
+# N/A
+
+# Bottom Row
+# N/A
+

@@ -1,0 +1,93 @@
+Name = programmers dvorak default layer;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2016";
+KLL = 0.3d;
+
+# Modified Date
+Date = 2016-08-06;
+
+# This the default layer for programmers dvorak
+# http://www.kaufmann.no/roland/dvorak/
+#
+# CAVEATS;
+# 1) Assumes US ANSI locale set on the host OS
+# 2) No AltGr layer (future enhancement, will require a different locale)
+# 3) Some shortcuts may not behave correctly
+#    Shift Keys are masked in some situations
+#
+# USAGE:
+# This layer must be set on the defaultMap
+# programmers_dvorak_shift must be set as Layer1 (first PartialMap)
+
+
+# Attempt to force the host OS to use US ANSI
+# (Not guaranteed)
+keyboardLocale = 33;
+
+
+### Mapping ###
+
+# Top Row
+U"BackTick" : '$';
+U"1" : '&';
+U"2" : '[';
+U"3" : '{';
+U"4" : '}';
+U"5" : '(';
+U"6" : '=';
+U"7" : '*';
+U"8" : ')';
+U"9" : '+';
+U"0" : ']';
+U"-" : '!';
+U"=" : '#';
+
+# Top-Middle Row
+U"Q" : ';';
+U"W" : ',';
+U"E" : '.';
+U"R" : 'p';
+U"T" : 'y';
+U"Y" : 'f';
+U"U" : 'g';
+U"I" : 'c';
+U"O" : 'r';
+U"P" : 'l';
+U"[" : '/';
+U"]" : '@';
+### / is in the same place
+
+# Middle Row
+### A is in the same place
+U"S" : 'o';
+U"D" : 'e';
+U"F" : 'u';
+U"G" : 'i';
+U"H" : 'd';
+U"J" : 'h';
+U"K" : 't';
+U"L" : 'n';
+U"Semicolon" : 's';
+U"Quote" : '-';
+
+# Bottom-Middle Row
+
+U"LShift" :+ U"Function1"; # Do not replace LShift, just trigger Function1 in addition to LShift
+
+### XXX Not sure what the square key is (-HaaTa)
+U"Z" : U"Quote"; # ' is hard to do using the single quote syntax
+U"X" : 'q';
+U"C" : 'j';
+U"V" : 'k';
+U"B" : 'x';
+### M is in the same place
+U"N" : 'b';
+U"Comma" : 'w';
+#U"Period" : 'v';
+U"Slash" : 'z';
+
+U"RShift" :+ U"Function1"; # Do not replace RShift, just trigger Function1 in addition to RShift
+
+# Bottom Row
+# N/A
+
