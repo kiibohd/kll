@@ -130,9 +130,8 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.generate( self.def_output )
 
 		# Load keymap template and generate
-                # TODO
-		#self.load_template( self.map_template )
-		#self.generate( self.map_output )
+		self.load_template( self.map_template )
+		self.generate( self.map_output )
 
 		# Load pixelmap template and generate
 		self.load_template( self.pixel_template )
