@@ -23,6 +23,7 @@ KLL Compiler Stage Definitions
 from multiprocessing.dummy import Pool as ThreadPool
 
 import io
+import multiprocessing
 import os
 import re
 import sys
@@ -222,7 +223,7 @@ class CompilerConfigurationStage( Stage ):
 		super().__init__( control )
 
 		self.color   = "auto"
-		self.jobs    = os.cpu_count()
+		self.jobs    = multiprocessing.cpu_count()
 		self.pool    = None
 
 		# Build list of emitters
