@@ -27,7 +27,7 @@ kll <kll files>
 ### Kiibohd Controller Usage
 
 ```bash
-kll.py <misc kll files> --config <config/capability kll files> --base <basemap kll files) --default <default layer kll files> --partial <partial layer 1 kll files> --partial <partial layer 2 kll files>
+kll <misc kll files> --config <config/capability kll files> --base <basemap kll files) --default <default layer kll files> --partial <partial layer 1 kll files> --partial <partial layer 2 kll files>
 ```
 
 See `kll --help` for the most up to date documentation

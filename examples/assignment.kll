@@ -3,3 +3,7 @@ Array[] = a b c "b c" 3;
 Index[5] = "this text" thing; # Single element
 Index[6] = moar;
 
+Variable => Variable_define;
+Array => Array_define;
+Index => Index_define;
+

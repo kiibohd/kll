@@ -151,7 +151,7 @@ class Parser(object):
                 tok = tokens[max]
             else:
                 tok = '<EOF>'
-            raise NoParseError('%s: %s' % (e.msg, tok), e.state)
+            raise NoParseError('%s: %s' % (e.msg, tok), e.state, tok)
 
     def __add__(self, other):
         """Parser(a, b), Parser(a, c) -> Parser(a, _Tuple(b, c))
@@ -265,9 +265,10 @@ class State(object):
 
 
 class NoParseError(Exception):
-    def __init__(self, msg='', state=None):
+    def __init__(self, msg='', state=None, token=None):
         self.msg = msg
         self.state = state
+        self.token = token # Next token
 
     def __str__(self):
         return self.msg
@@ -294,7 +295,7 @@ def finished(tokens, s):
     if s.pos >= len(tokens):
         return None, s
     else:
-        raise NoParseError('should have reached <EOF>', s)
+        raise NoParseError('should have reached <EOF>', s, tokens[s.pos])
 
 
 finished.name = 'finished'
@@ -344,7 +345,7 @@ def some(pred):
             else:
                 if debug:
                     log.debug('failed "%s", state = %s' % (t, s))
-                raise NoParseError('got unexpected token', s)
+                raise NoParseError('got unexpected token', s, t)
 
     _some.name = '(some)'
     return _some

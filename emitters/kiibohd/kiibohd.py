@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-KLL Kiibohd .h File Emitter
+KLL Kiibohd .h/.c File Emitter
 '''
 
 # Copyright (C) 2016 by Jacob Alexander
@@ -238,10 +238,12 @@ class Kiibohd( Emitter, TextEmitter ):
 		variables = full_context.query( 'AssignmentExpression', 'Variable' )
 		for dkey, dvalue in sorted( defines.data.items() ):
 			if dvalue.name in variables.data.keys():
-				self.fill_dict['Defines'] += "\n#define {0} {1}".format(
-					dvalue.association,
-					variables.data[ dvalue.name ].value.replace( '\n', ' \\\n' ),
-				)
+				# TODO Handle arrays
+				if not isinstance( variables.data[ dvalue.name ].value, list ):
+					self.fill_dict['Defines'] += "\n#define {0} {1}".format(
+						dvalue.association,
+						variables.data[ dvalue.name ].value.replace( '\n', ' \\\n' ),
+					)
 			else:
 				print( "{0} '{1}' not defined...".format( WARNING, dvalue.name ) )
 

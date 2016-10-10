@@ -864,7 +864,7 @@ class OperationSpecificsStage( Stage ):
 			( 'AnimationStart',   ( r'A\[', ) ),
 			( 'CodeBegin',        ( r'\[', ) ),
 			( 'CodeEnd',          ( r'\]', ) ),
-			( 'Position',         ( r'r?[xyz]:[0-9]+(.[0-9]+)?', ) ),
+			( 'Position',         ( r'r?[xyz]:-?[0-9]+(.[0-9]+)?', ) ),
 
 			( 'Comma',            ( r',', ) ),
 			( 'Dash',             ( r'-', ) ),
@@ -887,7 +887,7 @@ class OperationSpecificsStage( Stage ):
 			( 'ScanCodeStart',    ( r'S\[', ) ),
 			( 'CodeBegin',        ( r'\[', ) ),
 			( 'CodeEnd',          ( r'\]', ) ),
-			( 'Position',         ( r'r?[xyz]:[0-9]+(.[0-9]+)?', ) ),
+			( 'Position',         ( r'r?[xyz]:-?[0-9]+(.[0-9]+)?', ) ),
 			( 'PixelOperator',    ( r'(\+:|-:|>>|<<)', ) ),
 
 			( 'String',           ( r'"[^"]*"', ) ),
@@ -897,7 +897,7 @@ class OperationSpecificsStage( Stage ):
 			( 'Dash',             ( r'-', ) ),
 			( 'Plus',             ( r'\+', ) ),
 			( 'Parenthesis',      ( r'\(|\)', ) ),
-			( 'Percent',          ( r'0|([1-9][0-9]*)%', ) ),
+			( 'Percent',          ( r'(0|([1-9][0-9]*))%', ) ),
 			( 'Number',           ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', ) ),
 			( 'Name',             ( r'[A-Za-z_][A-Za-z_0-9]*', ) ),
 		]
