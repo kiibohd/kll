@@ -248,6 +248,12 @@ class CompilerConfigurationStage( Stage ):
 		# TODO Detect whether colorization should be used
 		self.color = self.color in ['auto', 'always']
 
+		# Validate if it's a valid emitter
+		if self.emitter not in self.emitters.emitter_list():
+			print( "{0} Invalid emitter '{1}'".format( ERROR, self.emitter ) )
+			print( "Valid emitters: {0}".format( self.emitters.emitter_list() ) )
+			sys.exit( 2 )
+
 	def command_line_flags( self, parser ):
 		'''
 		Group parser for command line options
@@ -875,16 +881,23 @@ class OperationSpecificsStage( Stage ):
 			( 'PixelLayerStart',  ( r'PL\[', ) ),
 			( 'Animation',        ( r'A"[^"]+"', ) ),
 			( 'AnimationStart',   ( r'A\[', ) ),
+			( 'USBCode',          ( r'U(("[^"]+")|(0x[0-9a-fA-F]+)|([0-9]+))', ) ),
+			( 'USBCodeStart',     ( r'U\[', ) ),
+			( 'ScanCode',         ( r'S((0x[0-9a-fA-F]+)|([0-9]+))', ) ),
+			( 'ScanCodeStart',    ( r'S\[', ) ),
 			( 'CodeBegin',        ( r'\[', ) ),
 			( 'CodeEnd',          ( r'\]', ) ),
 			( 'Position',         ( r'r?[xyz]:[0-9]+(.[0-9]+)?', ) ),
 			( 'PixelOperator',    ( r'(\+:|-:|>>|<<)', ) ),
+
+			( 'String',           ( r'"[^"]*"', ) ),
 
 			( 'Operator',         ( r':', ) ),
 			( 'Comma',            ( r',', ) ),
 			( 'Dash',             ( r'-', ) ),
 			( 'Plus',             ( r'\+', ) ),
 			( 'Parenthesis',      ( r'\(|\)', ) ),
+			( 'Percent',          ( r'0|([1-9][0-9]*)%', ) ),
 			( 'Number',           ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', ) ),
 			( 'Name',             ( r'[A-Za-z_][A-Za-z_0-9]*', ) ),
 		]

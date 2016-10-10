@@ -99,7 +99,7 @@ def command_line_args( control ):
 	parser = argparse.ArgumentParser(
 		usage="%(prog)s [options..] [<generic>..]",
 		description="KLL Compiler - Generates specified output from KLL .kll files.",
-		epilog="Example: {0} TODO".format( os.path.basename( sys.argv[0] ) ),
+		epilog="Example: {0} scan_map.kll".format( os.path.basename( sys.argv[0] ) ),
 		formatter_class=argparse.RawTextHelpFormatter,
 		add_help=False,
 	)

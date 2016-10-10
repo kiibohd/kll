@@ -10,7 +10,7 @@ kll - keyboard layout language
 KLL Compiler
 ------------
 
-Most current version of the [KLL Spec](http://input.club/kll).
+Most current version of the [KLL Spec](https://github.com/kiibohd/kll-spec).
 
 Uses [funcparserlib](https://code.google.com/p/funcparserlib/)
 
@@ -21,16 +21,25 @@ Usage
 ### General Usage
 
 ```bash
-kll.py <kll files>
+kll <kll files>
 ```
 
 ### Kiibohd Controller Usage
 
 ```bash
-kll.py <basemap kll files> --default <default layer kll files> --partial <partial layer 1 kll files> --partial <partial layer 2 kll files> --backend kiibohd --templates templates/kiibohdKeymap.h templates/kiibohdDefs.h --outputs generatedKeymap.h kll_defs.h
+kll.py <misc kll files> --config <config/capability kll files> --base <basemap kll files) --default <default layer kll files> --partial <partial layer 1 kll files> --partial <partial layer 2 kll files>
 ```
 
-See `kll.py --help` for the most up to date documentation
+See `kll --help` for the most up to date documentation
+
+
+Unit Tests
+----------
+
+Unit tests can be found in the [tests](tests) directory.
+They are run by Travis-CI, but can be useful when testing your own changes.
+
+Remember to add new tests when adding new features/changes.
 
 
 Patches/Features/Backends

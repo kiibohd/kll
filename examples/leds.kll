@@ -44,6 +44,15 @@ A[BLEEdsing, 11, 13-15] <= P[4-10](+32);
 
 A[BLEEdsing2, 0] <= PL[0](127, 30, 40), P[5](20, 30, 40);
 A[BLEEdsing2, 1] <= P[1-20,40](40,50,0x60);
+A[BLEEdsing2, 2] <= P[c:0](40,50,0x60);
+A[BLEEdsing2, 3] <= P[c:10%](40,50,0x60);
+A[BLEEdsing2, 4] <= P[r:10%,c:20](40,50,0x60);
+A[BLEEdsing2, 5] <= P[r:i+10%,c:i-20](40,50,0x60);
+A[BLEEdsing2, 6] <= P[r:i+10%](40,50,0x60);
+A[BLEEdsing2, 7] <= U["A"](40,50,0x60);
+A[BLEEdsing2, 8] <= U"B"(40,50,0x60);
+A[BLEEdsing2, 9] <= S120(40,50,0x60);
+A[BLEEdsing2, 10] <= S[0x10](40,50,0x60);
 
 # Animation Triggers
 myCapability  => myFunc( myArg1 : 1, myArg2 : 4 );

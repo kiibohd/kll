@@ -33,6 +33,7 @@ before_install:
 env:
   # Basic KLL Tests
   - DIR=tests SCRIPT=sanity.bash
+  - DIR=tests SCRIPT=syntax.bash
 
 # Exclusions
 matrix:
