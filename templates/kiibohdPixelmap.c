@@ -231,16 +231,20 @@ const uint8_t Pixel_DisplayMapping[] = {
 // Frame of led changes
 //  const uint8_t <animation>_frame<num>[] = { PixelMod, ... }
 #define s2bs(n) (n & 0xFF), (n >> 8)
-#define Pixel_ModRGB(pixel,type,color) s2bs(pixel), PixelChange_##type, 1, color
-#define Pixel_ModRGB_(pixel,type,r,g,b) pixel, PixelChange_##type, 1, r, g, b
+#define w2bs(n) (n & 0xFF), (n & 0xFF00) >> 8, (n & 0xFF0000) >> 16, (n & 0xFF000000) >> 24
+#define Pixel_ModRGB(pixel,change,color) PixelAddressType_Index, w2bs(pixel), PixelChange_##change, color
+#define Pixel_ModRGB_(pixel,change,r,g,b) PixelAddressType_Index, w2bs(pixel), PixelChange_##change, r, g, b
 const uint8_t testani_frame0[] = {
 	Pixel_ModRGB_(0, Set, 30, 70, 120),
+	PixelAddressType_End,
 };
 const uint8_t testani_frame1[] = {
 	Pixel_ModRGB_(0, Set, 0, 0, 0),
+	PixelAddressType_End,
 };
 const uint8_t testani_frame2[] = {
 	Pixel_ModRGB_(0, Set, 60, 90, 140),
+	PixelAddressType_End,
 };
 
 // Temp convenience colours
@@ -270,6 +274,7 @@ const uint8_t rainbow_inter_frame0[] = {
 	Pixel_ModRGB(10, Set, RGB_Red),
 	Pixel_ModRGB(15, Set, RGB_Violet),
 	Pixel_ModRGB(20, Set, RGB_Blue),
+	0,
 };
 
 
@@ -279,21 +284,20 @@ const uint8_t *testani_frames[] = {
 	testani_frame0,
 	testani_frame1,
 	testani_frame2,
+	0,
 };
 
 
 // Rainbox (interpolation) frame index
 const uint8_t *rainbow_inter_frames[] = {
 	rainbow_inter_frame0,
+	0,
 };
-
-
-// XXX Temp
-uint16_t rainbow_pos = 0;
 
 
 // Index of animations
 //  uint8_t *Pixel_Animations[] = { <animation>_frames, ... }
 const uint8_t **Pixel_Animations[] = {
 	testani_frames,
+	rainbow_inter_frames,
 };
