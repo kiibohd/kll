@@ -233,6 +233,7 @@ const uint8_t Pixel_DisplayMapping[] = {
 #define s2bs(n) (n & 0xFF), (n >> 8)
 #define w2bs(n) (n & 0xFF), (n & 0xFF00) >> 8, (n & 0xFF0000) >> 16, (n & 0xFF000000) >> 24
 #define Pixel_ModRGB(pixel,change,color) PixelAddressType_Index, w2bs(pixel), PixelChange_##change, color
+#define Pixel_ModRGBCol(col,change,color) PixelAddressType_ColumnFill, s2bs(col), s2bs(0), PixelChange_##change, color
 #define Pixel_ModRGB_(pixel,change,r,g,b) PixelAddressType_Index, w2bs(pixel), PixelChange_##change, r, g, b
 const uint8_t testani_frame0[] = {
 	Pixel_ModRGB_(0, Set, 30, 70, 120),
@@ -269,11 +270,11 @@ const uint8_t testani_frame2[] = {
 
 
 const uint8_t rainbow_inter_frame0[] = {
-	Pixel_ModRGB(0, Set, RGB_Green),
-	Pixel_ModRGB(5, Set, RGB_Yellow),
-	Pixel_ModRGB(10, Set, RGB_Red),
-	Pixel_ModRGB(15, Set, RGB_Violet),
-	Pixel_ModRGB(20, Set, RGB_Blue),
+	Pixel_ModRGBCol(0, Set, RGB_Green),
+	Pixel_ModRGBCol(9, Set, RGB_Yellow),
+	Pixel_ModRGBCol(19, Set, RGB_Red),
+	Pixel_ModRGBCol(28, Set, RGB_Violet),
+	Pixel_ModRGBCol(37, Set, RGB_Blue),
 	0,
 };
 
@@ -301,3 +302,4 @@ const uint8_t **Pixel_Animations[] = {
 	testani_frames,
 	rainbow_inter_frames,
 };
+
