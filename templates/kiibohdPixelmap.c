@@ -235,6 +235,7 @@ const uint8_t Pixel_DisplayMapping[] = {
 #define Pixel_ModRGB(pixel,change,color) PixelAddressType_Index, w2bs(pixel), PixelChange_##change, color
 #define Pixel_ModRGBCol(col,change,color) PixelAddressType_ColumnFill, s2bs(col), s2bs(0), PixelChange_##change, color
 #define Pixel_ModRGB_(pixel,change,r,g,b) PixelAddressType_Index, w2bs(pixel), PixelChange_##change, r, g, b
+#define Pixel_ModRGBScan(scanCode,change,color) PixelAddressType_ScanCode, w2bs(scanCode), PixelChange_##change, color
 const uint8_t testani_frame0[] = {
 	Pixel_ModRGB_(0, Set, 30, 70, 120),
 	PixelAddressType_End,
@@ -278,6 +279,15 @@ const uint8_t rainbow_inter_frame0[] = {
 	0,
 };
 
+const uint8_t clear_pixels_frame0[] = {
+	Pixel_ModRGBScan(17, Set, RGB_Black),
+	Pixel_ModRGBScan(18, Set, RGB_Black),
+	Pixel_ModRGBScan(19, Set, RGB_Black),
+	Pixel_ModRGBScan(20, Set, RGB_Black),
+	Pixel_ModRGBScan(21, Set, RGB_Black),
+	0,
+};
+
 
 // Index of frames for animations
 //  uint8_t *<animation>_frames[] = { <animation>_frame<num>, ... }
@@ -296,10 +306,121 @@ const uint8_t *rainbow_inter_frames[] = {
 };
 
 
+// Pixel Clear test
+const uint8_t *clear_pixels_frames[] = {
+	clear_pixels_frame0,
+	0,
+};
+
+
 // Index of animations
 //  uint8_t *Pixel_Animations[] = { <animation>_frames, ... }
 const uint8_t **Pixel_Animations[] = {
 	testani_frames,
 	rainbow_inter_frames,
+	clear_pixels_frames,
+};
+
+
+// ScanCode to Pixel Mapping
+const uint8_t Pixel_ScanCodeToPixel[] = {
+	// Function Row (1-16)
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	7,
+	8,
+	9,
+	10,
+	11,
+	12,
+	13,
+	14,
+	15,
+	16,
+
+	// Number Row (17-33)
+	17,
+	18,
+	19,
+	20,
+	21,
+	22,
+	23,
+	24,
+	25,
+	26,
+	27,
+	28,
+	29,
+	30,
+	31,
+	32,
+	33,
+
+	// Top Alpha Row (34-50)
+	34,
+	35,
+	36,
+	37,
+	38,
+	39,
+	40,
+	41,
+	42,
+	43,
+	44,
+	45,
+	46,
+	47,
+	48,
+	49,
+	50,
+
+	// Mid Alpha Row (51-63)
+	51,
+	52,
+	53,
+	54,
+	55,
+	56,
+	57,
+	58,
+	59,
+	60,
+	61,
+	62,
+	63,
+
+	// Low Alpha Row (64-76)
+	64,
+	65,
+	66,
+	67,
+	68,
+	69,
+	70,
+	71,
+	72,
+	73,
+	74,
+	75,
+	76,
+
+	// Mod Row (77-87)
+	77,
+	78,
+	79,
+	80,
+	81,
+	82,
+	83,
+	84,
+	85,
+	86,
+	87,
 };
 
