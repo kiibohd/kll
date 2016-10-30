@@ -53,6 +53,7 @@ PixelBuf Pixel_Buffers[] = {
 
 
 // Pixel Mapping
+<|PixelMapping|>
 //#define Pixel_TotalPixels 128 // TODO Generate
 const PixelElement Pixel_Mapping[] = {
 	// Function Row (1-16)
@@ -219,6 +220,7 @@ const PixelElement Pixel_Mapping[] = {
 // - 0.5 key spacing between the columns, in the case where multiple leds should be in the column, one is shifted to the right
 //#define Pixel_DisplayMapping_Cols 38
 //#define Pixel_DisplayMapping_Rows 6
+<|PixelDisplayMapping|>
 const uint8_t Pixel_DisplayMapping[] = {
  97,  1,  0, 98,  0,  2, 99,  3,  0,  4,100,  5,  0,101,  6,102,  7,  0,  8,103,  9,104,  0, 10,105, 11,  0, 12,106, 13,  0,107, 14,108, 15,  0, 16,109,
 128, 17,  0, 18,  0, 19,  0, 20,  0, 21,  0, 22,  0, 23,  0, 24,  0, 25,  0, 26,  0, 27,  0, 28,  0, 29,  0,  0, 30,  0,  0,  0, 31,  0, 32,  0, 33,110,
@@ -269,6 +271,8 @@ const uint8_t testani_frame2[] = {
 #define RGB_White        255,255,255
 #define RGB_Black        0,0,0
 
+#define RGB_MD_Blue      0x00,0xAE,0xDA
+
 
 const uint8_t rainbow_inter_frame0[] = {
 	Pixel_ModRGBCol(0, Set, RGB_Green),
@@ -313,16 +317,32 @@ const uint8_t *clear_pixels_frames[] = {
 };
 
 
+const uint8_t md_blue_frame0[] = {
+	Pixel_ModRGBCol(0, Set, RGB_MD_Blue),
+	Pixel_ModRGBCol(37, Set, RGB_MD_Blue),
+	0,
+};
+
+
+const uint8_t *md_blue_frames[] = {
+	md_blue_frame0,
+	0,
+};
+
+
 // Index of animations
 //  uint8_t *Pixel_Animations[] = { <animation>_frames, ... }
+<|Animations|>
 const uint8_t **Pixel_Animations[] = {
 	testani_frames,
 	rainbow_inter_frames,
 	clear_pixels_frames,
+	md_blue_frames,
 };
 
 
 // ScanCode to Pixel Mapping
+<|ScanCodeToPixelMapping|>
 const uint8_t Pixel_ScanCodeToPixel[] = {
 	// Function Row (1-16)
 	1,

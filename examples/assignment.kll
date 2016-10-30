@@ -1,9 +1,9 @@
-Variable = 1;
-Array[] = a b c "b c" 3;
-Index[5] = "this text" thing; # Single element
-Index[6] = moar;
+myVariable = 1;
+myArray[] = a b c "b c" 3;
+myIndex[5] = "this text" thing; # Single element
+myIndex[6] = moar;
 
-Variable => Variable_define;
-Array => Array_define;
-Index => Index_define;
+myVariable => Variable_define;
+myArray => Array_define;
+myIndex => Index_define;
 

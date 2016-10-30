@@ -106,6 +106,31 @@ class Emitter:
 		)
 
 
+class FileEmitter:
+	'''
+	KLL File Emitter Class
+
+	Base class for any emitter that wants to output a file.
+	Generally, it is recommended to use the TextEmitter as templates are more readable.
+	'''
+	def __init__( self ):
+		'''
+		FileEmitter Initialization
+		'''
+		self.output_files = []
+
+	def generate( self, output_path ):
+		'''
+		Generate output file
+
+		@param contents: String contents of file
+		@param output_path: Path to output file
+		'''
+		for name, contents in self.output_files:
+			with open( "{0}/{1}".format( output_path, name ), 'w' ) as outputFile:
+				outputFile.write( contents )
+
+
 class TextEmitter:
 	'''
 	KLL Text Emitter Class

@@ -497,6 +497,44 @@ class VariableData( Data ):
 	Variable -> Data
 	Array    -> Data
 	'''
+	def add_expression( self, expression, debug ):
+		'''
+		Add expression to data structure
+
+		May have multiple keys to add for a given expression
+
+		In the case of indexed variables, only replaced the specified index
+
+		@param expression: KLL Expression (fully tokenized and parsed)
+		@param debug:      Enable debug output
+		'''
+		# Lookup unique keys for expression
+		keys = expression.unique_keys()
+
+		# Add/Modify expressions in datastructure
+		for key, uniq_expr in keys:
+			# Check which operation we are trying to do, add or modify
+			if debug[0]:
+				if key in self.data.keys():
+					output = self.debug_output['mod'].format( key )
+				else:
+					output = self.debug_output['add'].format( key )
+				print( debug[1] and output or ansi_escape.sub( '', output ) )
+
+			# Check to see if we need to cap-off the array (a position parameter is given)
+			if uniq_expr.type == 'Array' and uniq_expr.pos is not None:
+				# Modify existing array
+				if key in self.data.keys():
+					self.data[ key ].merge_array( uniq_expr )
+
+				# Add new array
+				else:
+					uniq_expr.merge_array()
+					self.data[ key ] = uniq_expr
+
+			# Otherwise just add/replace expression
+			else:
+				self.data[ key ] = uniq_expr
 
 
 class Organization:

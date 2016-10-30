@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+'''
+Re-Emits KLL files after processing. May do simplification.
+'''
+
+# Copyright (C) 2016 by Jacob Alexander
+#
+# This file is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+### Imports ###
+
+import os
+
+from common.emitter import Emitter, FileEmitter
+
+
+### Decorators ###
+
+## Print Decorator Variables
+ERROR = '\033[5;1;31mERROR\033[0m:'
+WARNING = '\033[5;1;33mWARNING\033[0m:'
+
+
+
+### Classes ###
+
+class KLL( Emitter, FileEmitter ):
+	'''
+	Re-Emits KLL files, may simplify and re-order expressions.
+	'''
+
+	def __init__( self, control ):
+		'''
+		Emitter initialization
+
+		@param control: ControlStage object, used to access data from other stages
+		'''
+		Emitter.__init__( self, control )
+		FileEmitter.__init__( self )
+
+		# Defaults
+		self.target_dir = "generated"
+
+	def command_line_args( self, args ):
+		'''
+		Group parser for command line arguments
+
+		@param args: Name space of processed arguments
+		'''
+		self.target_dir = args.target_dir
+
+	def command_line_flags( self, parser ):
+		'''
+		Group parser for command line options
+
+		@param parser: argparse setup object
+		'''
+		# Create new option group
+		group = parser.add_argument_group('\033[1mKLL Emitter Configuration\033[0m')
+
+		group.add_argument( '--target-dir', type=str, default=self.target_dir,
+			help="Target directory for generated files.\n"
+			"\033[1mDefault\033[0m: {0}\n".format( self.target_dir )
+		)
+
+	def output( self ):
+		'''
+		Final Stage of Emitter
+
+		Generate KLL files
+		'''
+		# Make sure output directory exists
+		os.makedirs( self.target_dir, exist_ok=True )
+
+		# Output list of files to disk
+		self.generate( self.target_dir )
+
+	def reconstitute_store( self, stores, name, debug=False ):
+		'''
+		Takes a list of organization stores and re-constitutes them into a kll file
+
+		@param stores: List of organization stores
+		@param name:   Filename to call list of stores
+		@param debug:  Debug mode (adds a comment to every line with the store key)
+
+		@return: kll file contents
+		'''
+		output = ""
+
+		for store in stores:
+			for key, value in sorted( store.data.items(), key=lambda x: x[0] ):
+				if debug:
+					output += "{0} # {1}\n".format( value, key )
+				else:
+					output += "{0}\n".format( value )
+
+		self.output_files.append( (name, output) )
+
+	def process( self ):
+		'''
+		Emitter Processing
+
+		Takes KLL datastructures and Analysis results then outputs them individually as kll files
+		'''
+		# Acquire Datastructures
+		early_contexts = self.control.stage('DataOrganizationStage').contexts
+		base_context = self.control.stage('DataFinalizationStage').base_context
+		default_context = self.control.stage('DataFinalizationStage').default_context
+		partial_contexts = self.control.stage('DataFinalizationStage').partial_contexts
+		full_context = self.control.stage('DataFinalizationStage').full_context
+
+		# Re-constitute KLL files using contexts of various stages
+		for key, context in early_contexts.items():
+			self.reconstitute_store( context.organization.stores(), "{0}.kll".format( key ) )
+
+		self.reconstitute_store( base_context.organization.stores(), "base.kll" )
+
+		self.reconstitute_store( default_context.organization.stores(), "default.kll" )
+
+		for index, partial in enumerate( partial_contexts ):
+			self.reconstitute_store( partial.organization.stores(), "partial-{0}.kll".format( index ) )
+
+		self.reconstitute_store( full_context.organization.stores(), "final.kll" )
+

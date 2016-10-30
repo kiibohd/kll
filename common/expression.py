@@ -189,6 +189,38 @@ class AssignmentExpression( Expression ):
 
 		return True
 
+	def merge_array( self, new_expression=None ):
+		'''
+		Merge arrays, used for position assignments
+		Merges unconditionally, make sure this is what you want to do first
+
+		If no additional array is specified, just "cap-off" array.
+		This does a proper array expansion into a python list.
+
+		@param new_expression: AssignmentExpression type array, ignore if None
+		'''
+		# First, check if base expression needs to be capped
+		if self.pos is not None:
+			# Generate a new string array
+			new_value = [""] * self.pos
+
+			# Append the old contents to the list
+			new_value.append( self.value )
+			self.value = new_value
+
+			# Clear pos, to indicate that array has been capped
+			self.pos = None
+
+		# Next, if a new_expression has been specified, merge in
+		if new_expression is not None and new_expression.pos is not None:
+			# Check if we need to extend the list
+			new_size = new_expression.pos + 1 - len( self.value )
+			if new_size > 0:
+				self.value.extend( [""] * new_size )
+
+			# Assign value to array
+			self.value[ new_expression.pos ] = new_expression.value
+
 	def variable( self, name, value ):
 		'''
 		Assign variable assignment parameters to expression
@@ -211,7 +243,17 @@ class AssignmentExpression( Expression ):
 		if self.type == 'Variable':
 			return "{0} = {1};".format( self.name, self.value )
 		elif self.type == 'Array':
-			return "{0}[{1}] = {2};".format( self.name, self.pos, self.value )
+			# Output KLL style array, double quoted elements, space-separated
+			if isinstance( self.value, list ):
+				output = "{0}[] =".format( self.name )
+				for value in self.value:
+					output += ' "{0}"'.format( value )
+				output += ";"
+				return output
+
+			# Single array assignment
+			else:
+				return "{0}[{1}] = {2};".format( self.name, self.pos, self.value )
 
 		return "ASSIGNMENT UNKNOWN"
 

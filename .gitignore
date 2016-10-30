@@ -65,3 +65,10 @@ __pycache__/
 ###########
 *.attr
 
+# Misc #
+########
+generatedKeymap.h
+generatedPixelmap.c
+kll_defs.h
+tests/generated
+

@@ -253,9 +253,9 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.fill_dict['CapabilitiesList'] = "const Capability CapabilitiesList[] = {\n"
 		self.fill_dict['CapabilitiesIndices'] = "typedef enum CapabilityIndex {\n"
 
-		# Keys are pre-sorted
+		# Sorted by C Function name
 		capabilities = full_context.query( 'NameAssociationExpression', 'Capability' )
-		for dkey, dvalue in sorted( capabilities.data.items() ):
+		for dkey, dvalue in sorted( capabilities.data.items(), key=lambda x: x[1].association.name ):
 			funcName = dvalue.association.name
 			argByteWidth = dvalue.association.total_arg_bytes()
 
@@ -266,6 +266,48 @@ class Kiibohd( Emitter, TextEmitter ):
 
 		self.fill_dict['CapabilitiesList'] += "};"
 		self.fill_dict['CapabilitiesIndices'] += "} CapabilityIndex;"
+
+
+		## TODO MOVE ##
+		## Pixel Buffer Setup ##
+		self.fill_dict['PixelBufferSetup'] = "PixelBuf PixelBuffers[] = {\n"
+
+		# Lookup number of buffers
+		bufsize = len( variables.data[ defines.data['Pixel_Buffer_Size'].name ].value )
+		for index in range( bufsize ):
+			# TODO
+			self.fill_dict['PixelBufferSetup'] += "\tPixelBufElem( {0}, {1}, {2}, {3} ),\n".format(
+				0,
+				#variables.data[ defines.data['Pixel_Buffer_Length'].name ].value[ index ],
+				variables.data[ defines.data['Pixel_Buffer_Width'].name ].value[ index ],
+				variables.data[ defines.data['Pixel_Buffer_Size'].name ].value[ index ],
+				#variables.data[ defines.data['Pixel_Buffer_Buffer'].name ].value[ index ],
+				0,
+			)
+		self.fill_dict['PixelBufferSetup'] += "};"
+		print( self.fill_dict['PixelBufferSetup'] )
+
+
+		## Pixel Mapping ##
+		self.fill_dict['PixelMapping'] = ""
+		# TODO
+
+
+		## Pixel Display Mapping ##
+		self.fill_dict['PixelDisplayMapping'] = "const uint8_t Pixel_DisplayMapping[] = {\n"
+		# TODO
+		self.fill_dict['PixelDisplayMapping'] += "};"
+
+
+		## ScanCode to Pixel Mapping ##
+		self.fill_dict['ScanCodeToPixelMapping'] = "const uint8_t Pixel_ScanCodeToPixel[] = {\n"
+		# TODO
+		self.fill_dict['ScanCodeToPixelMapping'] = "};"
+
+
+		## Animations ##
+		self.fill_dict['Animations'] = ""
+		## TODO MOVE END ##
 		return
 
 
