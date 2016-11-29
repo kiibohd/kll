@@ -69,7 +69,7 @@ class Schedule:
 
 		self.parameters = parameters
 
-	def strSchedule( self ):
+	def strSchedule( self, kll=False ):
 		'''
 		__repr__ of Schedule when multiple inheritance is used
 		'''
@@ -78,8 +78,14 @@ class Schedule:
 			for index, param in enumerate( self.parameters ):
 				if index > 0:
 					output += ","
-				output += "{0}".format( param )
+				output += "{0}".format( param.kllify() )
 		return output
+
+	def kllify( self ):
+		'''
+		KLL representation of object
+		'''
+		return self.strSchedule( kll=True )
 
 	def __repr__( self ):
 		return self.strSchedule()
@@ -110,6 +116,15 @@ class ScheduleParam:
 		Set parameter timing
 		'''
 		self.timing = timing
+
+	def kllify( self ):
+		'''
+		KLL representation of ScheduleParam object
+		'''
+		output = ""
+		if self.state is None and self.timing is not None:
+			output += "{0}".format( self.timing )
+		return output
 
 	def __repr__( self ):
 		output = ""
@@ -142,6 +157,12 @@ class ButtonScheduleParam( ScheduleParam ):
 			output += ":{0}".format( self.timing )
 		return output
 
+	def kllify( self ):
+		'''
+		KLL representation of object
+		'''
+		return "{0}".format( self )
+
 
 class AnalogScheduleParam( ScheduleParam ):
 	'''
@@ -157,6 +178,12 @@ class AnalogScheduleParam( ScheduleParam ):
 
 	def __repr__( self ):
 		return "Analog({0})".format( self.state )
+
+	def kllify( self ):
+		'''
+		KLL representation of object
+		'''
+		return "{0}".format( self.state )
 
 
 class IndicatorScheduleParam( ScheduleParam ):
@@ -177,4 +204,10 @@ class IndicatorScheduleParam( ScheduleParam ):
 		if self.timing is not None:
 			output += ":{0}".format( self.timing )
 		return output
+
+	def kllify( self ):
+		'''
+		KLL representation of object
+		'''
+		return "{0}".format( self )
 

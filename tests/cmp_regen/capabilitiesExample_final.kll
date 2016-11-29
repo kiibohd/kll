@@ -1,0 +1,25 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+myCapability <= myFunc(myArg1:1,myArg2:4); # myCapability  => myFunc( myArg1 : 1, myArg2 : 4 ); # myCapability
+myCapability2 <= myFunc2(); # myCapability2 => myFunc2(); # myCapability2
+myCapability3 <= myFunc2(myArg1:2); # myCapability3 => myFunc2( myArg1 : 2 ); # myCapability3
+usbKeyOut <= Output_usbCodeSend_capability(usbCode:1); # usbKeyOut   => Output_usbCodeSend_capability( usbCode : 1 ); # usbKeyOut
+
+# DefineData
+
+# MappingData
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2014; # Author = "HaaTa (Jacob Alexander) 2014"; # Author
+KLL = 0.3; # KLL = 0.3; # KLL
+Name = ExampleModule; # Name = ExampleModule; # Name
+

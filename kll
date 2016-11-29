@@ -40,7 +40,7 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 ## Python Text Formatting Fixer...
 ##  Because the creators of Python are averse to proper capitalization.
 textFormatter_lookup = {
-	"usage: "            : "Usage: ",
+	"usage: "            : "\033[1mUsage\033[0m: ",
 	"optional arguments" : "\033[1mOptional Arguments\033[0m",
 }
 
@@ -54,6 +54,11 @@ argparse._ = textFormatter_gettext
 ### Misc Utility Functions ###
 
 def git_revision( kllPath ):
+	'''
+	Retrieve git information using given path
+
+	@return: (revision, changed, revision_date)
+	'''
 	import subprocess
 
 	# Change the path to where kll.py is
@@ -85,6 +90,11 @@ def git_revision( kllPath ):
 ### Argument Parsing ###
 
 def checkFileExists( filename ):
+	'''
+	Validate that file exists
+
+	@param filename: Path to file
+	'''
 	if not os.path.isfile( filename ):
 		print ( "{0} {1} does not exist...".format( ERROR, filename ) )
 		sys.exit( 1 )

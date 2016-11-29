@@ -51,6 +51,7 @@ class KLL( Emitter, FileEmitter ):
 
 		# Defaults
 		self.target_dir = "generated"
+		self.output_debug = False
 
 	def command_line_args( self, args ):
 		'''
@@ -59,6 +60,7 @@ class KLL( Emitter, FileEmitter ):
 		@param args: Name space of processed arguments
 		'''
 		self.target_dir = args.target_dir
+		self.output_debug = args.output_debug
 
 	def command_line_flags( self, parser ):
 		'''
@@ -73,6 +75,9 @@ class KLL( Emitter, FileEmitter ):
 			help="Target directory for generated files.\n"
 			"\033[1mDefault\033[0m: {0}\n".format( self.target_dir )
 		)
+		group.add_argument( '--output-debug', action='store_true', default=self.output_debug,
+			help="Enable kll reconstitution in-file debug output.\n",
+		)
 
 	def output( self ):
 		'''
@@ -86,24 +91,58 @@ class KLL( Emitter, FileEmitter ):
 		# Output list of files to disk
 		self.generate( self.target_dir )
 
-	def reconstitute_store( self, stores, name, debug=False ):
+	def reconstitute_elem( self, elem, key ):
+		'''
+		Re-constitute single element
+		May recurse if this is a list of elements
+
+		@param elem:  Element to reconstitute
+		@param key:   Identifier, used in debug output
+
+		@return: Re-constituted string
+		'''
+		# If the element is a list, iterate through it
+		if isinstance( elem, list ):
+			output = ""
+			for index, subelem in enumerate( elem ):
+				output += self.reconstitute_elem( subelem, "{0}[{1}]".format( key, index ) )
+			return output
+
+		# NOTE: Useful line when debugging issues
+		#print( type( elem ), elem )
+
+		# Otherwise format each element
+		if self.output_debug:
+			return "{0} # {1} # {2}\n".format( elem.kllify(), elem.regen_str(), key )
+		else:
+			return "{0}\n".format( elem.kllify() )
+
+	def reconstitute_store( self, stores, name ):
 		'''
 		Takes a list of organization stores and re-constitutes them into a kll file
 
 		@param stores: List of organization stores
 		@param name:   Filename to call list of stores
-		@param debug:  Debug mode (adds a comment to every line with the store key)
 
 		@return: kll file contents
 		'''
 		output = ""
 
 		for store in stores:
-			for key, value in sorted( store.data.items(), key=lambda x: x[0] ):
-				if debug:
-					output += "{0} # {1}\n".format( value, key )
-				else:
-					output += "{0}\n".format( value )
+			# Show name of store
+			section_name = type( store ).__name__
+			output += "# {0}\n".format( section_name )
+
+			# NOTE: Useful for debugging
+			#print( section_name )
+
+			# Sort by output string, rather than by key
+			for key, value in sorted(
+				store.data.items(),
+				key=lambda x: self.reconstitute_elem( x[1], x[0] )
+			):
+				output += self.reconstitute_elem( value, key )
+			output += "\n"
 
 		self.output_files.append( (name, output) )
 

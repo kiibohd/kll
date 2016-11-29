@@ -69,6 +69,19 @@ class Position:
 				return True
 		return False
 
+	def isPositionSet( self ):
+		'''
+		Check if a position is set
+
+		@return: True if any position is not None
+		'''
+		for param in self._parameters:
+			value = getattr( self, param )
+			if value is not None:
+				return True
+
+		return False
+
 	def setPosition( self, positions ):
 		'''
 		Applies given list of position measurements
@@ -90,6 +103,18 @@ class Position:
 			# Only set if None
 			if getattr( self, name ) is None:
 				setattr( self, name, value )
+
+	def updatePositions( self, position ):
+		'''
+		Using another Position object update positions
+		All positions are overwritten, unless set to None in the new position set
+
+		@param position: Position object with new positions
+		'''
+		for param in position._parameters:
+			value = getattr( position, param )
+			if value is not None:
+				setattr( self, param, value )
 
 	def strPosition( self ):
 		'''

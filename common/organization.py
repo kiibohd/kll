@@ -480,6 +480,33 @@ class PixelPositionData( Data ):
 
 	Pixel -> Physical Location
 	'''
+	def add_expression( self, expression, debug ):
+		'''
+		Add expression to data structure
+
+		May have multiple keys to add for a given expression
+
+		@param expression: KLL Expression (fully tokenized and parsed)
+		@param debug:      Enable debug output
+		'''
+		# Lookup unique keys for expression
+		keys = expression.unique_keys()
+
+		# Add/Modify expressions in datastructure
+		for key, uniq_expr in keys:
+			# Check which operation we are trying to do, add or modify
+			if debug[0]:
+				if key in self.data.keys():
+					output = self.debug_output['mod'].format( key )
+				else:
+					output = self.debug_output['add'].format( key )
+				print( debug[1] and output or ansi_escape.sub( '', output ) )
+
+			# If key already exists, just update
+			if key in self.data.keys():
+				self.data[ key ].update( uniq_expr )
+			else:
+				self.data[ key ] = uniq_expr
 
 
 class ScanCodePositionData( Data ):
@@ -488,6 +515,33 @@ class ScanCodePositionData( Data ):
 
 	ScanCode -> Physical Location
 	'''
+	def add_expression( self, expression, debug ):
+		'''
+		Add expression to data structure
+
+		May have multiple keys to add for a given expression
+
+		@param expression: KLL Expression (fully tokenized and parsed)
+		@param debug:      Enable debug output
+		'''
+		# Lookup unique keys for expression
+		keys = expression.unique_keys()
+
+		# Add/Modify expressions in datastructure
+		for key, uniq_expr in keys:
+			# Check which operation we are trying to do, add or modify
+			if debug[0]:
+				if key in self.data.keys():
+					output = self.debug_output['mod'].format( key )
+				else:
+					output = self.debug_output['add'].format( key )
+				print( debug[1] and output or ansi_escape.sub( '', output ) )
+
+			# If key already exists, just update
+			if key in self.data.keys():
+				self.data[ key ].update( uniq_expr )
+			else:
+				self.data[ key ] = uniq_expr
 
 
 class VariableData( Data ):

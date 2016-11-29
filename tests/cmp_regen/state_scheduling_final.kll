@@ -1,0 +1,96 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+
+# DefineData
+
+# MappingData
+IND0x001 : U0x02c; # I"NumLock" : U"Space"; # :HID(IndCode)"LED_NUM_LOCK"[0]
+IND0x001(A) : U0x02c; # I"NumLock"(A) : U"Space"; # :HID(IndCode)"LED_NUM_LOCK"(A)[0]
+IND0x001(D) : U0x01d; # I"NumLock"(D) : U"Z"; # :HID(IndCode)"LED_NUM_LOCK"(D)[0]
+IND0x002 : U0x00a; # I2 : U"G"; # :HID(IndCode)"LED_CAPS_LOCK"[0]
+S0x022(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S34(22)[0]
+S0x022(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S34(88)[0]
+S0x023(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S35(22)[0]
+S0x023(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S35(88)[0]
+S0x024(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S36(22)[0]
+S0x024(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S36(88)[0]
+S0x025(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S37(22)[0]
+S0x025(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S37(88)[0]
+S0x026(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S38(22)[0]
+S0x026(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S38(88)[0]
+S0x027(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S39(22)[0]
+S0x027(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S39(88)[0]
+S0x028(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S40(22)[0]
+S0x028(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S40(88)[0]
+S0x029(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S41(22)[0]
+S0x029(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S41(88)[0]
+S0x02a(10) : U0x005; # S0x2A(10) : U"B"; # :S42(10)[0]
+S0x02a(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S42(22)[0]
+S0x02a(80) : U0x006; # S0x2A(80) : U"C"; # :S42(80)[0]
+S0x02a(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S42(88)[0]
+S0x02b(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S43(22)[0]
+S0x02b(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S43(88)[0]
+S0x02c(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S44(22)[0]
+S0x02c(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S44(88)[0]
+S0x02d(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S45(22)[0]
+S0x02d(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S45(88)[0]
+S0x02e(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S46(22)[0]
+S0x02e(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S46(88)[0]
+S0x02f(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S47(22)[0]
+S0x02f(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S47(88)[0]
+S0x030(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S48(22)[0]
+S0x030(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S48(88)[0]
+S0x031(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S49(22)[0]
+S0x031(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S49(88)[0]
+S0x032(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S50(22)[0]
+S0x032(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S50(88)[0]
+S0x033(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S51(22)[0]
+S0x033(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S51(88)[0]
+S0x034(22) : U0x005, U0x012, U0x012; # S[34-52](22) : 'boo'; # :S52(22)[0]
+S0x034(88) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S52(88)[0]
+S0x043 : U0x028; # S0x43 : U"Enter"; # :S67[0]
+S0x043(P,UP,UR) : U0x028; # S[0x43(P,UP,UR)] : U"Enter"; # :S67(P,UP,UR)[0]
+S0x044(P) : U0x028; # S0x44(P) : U"Enter"; # :S68(P)[0]
+S0x045(UP) : U0x028; # S0x45(UP) : U"Enter"; # :S69(UP)[0]
+S0x046(R) : U0x028; # S0x46(R) : U"Enter"; # :S70(R)[0]
+S0x046(UR) : U0x028; # S0x46(UR) : U"Enter"; # :S70(UR)[0]
+S0x047(H) + S0x048 : U0x028; # S0x47(H) + S0x48 : U"Enter"; # :S71(H) + S72[0]
+S0x049(O) + S0x050 : U0x028; # S0x49(O) + S0x50 : U"Enter"; # :S73(O) + S80[0]
+S0x04e(30) : U0x00d, U0x012, U0x008; # S[34-52(88), 78](30) : 'joe'; # :S78(30)[0]
+U0x004 + IND0x001(Off) : U0x014; # U"a" + I"NumLock"(Off) : U"Q"; # :HID(USBCode)"KEY_A" + HID(IndCode)"LED_NUM_LOCK"(Off)[0]
+U0x004 + IND0x001(On) : U0x01a; # U"a" + I"NumLock"(On) : U"W"; # :HID(USBCode)"KEY_A" + HID(IndCode)"LED_NUM_LOCK"(On)[0]
+U0x004 + U0x005(P:1.0s) : U0x016, U0x00f, U0x012, U0x01a; # U"a" + U"b"(P:1s) : 'slow'; # :HID(USBCode)"KEY_A" + HID(USBCode)"KEY_B"(P:1.0s)[0]
+U0x004 + U0x005(P:50.0ms,H:100.0ms,R:200.0ms) : U0x009, U0x004, U0x016, U0x017; # U"a" + U"b"(P:50ms,H:100ms,R:200ms) : 'fast'; # :HID(USBCode)"KEY_A" + HID(USBCode)"KEY_B"(P:50.0ms,H:100.0ms,R:200.0ms)[0]
+U0x004(0) : U0x004; # U"A"(0)   : U"A"; # :HID(USBCode)"KEY_A"(0)[0]
+U0x004(42) : U0x014; # U"A"(42)  : U"Q"; # :HID(USBCode)"KEY_A"(42)[0]
+U0x00c(200) : U0x007, U0x018, U0x018, U0x018, U0x007, U0x008, U0x01e; # U"i"(200) : 'duuude1'; # :HID(USBCode)"KEY_I"(200)[0]
+U0x010(40.0us) : U0x007, U0x018, U0x018, U0x018, U0x020, U0x007, U0x008; # U"m"(40us) : 'duuu3de'; # :HID(USBCode)"KEY_M"(40.0us)[0]
+U0x017(30.2ms) : U0x007, U0x018, U0x018, U0x018, U0x007, U0x008; # U"t"(30.2ms) : 'duuude'; # :HID(USBCode)"KEY_T"(30.2ms)[0]
+U0x017(300.0ms) : U0x007, U0x018, U0x018, U0x018, U0x007, U0x008; # U"t"(300ms) : 'duuude'; # :HID(USBCode)"KEY_T"(300.0ms)[0]
+U0x018(1.0s) : U0x007, U0x018, U0x018, U0x018, U0x007, U0x01f, U0x008; # U"u"(1s) : 'duuud2e'; # :HID(USBCode)"KEY_U"(1.0s)[0]
+U0x019 : U0x004(P,H:300.0ms,R); # U"v" : U"a"(P,H:300ms,R); # :HID(USBCode)"KEY_V"[0]
+U0x01b : U0x004(300.0ms); # U"x" : U"a"(300ms); # :HID(USBCode)"KEY_X"[0]
+U0x01e(42) : U0x010, U0x004, U0x006; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :HID(USBCode)"KEY_1"(42)[0]
+U0x01f(42) : U0x010, U0x004, U0x006; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :HID(USBCode)"KEY_2"(42)[0]
+U0x020(42) : U0x010, U0x004, U0x006; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :HID(USBCode)"KEY_3"(42)[0]
+U0x021(42) : U0x010, U0x004, U0x006; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :HID(USBCode)"KEY_4"(42)[0]
+U0x022(42) : U0x010, U0x004, U0x006; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :HID(USBCode)"KEY_5"(42)[0]
+U0x02b(30) : U0x010, U0x004, U0x006; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :HID(USBCode)"KEY_TAB"(30)[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2016; # Author = "HaaTa (Jacob Alexander) 2016"; # Author
+KLL = 0.4; # KLL = 0.4; # KLL
+Name = State Scheduling; # Name = "State Scheduling"; # Name
+mydefine = stuffs here; # mydefine = "stuffs here"; # mydefine
+mydefine2 = "stuffs here"; # mydefine2 = '"stuffs here"'; # mydefine2
+mynumber = 414; # mynumber = 414; # mynumber
+

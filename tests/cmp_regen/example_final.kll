@@ -1,0 +1,42 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+test <= myCFunc(dat:1); # test => myCFunc( dat : 1 ); # test
+
+# DefineData
+
+# MappingData
+U0x004 : U0x005; # U"A" : U"B"; # :HID(USBCode)"KEY_A"[0]
+U0x007 : U0x016; # 'd' : 's'; # :HID(USBCode)"KEY_D"[0]
+U0x008 : U0x009; # 'e' : 'f'; # :HID(USBCode)"KEY_E"[0]
+U0x009 : U0x017; # 'f' : 't'; # :HID(USBCode)"KEY_F"[0]
+U0x00a : U0x007; # 'g' : 'd'; # :HID(USBCode)"KEY_G"[0]
+U0x00c : U0x018; # 'i' : 'u'; # :HID(USBCode)"KEY_I"[0]
+U0x00d : U0x011; # 'j' : 'n'; # :HID(USBCode)"KEY_J"[0]
+U0x00e : U0x008; # 'k' : 'e'; # :HID(USBCode)"KEY_K"[0]
+U0x00f : U0x00c; # 'l' : 'i'; # :HID(USBCode)"KEY_L"[0]
+U0x011 : U0x00e; # 'n' : 'k'; # :HID(USBCode)"KEY_N"[0]
+U0x012 : U0x01c; # 'o' : 'y'; # :HID(USBCode)"KEY_O"[0]
+U0x013 : U0x033; # 'p' : ';'; # :HID(USBCode)"KEY_P"[0]
+U0x015 : U0x013; # 'r' : 'p'; # :HID(USBCode)"KEY_R"[0]
+U0x016 : U0x015; # 's' : 'r'; # :HID(USBCode)"KEY_S"[0]
+U0x017 : U0x00a; # 't' : 'g'; # :HID(USBCode)"KEY_T"[0]
+U0x018 : U0x00f; # 'u' : 'l'; # :HID(USBCode)"KEY_U"[0]
+U0x01c : U0x00d; # 'y' : 'j'; # :HID(USBCode)"KEY_Y"[0]
+U0x033 : U0x012; # ';' : 'o'; # :HID(USBCode)"KEY_SEMICOLON"[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2014; # Author = "HaaTa (Jacob Alexander) 2014"; # Author
+Date = 2014-08-24; # Date = 2014-08-24; # Date
+KLL = 0.3; # KLL = 0.3; # KLL
+Name = colemak; # Name = colemak; # Name
+Version = 0.1; # Version = 0.1; # Version
+

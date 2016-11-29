@@ -13,18 +13,20 @@ myarray[4] = test;
 S120 <= x:20, rx:15;
 S121 <= x:20, y:10, z:2, rx:15, ry:12, rz:39;
 S[122-125] <= x:20, rx:15;
+S[122] <= z:14;
 
 # Pixel Positioning
 P19 <= x:21, rx:16;
 P[20] <= x:20, rx:15;
 P[21] <= x:20, y:10, z:2, rx:15, ry:12, rz:39;
 P[22-25] <= x:20, rx:15;
+P[22] <= z:13;
 
 # Pixel Channel Mapping
 P[5](4:8, 5:8, 12:8) : None;
 P[4](3:8) : S0x31;
 P[12](40:8, 50:8, 120:8) : S59;
-P[12](12:8, 13:8, 14:8) : S[40];
+P12(12:8, 13:8, 14:8) : S[40];
 
 # Animation
 A[BLEEdsing] <= loop:3,frame:2;

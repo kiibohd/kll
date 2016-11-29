@@ -1,0 +1,24 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+
+# DefineData
+myArray <= Array_define; # myArray => Array_define; # myArray
+myIndex <= Index_define; # myIndex => Index_define; # myIndex
+myVariable <= Variable_define; # myVariable => Variable_define; # myVariable
+
+# MappingData
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+myArray[] = "a" "b" "c" "b c" "3"; # myArray[] = a b c "b c" 3; # myArray
+myIndex[] = "" "" "" "" "" "this textthing" "moar"; # myIndex[5] = "this text" thing; # myIndex
+myVariable = 1; # myVariable = 1; # myVariable
+

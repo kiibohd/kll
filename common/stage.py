@@ -889,6 +889,8 @@ class OperationSpecificsStage( Stage ):
 			( 'CodeEnd',          ( r'\]', ) ),
 			( 'Position',         ( r'r?[xyz]:-?[0-9]+(.[0-9]+)?', ) ),
 			( 'PixelOperator',    ( r'(\+:|-:|>>|<<)', ) ),
+			( 'RelCROperator',    ( r'[cr]:i[+-]', ) ),
+			( 'ColRowOperator',   ( r'[cr]:', ) ),
 
 			( 'String',           ( r'"[^"]*"', ) ),
 
@@ -1047,8 +1049,9 @@ class OperationSpecificsStage( Stage ):
 		except NoParseError as err:
 			if not quiet:
 				print( kll_expression.final_tokens() )
-				print( err )
+				print( "\033[1;33m{0}\033[0m".format( err ) )
 			ret = False
+			raise
 
 		return ret
 
@@ -1110,7 +1113,7 @@ class OperationSpecificsStage( Stage ):
 		# <animation>       <= <modifiers>;
 		# <animation frame> <= <modifiers>;
 		animation_expression      = ( animation_elem | animation_def ) + skip( operator('<=') ) + animation_modlist >> unarg( kll_expression.animation )
-		animationFrame_expression = animation_flattened + skip( operator('<=') ) + many( pixelmod_elem + skip( maybe( comma ) ) ) >> unarg( kll_expression.animationFrame )
+		animationFrame_expression = animation_flattened + skip( operator('<=') ) + oneplus( pixelmod_elem + skip( maybe( comma ) ) ) >> unarg( kll_expression.animationFrame )
 
 		# Data Association
 		# <pixel> <= <position>;
@@ -1316,7 +1319,8 @@ class OperationSpecificsStage( Stage ):
 
 				traceback.print_tb( err.__traceback__ )
 				print( type( err ).__name__, err )
-				print( "Bad kll expression, usually a syntax error." )
+				print( "\033[1mBad kll expression, usually a syntax error.\033[0m" )
+				cur_ret = False
 
 			# Invalid parsing rules, definitely a bug
 			except TypeError as err:
@@ -1324,14 +1328,14 @@ class OperationSpecificsStage( Stage ):
 
 				traceback.print_tb( err.__traceback__ )
 				print( type( err ).__name__, err )
-				print( "Bad parsing rule, this is a bug!" )
+				print( "\033[1mBad parsing rule, this is a bug!\033[0m" )
 
 			# Lookup error, invalid lookup
 			except KeyError as err:
 				import traceback
 
 				print( "".join( traceback.format_tb( err.__traceback__ )[-1:] ), end='' )
-				print( "Invalid dictionary lookup, check syntax." )
+				print( "\033[1mInvalid dictionary lookup, check syntax.\033[0m" )
 				parser_debug_ignore = True
 
 			# Parsing failed, show more error info

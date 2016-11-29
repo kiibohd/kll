@@ -148,6 +148,20 @@ class Expression:
 		# TODO - Add more depending on what has been set
 		return out
 
+	def kllify( self ):
+		'''
+		Returns KLL version of the expression
+
+		May not look like the original expression if simplication has taken place
+		'''
+		print( "{0} kllify not defined for {1}".format( WARNING, self.__class__.__name__ ) )
+		out = "{0}{1}{2};".format(
+			self.lparam_token.value,
+			self.operator_token.value,
+			self.rparam_token.value,
+		)
+		return out
+
 	def unique_keys( self ):
 		'''
 		Generates a list of unique identifiers for the expression that is mergeable
@@ -257,6 +271,16 @@ class AssignmentExpression( Expression ):
 
 		return "ASSIGNMENT UNKNOWN"
 
+	def kllify( self ):
+		'''
+		Returns KLL version of the expression
+
+		May not look like the original expression if simplication has taken place
+
+		__repr__ is formatted correctly with assignment expressions
+		'''
+		return self.__repr__()
+
 	def unique_keys( self ):
 		'''
 		Generates a list of unique identifiers for the expression that is mergeable
@@ -306,6 +330,14 @@ class NameAssociationExpression( Expression ):
 
 	def __repr__( self ):
 		return "{0} <= {1};".format( self.name, self.association )
+
+	def kllify( self ):
+		'''
+		Returns KLL version of the expression
+
+		May not look like the original expression if simplication has taken place
+		'''
+		return "{0}".format( self )
 
 	def unique_keys( self ):
 		'''
@@ -380,6 +412,17 @@ class DataAssociationExpression( Expression ):
 
 		return True
 
+	def update( self, new_expression ):
+		'''
+		Update expression
+
+		@param new_expression: Expression used to update this one
+		'''
+		supported = ['PixelPosition', 'ScanCodePosition']
+		if new_expression.type in supported:
+			for scancode in self.association:
+				scancode.updatePositions( new_expression.association[0] )
+
 	def __repr__( self ):
 		if self.type in ['PixelPosition', 'ScanCodePosition']:
 			output = ""
@@ -389,6 +432,33 @@ class DataAssociationExpression( Expression ):
 				output += "{0}".format( association )
 			return "{0};".format( output )
 		return "{0} <= {1};".format( self.association, self.value )
+
+	def kllify( self ):
+		'''
+		Returns KLL version of the expression
+
+		May not look like the original expression if simplication has taken place
+
+		__repr__ is formatted correctly with assignment expressions
+		'''
+
+		if self.type in ['PixelPosition', 'ScanCodePosition']:
+			output = ""
+			for index, association in enumerate( self.association ):
+				if index > 0:
+					output += "; "
+				output += "{0}".format( association.kllify() )
+			return "{0};".format( output )
+
+		if self.type in ['AnimationFrame']:
+			output = "{0} <= ".format( self.association[0].kllify() )
+			for index, association in enumerate( self.value ):
+				if index > 0:
+					output += ", "
+				output += "{0}".format( association[0].kllify() )
+			return "{0};".format( output )
+
+		return "{0} <= {1};".format( self.association.kllify(), self.value.kllify() )
 
 	def unique_keys( self ):
 		'''
@@ -553,6 +623,39 @@ class MapExpression( Expression ):
 
 		return output
 
+	def sequencesOfCombosOfIds_kll( self, expression_param ):
+		'''
+		Prettified Sequence of Combos of Identifiers, kll output edition
+
+		@param expression_param: Trigger or Result parameter of an expression
+
+		Scan Code Example
+		[[[S10, S16], [S42]], [[S11, S16], [S42]]] -> ['S10 + S16, S42', 'S11 + S16, S42']
+		'''
+		output = ['']
+
+		# Sometimes during error cases, might be None
+		if expression_param is None:
+			return output
+
+		# Iterate over each trigger/result variants (expanded from ranges), each one is a sequence
+		for index, sequence in enumerate( expression_param ):
+			if index > 0:
+				output.append('')
+
+			# Iterate over each combo (element of the sequence)
+			for index, combo in enumerate( sequence ):
+				if index > 0:
+					output[-1] += ", "
+
+				# Iterate over each trigger identifier
+				for index, identifier in enumerate( combo ):
+					if index > 0:
+						output[-1] += " + "
+					output[-1] += "{0}".format( identifier.kllify() )
+
+		return output
+
 	def elems( self ):
 		'''
 		Return number of trigger and result elements
@@ -619,6 +722,27 @@ class MapExpression( Expression ):
 			self.sequencesOfCombosOfIds( self.triggers ),
 			self.operator,
 			self.sequencesOfCombosOfIds( self.results ),
+		)
+
+	def kllify( self ):
+		'''
+		Returns KLL version of the expression
+
+		May not look like the original expression if simplication has taken place
+		'''
+		# TODO Handle variations? Instead of just the first index
+
+		if self.type == 'PixelChannel':
+			result = self.position
+			# Handle None pixel mapping case
+			if isinstance( self.position, list ):
+				result = self.sequencesOfCombosOfIds_kll( self.position )[0]
+			return "{0} : {1};".format( self.pixel.kllify(), result )
+
+		return "{0} {1} {2};".format(
+			self.sequencesOfCombosOfIds_kll( self.triggers )[0],
+			self.operator,
+			self.sequencesOfCombosOfIds_kll( self.results )[0],
 		)
 
 	def unique_keys( self ):

@@ -1,0 +1,24 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+usbKeyOut <= Output_usbCodeSend_capability(usbCode:1); # usbKeyOut => Output_usbCodeSend_capability( usbCode : 1 ); # usbKeyOut
+
+# DefineData
+
+# MappingData
+S0x040 : U0x02a; # S0x40 : U"Backspace"; # :S64[0]
+S0x042 : U0x029; # S0x42 : U"Esc"; # :S66[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2014-2015; # Author = "HaaTa (Jacob Alexander) 2014-2015"; # Author
+KLL = 0.3a; # KLL = 0.3a; # KLL
+Name = Simple Example; # Name = "Simple Example"; # Name
+

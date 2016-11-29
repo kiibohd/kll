@@ -45,6 +45,14 @@ class AnimationModifier:
 			return "{0}".format( self.name )
 		return "{0}:{1}".format( self.name, self.value )
 
+	def kllify( self ):
+		'''
+		Returns KLL version of the Modifier
+
+		In most cases we can just the string representation of the object
+		'''
+		return "{0}".format( self )
+
 
 class AnimationModifierList:
 	'''
@@ -77,6 +85,14 @@ class AnimationModifierList:
 	def __repr__( self ):
 		return self.strModifiers()
 
+	def kllify( self ):
+		'''
+		Returns KLL version of the ModifierList
+
+		In most cases we can just the string representation of the object
+		'''
+		return "{0}".format( self )
+
 
 class PixelModifier:
 	'''
@@ -90,6 +106,14 @@ class PixelModifier:
 		if self.operator is None:
 			return "{0}".format( self.value )
 		return "{0}{1}".format( self.operator, self.value )
+
+	def kllify( self ):
+		'''
+		Returns KLL version of the PixelModifier
+
+		In most cases we can just the string representation of the object
+		'''
+		return "{0}".format( self )
 
 
 class PixelModifierList:
@@ -123,4 +147,12 @@ class PixelModifierList:
 
 	def __repr__( self ):
 		return self.strModifiers()
+
+	def kllify( self ):
+		'''
+		Returns KLL version of the PixelModifierList
+
+		In most cases we can just the string representation of the object
+		'''
+		return "{0}".format( self )
 

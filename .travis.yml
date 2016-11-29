@@ -34,7 +34,7 @@ env:
   # Basic KLL Tests
   - DIR=tests SCRIPT=sanity.bash
   - DIR=tests SCRIPT=syntax.bash
-  - DIR=tests SCRIPT=assignment.bash
+  - DIR=tests SCRIPT=regen.bash
 
 # Exclusions
 matrix:

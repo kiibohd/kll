@@ -1,6 +1,0 @@
-myArray <= Array_define;
-myIndex <= Index_define;
-myVariable <= Variable_define;
-myArray[] = "a" "b" "c" "b c" "3";
-myIndex[] = "" "" "" "" "" "this textthing" "moar";
-myVariable = 1;

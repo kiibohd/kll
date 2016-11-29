@@ -1,0 +1,73 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+consCtrlOut <= Output_consCtrlSend_capability(consCode:2); # consCtrlOut => Output_consCtrlSend_capability( consCode : 2 ); # consCtrlOut
+myCapability <= myFunc(myArg1:1,myArg2:4); # myCapability  => myFunc( myArg1 : 1, myArg2 : 4 ); # myCapability
+myCapability2 <= myFunc2(); # myCapability2 => myFunc2(); # myCapability2
+myCapability3 <= myFunc3(myArg1:2); # myCapability3 => myFunc3( myArg1 : 2 ); # myCapability3
+noneOut <= Output_noneSend_capability(); # noneOut     => Output_noneSend_capability(); # noneOut
+sysCtrlOut <= Output_sysCtrlSend_capability(sysCode:1); # sysCtrlOut  => Output_sysCtrlSend_capability( sysCode : 1 ); # sysCtrlOut
+usbKeyOut <= Output_usbCodeSend_capability(usbCode:1); # usbKeyOut => Output_usbCodeSend_capability( usbCode : 1 ); # usbKeyOut
+
+# DefineData
+mydefine <= myCdef; # mydefine => myCdef; # mydefine
+mydefine2 <= myCdef2; # mydefine2 => myCdef2; # mydefine2
+mydefine3 <= myCdef3; # mydefine3 => myCdef3; # mydefine3
+mynumber <= myCnumber; # mynumber => myCnumber; # mynumber
+
+# MappingData
+S0x002 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S2[0]
+S0x003 + S0x010, S0x020 : U0x028; # S[ 0x3 - 0x4 ] + S[ 0x10 ], S[ 0x20 ] : U"Enter"; # :S3 + S16, S32[0]
+S0x003 : myCapability2(); # S0x3 : myCapability2(); # :S3[0]
+S0x003 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S3[0]
+S0x004 + S0x010, S0x020 : U0x028; # S[ 0x3 - 0x4 ] + S[ 0x10 ], S[ 0x20 ] : U"Enter"; # :S4 + S16, S32[0]
+S0x004 : myCapability(8,37); # S[0x4] : myCapability( 0x8, 0x25 ); # :S4[0]
+S0x004 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S4[0]
+S0x005 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S5[0]
+S0x006 : U0x004, U0x005, U0x006, U0x007, U0x0e1 + U0x007, U0x009, U0x0e1 + U0x009; # S0x6 : 'abcdDfF'; # :S6[0]
+S0x006 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S6[0]
+S0x007 : U0x023; # S[ 0x7 - 0x9 ] : U"6"; # :S7[0]
+S0x007 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S7[0]
+S0x007, S0x002 : U0x023; # S[ 0x7 - 0x9 ], S[0x2,0x3] : U"6"; # :S7, S2[0]
+S0x008 : U0x023; # S[ 0x7 - 0x9 ] : U"6"; # :S8[0]
+S0x008 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S8[0]
+S0x008, S0x003 : U0x023; # S[ 0x7 - 0x9 ], S[0x2,0x3] : U"6"; # :S8, S3[0]
+S0x009 : U0x023; # S[ 0x7 - 0x9 ] : U"6"; # :S9[0]
+S0x009 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S9[0]
+S0x009, S0x002 : U0x023; # S[ 0x7 - 0x9 ], S[0x2,0x3] : U"6"; # :S9, S2[0]
+S0x00b : U0x029; # S0x0B : U["Esc"]; # :S11[0]
+S0x00b :+ U0x014; # S0x0B :+ U["Q"]; # :+S11[0]
+S0x00b :- U0x029; # S0x0B :- U["Esc"]; # :-S11[0]
+S0x010 :+ U0x015; # S[ 0x2 - 0x9, 0x10 ] :+ U"r"; # :+S16[0]
+S0x012 : U0x07a + U0x07b; # S0x12 : U[122] + U[123]; # :S18[0]
+S0x028(20) : U0x004; # S0x28(20) : U"A"; # :S40(20)[0]
+S0x029(P:10.0ms) : U0x004; # S0x29(P:10ms) : U"A"; # :S41(P:10.0ms)[0]
+S0x030(P) : U0x004; # S0x30(P) : U"A"; # :S48(P)[0]
+S0x031(H:20.0ms,R:1.0s) : U0x005; # S0x31(H:20ms, R:1s) : U"B"; # :S49(H:20.0ms,R:1.0s)[0]
+S0x032(P,H,R) : U0x005; # S0x32(P,H,R) : U"B"; # :S50(P,H,R)[0]
+S0x040 : U0x001; # S0x40 : U[0x1]; # :S64[0]
+S0x041 : CONS0x030; # S0x41 : CONS[0x30]; # :S65[0]
+S0x042 : CONS0x0b0; # S0x42 : CONS["Play"]; # :S66[0]
+S0x043 : CONS0x031; # S0x43 : CONS0x31; # :S67[0]
+S0x045 : SYS0x0a0; # S0x45 : SYS[0xA0]; # :S69[0]
+S0x046 : SYS0x0a1; # S0x46 : SYS["UnDock"]; # :S70[0]
+S0x047 : SYS0x0a2; # S0x47 : SYS0xA2; # :S71[0]
+S0x048 : None; # S[0x48] : None; # :S72[0]
+S0x07f + S0x080 : U0x027; # S127 + S128 : U"0"; # :S127 + S128[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2014; # Author = "HaaTa (Jacob Alexander) 2014"; # Author
+KLL = 0.3; # KLL = 0.3; # KLL
+Name = colemak; # Name = colemak; # Name
+mydefine = stuffs here; # mydefine = "stuffs here"; # mydefine
+mydefine2 = "stuffs here"; # mydefine2 = '"stuffs here"'; # mydefine2
+mynumber = 414; # mynumber = 414; # mynumber
+

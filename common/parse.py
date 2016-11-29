@@ -34,7 +34,7 @@ from common.id import (
 	CapArgId, CapId,
 	HIDId,
 	NoneId,
-	PixelId, PixelLayerId,
+	PixelAddressId, PixelId, PixelLayerId,
 	ScanCodeId
 )
 from common.modifier import AnimationModifierList
@@ -262,9 +262,73 @@ class Make:
 		'''
 		pixelcap_list = []
 		for pixel in pixels:
+			# Convert HIDIds into PixelIds
+			if isinstance( pixel, HIDId ) or isinstance( pixel, ScanCodeId ):
+				pixel = PixelId( pixel )
 			pixel.setModifiers( modifiers )
 			pixelcap_list.append( pixel )
 		return pixelcap_list
+
+	def pixel_address( elems ) :
+		'''
+		Parse pixel positioning for row/column addressing
+
+		@param elems:  index list or (operator, value)
+
+		40
+		c:0
+		c:30%
+		r:i+30
+		'''
+		pixel_address_list = []
+
+		# Index list
+		if isinstance( elems, list ):
+			# List of integers, possibly a range
+			if isinstance( elems[0], int ):
+				for elem in elems:
+					pixel_address_list.append( PixelAddressId( index=elem ) )
+			# Already ready to append
+			elif isinstance( elems[0], PixelId ):
+				pixel_address_list.append( elems[0] )
+
+		# Operator with value
+		elif isinstance( elems[0], Token ):
+			# Prepare address value
+			value = elems[1]
+
+			# Positioning
+			if elems[0].type == "ColRowOperator":
+				# Row
+				if elems[0].name == "r:":
+					pixel_address_list.append( PixelAddressId( row=value ) )
+				# Column
+				if elems[0].name == "c:":
+					pixel_address_list.append( PixelAddressId( col=value ) )
+
+			# Relative Positioning
+			elif elems[0].type == "RelCROperator":
+				relative_sign = '-' in elems[0].name and '-' or '+'
+
+				# Row
+				if "r:i" in elems[0].name:
+					pixel_address_list.append( PixelAddressId( row=value, relRow=relative_sign ) )
+				# Column
+				if "c:i" in elems[0].name:
+					pixel_address_list.append( PixelAddressId( col=value, relCol=relative_sign ) )
+
+		return pixel_address_list
+
+	def pixel_address_merge( elems ):
+		'''
+		Merge pixel addresses together
+		'''
+		# Merge is only necessary if there is more than one element
+		if len( elems ) > 1:
+			for elem in elems[1:]:
+				elems[0].merge( elem )
+
+		return [ elems[0] ]
 
 	def position( token ):
 		'''
@@ -384,6 +448,12 @@ class Make:
 		Convert string number to Python integer
 		'''
 		return int( token, 0 )
+
+	def percent( token ):
+		'''
+		Convert string percent to Python float
+		'''
+		return int( token[:-1], 0 ) / 100.0
 
 	def timing( token ):
 		'''
@@ -553,6 +623,14 @@ class Make:
 		'''
 		return CapId( name, 'Usage', arguments )
 
+	def debug( tokens ):
+		'''
+		Just prints tokens
+		Used for debugging
+		'''
+		print( tokens )
+		return tokens
+
 
 
 ### Rules ###
@@ -682,18 +760,24 @@ pixel         = tokenType('Pixel') >> Make.pixel
 pixelLayer    = tokenType('PixelLayer') >> Make.pixelLayer
 none          = tokenType('None') >> Make.none
 position      = tokenType('Position') >> Make.position
+
+comma         = tokenType('Comma')
+content       = tokenType('VariableContents')
+dash          = tokenType('Dash')
 name          = tokenType('Name')
 number        = tokenType('Number') >> Make.number
-timing        = tokenType('Timing') >> Make.timing
-comma         = tokenType('Comma')
-dash          = tokenType('Dash')
+percent       = tokenType('Percent') >> Make.percent
 plus          = tokenType('Plus')
-content       = tokenType('VariableContents')
+timing        = tokenType('Timing') >> Make.timing
+
 string        = tokenType('String') >> Make.string
 unString      = tokenType('String') # When the double quotes are still needed for internal processing
 seqString     = tokenType('SequenceString') >> Make.seqString
 unseqString   = tokenType('SequenceString') >> Make.unseqString # For use with variables
-pixelOperator = tokenType('PixelOperator')
+
+colRowOperator = lambda s: a( Token( 'ColRowOperator', s ) )
+relCROperator  = lambda s: a( Token( 'RelCROperator', s ) )
+pixelOperator  = tokenType('PixelOperator')
 
 # Code variants
 code_begin = tokenType('CodeBegin')
@@ -707,16 +791,18 @@ specifier_analog  = number >> Make.specifierAnalog
 specifier_list    = skip( parenthesis('(') ) + many( ( specifier_state | specifier_analog ) + skip( maybe( comma ) ) ) + skip( parenthesis(')') )
 
 # Scan Codes
-scanCode_start     = tokenType('ScanCodeStart')
-scanCode_range     = number + skip( dash ) + number >> Make.scanCode_range
-scanCode_listElem  = number >> Make.scanCode
-scanCode_specifier = ( scanCode_range | scanCode_listElem ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
-scanCode_innerList = many( scanCode_specifier + skip( maybe( comma ) ) ) >> flatten
-scanCode_expanded  = skip( scanCode_start ) + scanCode_innerList + skip( code_end ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
-scanCode_elem      = scanCode + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
-scanCode_combo     = oneplus( ( scanCode_expanded | scanCode_elem ) + skip( maybe( plus ) ) )
-scanCode_sequence  = oneplus( scanCode_combo + skip( maybe( comma ) ) )
-scanCode_single    = ( skip( scanCode_start ) + scanCode_listElem + skip( code_end ) ) | scanCode
+scanCode_start       = tokenType('ScanCodeStart')
+scanCode_range       = number + skip( dash ) + number >> Make.scanCode_range
+scanCode_listElem    = number >> Make.scanCode
+scanCode_specifier   = ( scanCode_range | scanCode_listElem ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
+scanCode_innerList   = many( scanCode_specifier + skip( maybe( comma ) ) ) >> flatten
+scanCode_expanded    = skip( scanCode_start ) + scanCode_innerList + skip( code_end ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
+scanCode_elem        = scanCode + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
+scanCode_combo       = oneplus( ( scanCode_expanded | scanCode_elem ) + skip( maybe( plus ) ) )
+scanCode_sequence    = oneplus( scanCode_combo + skip( maybe( comma ) ) )
+scanCode_single      = ( skip( scanCode_start ) + scanCode_listElem + skip( code_end ) ) | scanCode
+scanCode_il_nospec   = oneplus( ( scanCode_range | scanCode_listElem ) + skip( maybe( comma ) ) )
+scanCode_nospecifier = skip( scanCode_start ) + scanCode_il_nospec + skip( code_end )
 
 # Cons Codes
 consCode_start       = tokenType('ConsCodeStart')
@@ -728,6 +814,8 @@ consCode_specifier   = ( consCode_range | consCode_listElem ) + maybe( specifier
 consCode_innerList   = oneplus( consCode_specifier + skip( maybe( comma ) ) ) >> flatten
 consCode_expanded    = skip( consCode_start ) + consCode_innerList + skip( code_end ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
 consCode_elem        = consCode + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
+consCode_il_nospec   = oneplus( ( consCode_range | consCode_listElem ) + skip( maybe( comma ) ) )
+consCode_nospecifier = skip( consCode_start ) + consCode_il_nospec + skip( code_end )
 
 # Sys Codes
 sysCode_start       = tokenType('SysCodeStart')
@@ -739,6 +827,8 @@ sysCode_specifier   = ( sysCode_range | sysCode_listElem ) + maybe( specifier_li
 sysCode_innerList   = oneplus( sysCode_specifier + skip( maybe( comma ) ) ) >> flatten
 sysCode_expanded    = skip( sysCode_start ) + sysCode_innerList + skip( code_end ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
 sysCode_elem        = sysCode + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
+sysCode_il_nospec   = oneplus( ( sysCode_range | sysCode_listElem ) + skip( maybe( comma ) ) )
+sysCode_nospecifier = skip( sysCode_start ) + sysCode_il_nospec + skip( code_end )
 
 # Indicator Codes
 indCode_start       = tokenType('IndicatorStart')
@@ -750,6 +840,8 @@ indCode_specifier   = ( indCode_range | indCode_listElem ) + maybe( specifier_li
 indCode_innerList   = oneplus( indCode_specifier + skip( maybe( comma ) ) ) >> flatten
 indCode_expanded    = skip( indCode_start ) + indCode_innerList + skip( code_end ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
 indCode_elem        = indCode + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
+indCode_il_nospec   = oneplus( ( indCode_range | indCode_listElem ) + skip( maybe( comma ) ) )
+indCode_nospecifier = skip( indCode_start ) + indCode_il_nospec + skip( code_end )
 
 # USB Codes
 usbCode_start       = tokenType('USBCodeStart')
@@ -758,6 +850,8 @@ usbCode_range       = ( usbCode_number | unString ) + skip( dash ) + ( number | 
 usbCode_listElemTag = unString >> Make.usbCode
 usbCode_listElem    = ( usbCode_number | usbCode_listElemTag )
 usbCode_specifier   = ( usbCode_range | usbCode_listElem ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
+usbCode_il_nospec   = oneplus( ( usbCode_range | usbCode_listElem ) + skip( maybe( comma ) ) )
+usbCode_nospecifier = skip( usbCode_start ) + usbCode_il_nospec + skip( code_end )
 usbCode_innerList   = oneplus( usbCode_specifier + skip( maybe( comma ) ) ) >> flatten
 usbCode_expanded    = skip( usbCode_start ) + usbCode_innerList + skip( code_end ) + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
 usbCode_elem        = usbCode + maybe( specifier_list ) >> unarg( Make.specifierUnroll )
@@ -770,28 +864,38 @@ usbCode_sequence    = oneplus( ( usbCode_combo | seqString ) + skip( maybe( comm
 
 # Pixels
 pixel_start       = tokenType('PixelStart')
-pixel_range       = ( number ) + skip( dash ) + ( number ) >> unarg( Make.range )
-pixel_listElem    = number >> listElem
-pixel_innerList   = many( ( pixel_range | pixel_listElem ) + skip( maybe( comma ) ) ) >> flatten >> Make.pixel_list
+pixel_range       = ( number ) + skip( dash ) + ( number ) >> unarg( Make.range ) >> Make.pixel_address
+pixel_listElem    = number >> listElem >> Make.pixel_address
+pixel_pos         = ( colRowOperator('c:') | colRowOperator('r:') ) + ( number | percent ) >> Make.pixel_address
+pixel_posRel      = ( relCROperator('c:i+') | relCROperator('c:i-') | relCROperator('r:i+') | relCROperator('r:i-') ) + ( number | percent ) >> Make.pixel_address
+pixel_posMerge    = oneplus( ( pixel_pos | pixel_posRel ) + skip( maybe( comma ) ) ) >> flatten >> Make.pixel_address_merge
+pixel_innerList   = ( ( oneplus( ( pixel_range | pixel_listElem | pixel_posMerge ) + skip( maybe( comma ) ) ) >> flatten ) | ( pixel_posMerge ) ) >> Make.pixel_list
 pixel_expanded    = skip( pixel_start ) + pixel_innerList + skip( code_end )
-pixel_elem        = pixel >> listElem
+pixel_elem        = pixel >> listElem >> Make.pixel_address
 
 # Pixel Layer
 pixellayer_start     = tokenType('PixelLayerStart')
 pixellayer_range     = ( number ) + skip( dash ) + ( number ) >> unarg( Make.range )
 pixellayer_listElem  = number >> listElem
-pixellayer_innerList = many( ( pixellayer_range | pixellayer_listElem ) + skip( maybe( comma ) ) ) >> flatten >> Make.pixelLayer_list
+pixellayer_innerList = oneplus( ( pixellayer_range | pixellayer_listElem ) + skip( maybe( comma ) ) ) >> flatten >> Make.pixelLayer_list
 pixellayer_expanded  = skip( pixellayer_start ) + pixellayer_innerList + skip( code_end )
 pixellayer_elem      = pixelLayer >> listElem
 
 # Pixel Channels
 pixelchan_chans = many( number + skip( operator(':') ) + number + skip( maybe( comma ) ) )
-pixelchan_elem  = ( pixel_expanded | pixel_elem ) + skip( parenthesis('(') ) + pixelchan_chans + skip( parenthesis(')') ) >> unarg( Make.pixelchan )
+pixelchan_elem  = ( ( pixel_expanded | pixel_elem ) + skip( parenthesis('(') ) + pixelchan_chans + skip( parenthesis(')') ) ) >> unarg( Make.pixelchan )
+
+# HID Id for Pixel Mods
+pixelmod_hid_elem = ( usbCode | sysCode | consCode | indCode | scanCode ) >> listElem
+pixelmod_hid = pixelmod_hid_elem | usbCode_nospecifier | scanCode_nospecifier | consCode_nospecifier | sysCode_nospecifier | indCode_nospecifier
 
 # Pixel Mods
-pixelmod_mods  = many( maybe( pixelOperator | plus | dash ) + number + skip( maybe( comma ) ) )
+pixelmod_modop = maybe( pixelOperator | plus | dash ) >> listElem
+pixelmod_modva = number >> listElem
+pixelmod_mods  = oneplus( ( pixelmod_modop + pixelmod_modva + skip( maybe( comma ) ) ) >> flatten )
 pixelmod_layer = ( pixellayer_expanded | pixellayer_elem )
-pixelmod_elem  = ( pixel_expanded | pixel_elem | pixelmod_layer ) + skip( parenthesis('(') ) + pixelmod_mods + skip( parenthesis(')') ) >> unarg( Make.pixelmod )
+pixelmod_index = ( pixel_expanded | pixel_elem | pixelmod_hid | pixelmod_layer )
+pixelmod_elem  = pixelmod_index + skip( parenthesis('(') ) + pixelmod_mods + skip( parenthesis(')') ) >> unarg( Make.pixelmod )
 
 # Pixel Capability
 pixel_capability = pixelmod_elem
