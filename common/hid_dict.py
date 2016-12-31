@@ -844,7 +844,7 @@ kll_hid_lookup_dictionary['USBCode'] = dict([
 	( 'ESC', ('USB', 0x29) ), ( 'ESCAPE', ('USB', 0x29) ),
 	( 'BACKSPACE', ('USB', 0x2A) ),
 	( 'TAB', ('USB', 0x2B) ),
-	( 'SPACE', ('USB', 0x2C) ), ( 'SPACEBAR', ('USB', 0x2C) ),
+	( 'SPACE', ('USB', 0x2C) ), ( 'SPACEBAR', ('USB', 0x2C) ), ( ' ', ('USB', 0x2C) ),
 	( '-', ('USB', 0x2D) ), ( 'MINUS', ('USB', 0x2D) ),
 	( '=', ('USB', 0x2E) ), ( 'EQUALS', ('USB', 0x2E) ), ( 'EQUAL', ('USB', 0x2E) ),
 	( '[', ('USB', 0x2F) ), ( 'LEFT BRACKET', ('USB', 0x2F) ), ( 'LBRACKET', ('USB', 0x2F) ), ( 'LEFT BRACE', ('USB', 0x2F) ), ( 'LBRACE', ('USB', 0x2F) ),

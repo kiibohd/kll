@@ -22,6 +22,7 @@ KLL Compiler Stage Definitions
 
 from multiprocessing.dummy import Pool as ThreadPool
 
+import copy
 import io
 import multiprocessing
 import os
@@ -447,7 +448,7 @@ class PreprocessorStage( Stage ):
 		@param parser: argparse setup object
 		'''
 		# Create new option group
-		#group = parser.add_argument_group('\033[1mPreprocessor Configuration\033[0m')
+		group = parser.add_argument_group('\033[1mPreprocessor Configuration\033[0m')
 
 	def seed_context( self, kll_file ):
 		'''
@@ -523,7 +524,7 @@ class OperationClassificationStage( Stage ):
 		@param parser: argparse setup object
 		'''
 		# Create new option group
-		#group = parser.add_argument_group('\033[1mOperation Classification Configuration\033[0m')
+		group = parser.add_argument_group('\033[1mOperation Classification Configuration\033[0m')
 
 	def merge_tokens( self, token_list, token_type ):
 		'''
@@ -605,7 +606,7 @@ class OperationClassificationStage( Stage ):
 			if token.type in ['EndOfLine', 'Operator']:
 				# Determine the token type
 				token_type = 'LOperatorData'
-				if token.type is 'EndOfLine':
+				if token.type == 'EndOfLine':
 					token_type = 'ROperatorData'
 
 				# If this is a 'misplaced' operator, set as Misc
@@ -656,7 +657,7 @@ class OperationClassificationStage( Stage ):
 
 			@return True if the token is correct
 			'''
-			ret = token.type is token_type
+			ret = token.type == token_type
 
 			# Error message
 			if not ret:
@@ -1654,6 +1655,7 @@ class DataOrganizationStage( Stage ):
 			try:
 				self.contexts[ context_name ].merge(
 					next_context,
+					context_name,
 					( self.data_organization_debug, self.color )
 				)
 
@@ -1667,6 +1669,15 @@ class DataOrganizationStage( Stage ):
 					context_name
 				) )
 				return False
+
+		# After merging contexts, update Context information.
+		# If a BaseMap, apply modifier to each of the expressions.
+		# This is used by emitter to decide whether the expression can be filtered out.
+		if context_name == 'BaseMapContext':
+			for key, expr in self.contexts['BaseMapContext'].organization.mapping_data.data.items():
+				# Only applys to MapExpressions
+				if isinstance( expr[0], expression.MapExpression ):
+					expr[0].base_map = True
 
 		return True
 
@@ -1798,6 +1809,7 @@ class DataFinalizationStage( Stage ):
 			if 'GenericContext' in contexts.keys():
 				self.base_context.merge(
 					contexts['GenericContext'],
+					'GenericContext',
 					( self.data_finalization_debug, self.color )
 				)
 
@@ -1816,6 +1828,7 @@ class DataFinalizationStage( Stage ):
 		if 'BaseMapContext' in contexts.keys():
 			self.base_context.merge(
 				contexts['BaseMapContext'],
+				'BaseMapContext',
 				( self.data_finalization_debug, self.color )
 			)
 			self.context_list.append( ( 'BaseMapContext', self.base_context ) )
@@ -1825,6 +1838,7 @@ class DataFinalizationStage( Stage ):
 		if 'DefaultMapContext' in contexts.keys():
 			self.default_context.merge(
 				contexts['DefaultMapContext'],
+				'DefaultMapContext',
 				( self.data_finalization_debug, self.color )
 			)
 			self.context_list.append( ( 'DefaultMapContext', self.default_context ) )
@@ -1842,16 +1856,23 @@ class DataFinalizationStage( Stage ):
 			if 'PartialMapContext' in item[0]
 		]
 		for layer, partial in sorted( partial_context_list, key=lambda x: x[0] ):
+			# Start with base context
 			self.partial_contexts.append( context.MergeContext( self.base_context ) )
+
+			# Merge in layer
 			self.partial_contexts[ layer ].merge(
 				partial,
+				'PartialMapContext',
 				( self.data_finalization_debug, self.color )
 			)
+
+			# Add to context list
 			self.context_list.append( ( 'PartialMapContext{0}'.format( layer ), self.default_context ) )
 
 			# Add each partial to the full_context as well
 			self.full_context.merge(
 				partial,
+				'PartialMapContext',
 				( self.data_finalization_debug, self.color )
 			)
 
@@ -1894,6 +1915,23 @@ class DataAnalysisStage( Stage ):
 		'''
 		super().__init__( control )
 
+		self.data_analysis_debug = False
+		self.data_analysis_display = False
+
+		self.trigger_index = []
+		self.result_index = []
+		self.trigger_index_lookup = dict()
+		self.trigger_index_reduced_lookup = dict()
+		self.result_index_lookup = dict()
+		self.result_index = []
+		self.trigger_lists = []
+
+		self.max_scan_code = []
+		self.min_scan_code = []
+
+		self.interconnect_offsets = []
+
+		self.partial_contexts = None
 		self.layer_contexts = None
 		self.full_context = None
 
@@ -1903,6 +1941,8 @@ class DataAnalysisStage( Stage ):
 
 		@param args: Name space of processed arguments
 		'''
+		self.data_analysis_debug = args.data_analysis_debug
+		self.data_analysis_display = args.data_analysis_display
 
 	def command_line_flags( self, parser ):
 		'''
@@ -1911,7 +1951,21 @@ class DataAnalysisStage( Stage ):
 		@param parser: argparse setup object
 		'''
 		# Create new option group
-		#group = parser.add_argument_group('\033[1mData Analysis Configuration\033[0m')
+		group = parser.add_argument_group('\033[1mData Analysis Configuration\033[0m')
+
+		# Optional Arguments
+		group.add_argument(
+			'--data-analysis-debug',
+			action='store_true',
+			default=self.data_analysis_debug,
+			help="Show debug info from data analysis stage.\n",
+		)
+		group.add_argument(
+			'--data-analysis-display',
+			action='store_true',
+			default=self.data_analysis_display,
+			help="Show results of data analysis.\n",
+		)
 
 	def reduction( self ):
 		'''
@@ -1922,10 +1976,27 @@ class DataAnalysisStage( Stage ):
 		'''
 		self.reduced_contexts = []
 
-		for layer in self.layer_contexts:
+		if self.data_analysis_debug:
+			print( "\033[1m--- Analysis Reduction ---\033[0m" )
+
+		for index, layer in enumerate( self.layer_contexts ):
+			if self.data_analysis_debug:
+				print( "\033[1m ++ Layer {0} ++\033[0m".format( index ) )
 			reduced = context.MergeContext( layer )
-			reduced.reduction()
+			reduced.reduction( debug=self.data_analysis_debug )
 			self.reduced_contexts.append( reduced )
+
+		# Filter out BaseMap specific expressions
+		if self.data_analysis_debug:
+			print( "\033[1m == BaseMap Cleanup ==\033[0m" )
+
+		# Skip DefaultLayer (0) as there is nothing to cleanup
+		for index, layer in enumerate( self.reduced_contexts[1:] ):
+			if self.data_analysis_debug:
+				print( "\033[1m ++ Layer {0} ++\033[0m".format( index + 1 ) )
+			layer.cleanup( ( self.data_analysis_debug, self.color ) )
+			if self.data_analysis_debug:
+				print( layer.organization.mapping_data )
 
 	def generate_mapping_indices( self ):
 		'''
@@ -1933,49 +2004,122 @@ class DataAnalysisStage( Stage ):
 
 		The triggers and results are first sorted alphabetically
 		'''
-		# Build list of map expressions
-		expressions = []
+		if self.data_analysis_debug:
+			print( "\033[1m--- Mapping Indices ---\033[0m" )
+
+		# Build uniq dictionary of map expressions
+		# Only reduce true duplicates (identical kll expressions) initially
+		expressions = dict()
 		# Gather list of expressions
-		for layer in self.layer_contexts:
-			expressions.extend( layer.organization.mapping_data.data.items() )
+		for index, layer in enumerate( self.reduced_contexts ):
+			# Set initial min/max ScanCode
+			self.min_scan_code.append( 0xFFFF )
+			self.max_scan_code.append( 0 )
 
-		# Sort expressions by trigger, there may be *duplicate* triggers however don't reduce yet
-		# we need the result mappings as well
-		trigger_sorted = sorted( expressions, key=lambda x: x[1][0].trigger_str() )
-		trigger_filtered = [ elem for elem in trigger_sorted if not elem[1][0].type == 'USBCode' ]
-		#print( trigger_filtered )
+			# Add each expression in layer to overall dictionary lookup for command reduction
+			for key, elem in layer.organization.mapping_data.data.items():
+				expressions[ elem[0].kllify() ] = elem[0]
 
+				# Determine min ScanCode of each trigger expression
+				min_uid = elem[0].min_trigger_uid()
+				if min_uid < self.min_scan_code[ index ]:
+					self.min_scan_code[ index ] = min_uid
 
-		# Sort expressions by result, there may be *duplicate* results however don't reduce yet
-		# we need the result mappings as well
-		result_sorted = sorted( expressions, key=lambda x: x[1][0].result_str() )
-		#print( result_sorted )
+				# Determine max ScanCode of each trigger expression
+				max_uid = elem[0].max_trigger_uid()
+				if max_uid > self.max_scan_code[ index ]:
+					self.max_scan_code[ index ] = max_uid
 
-		# Build List of Triggers and sort by string contents
-		# XXX Only scan codes right now
-		#     This will need to expand to a
-		#TODO
+		# Sort expressions by trigger and result, there may be *duplicate* triggers however don't reduce yet
+		# we need the trigger->result and result->trigger mappings still
+		trigger_sorted = dict()
+		trigger_sorted_reduced = dict()
+		result_sorted = dict()
+		for key, elem in expressions.items():
+			# Trigger Sorting (we don't use trigger_str() here as it would cause reduction)
+			trig_key = key
+			if trig_key not in trigger_sorted.keys():
+				trigger_sorted[ trig_key ] = [ elem ]
+			else:
+				trigger_sorted[ trig_key ].append( elem )
 
-		# Build List of Results and sort by string contents
-		# TODO
+			# Trigger Sorting, reduced dictionary for trigger guides (i.e. we want reduction)
+			trig_key = elem.trigger_str()
+			if trig_key not in trigger_sorted_reduced.keys():
+				trigger_sorted_reduced[ trig_key ] = [ elem ]
+			else:
+				trigger_sorted_reduced[ trig_key ].append( elem )
 
-	def sort_map_index_lists( self ):
-		'''
-		'''
+			# Result Sorting
+			res_key = elem.result_str()
+			if res_key not in result_sorted.keys():
+				result_sorted[ res_key ] = [ elem ]
+			else:
+				result_sorted[ res_key ].append( elem )
+
+		# Debug info
+		if self.data_analysis_debug:
+			print( "\033[1mMin ScanCode\033[0m: {0}".format( self.min_scan_code ) )
+			print( "\033[1mMax ScanCode\033[0m: {0}".format( self.max_scan_code ) )
+
+		# Build indices
+		self.trigger_index = [ elem for key, elem in sorted( trigger_sorted.items(), key=lambda x: x[1][0].sort_trigger() ) ]
+		self.trigger_index_reduced = [ elem for key, elem in sorted( trigger_sorted_reduced.items(), key=lambda x: x[1][0].sort_trigger() ) ]
+		self.result_index = [ elem for key, elem in sorted( result_sorted.items(), key=lambda x: x[1][0].sort_result() ) ]
+
+		# Build index lookup
+		# trigger_index_lookup has a full lookup so we don't lose information
+		self.trigger_index_lookup = { name[0].kllify() : index for index, name in enumerate( self.trigger_index ) }
+		self.trigger_index_reduced_lookup = { name[0].sort_trigger() : index for index, name in enumerate( self.trigger_index_reduced ) }
+		self.result_index_lookup = { name[0].sort_result() : index for index, name in enumerate( self.result_index ) }
 
 	def generate_map_offset_table( self ):
 		'''
+		Generates list of offsets for each of the interconnect ids
 		'''
+		# TODO - Required for interconnect keyboards
+		if self.data_analysis_debug:
+			print( "\033[1m--- Map Offsets ---\033[0m" )
+			print( "TODO" )
 
 	def generate_trigger_lists( self ):
 		'''
+		Generate Trigger Lists per layer using the index lists
 		'''
+		if self.data_analysis_debug:
+			print( "\033[1m--- Trigger Lists ---\033[0m" )
+
+		# Iterate through each of the layers (starting from 0/Default)
+		# Generate the trigger list for each of the ScanCodes
+		# A trigger list is a list of all possible trigger macros that may be initiated by a ScanCode
+		for index, layer in enumerate( self.reduced_contexts ):
+			# Initialize trigger list by max index size
+			self.trigger_lists.append( [ None ] * ( self.max_scan_code[ index ] + 1 ) )
+
+			# Iterate over each expression
+			for key, elem in layer.organization.mapping_data.data.items():
+				# Get list of ids from expression
+				# Append each uid (if a ScanCode) to Trigger List
+				for identifier in elem[0].trigger_id_list():
+					if identifier.type == 'ScanCode':
+						# In order to uniquely identify each trigger, using full kll expression as lookup
+						trigger_index = self.trigger_index_lookup[ elem[0].kllify() ]
+
+						# Initialize trigger list if None
+						if self.trigger_lists[ index ][ identifier.uid ] is None:
+							self.trigger_lists[ index ][ identifier.uid ] = [ trigger_index ]
+
+						# Append to trigger list, only if trigger not already added
+						elif trigger_index not in self.trigger_lists[ index ][ identifier.uid ]:
+							self.trigger_lists[ index ][ identifier.uid ].append( trigger_index )
+
+			# Debug output
+			if self.data_analysis_debug:
+				print( "\033[1mTrigger List\033[0m: {0} {1}".format( index, self.trigger_lists[ index ] ) )
 
 	def analyze( self ):
 		'''
 		Analyze the set of configured contexts
-
-		TODO: Perhaps use emitters or something like it for this code? -HaaTa
 		'''
 		# Reduce Contexts
 		# Convert all trigger USBCodes to ScanCodes
@@ -1984,10 +2128,6 @@ class DataAnalysisStage( Stage ):
 		# Generate Indices
 		# Assigns a sequential index (starting from 0) for each map expresssion
 		self.generate_mapping_indices()
-
-		# Sort Index Lists
-		# Using indices sort Trigger and Results macros
-		self.sort_map_index_lists()
 
 		# Generate Offset Table
 		# This is needed for interconnect devices
@@ -2007,6 +2147,7 @@ class DataAnalysisStage( Stage ):
 
 		# Acquire list of contexts
 		self.layer_contexts = self.control.stage('DataFinalizationStage').layer_contexts
+		self.partial_contexts = self.control.stage('DataFinalizationStage').partial_contexts
 		self.full_context = self.control.stage('DataFinalizationStage').full_context
 
 		# Analyze set of contexts
@@ -2044,7 +2185,7 @@ class CodeGenerationStage( Stage ):
 		@param parser: argparse setup object
 		'''
 		# Create new option group
-		#group = parser.add_argument_group('\033[1mCode Generation Configuration\033[0m')
+		group = parser.add_argument_group('\033[1mCode Generation Configuration\033[0m')
 
 		# Create options groups for each of the Emitters
 		self.control.stage('CompilerConfigurationStage').emitters.command_line_flags( parser )

@@ -146,7 +146,5 @@
 // Each key has 6 dimensions
 // x,y,z and rx,ry,rz (rotation)
 // Units are in mm
-const Position Key_Position[] = {
-	PositionEntry( 1,0, 2,0, 3,2, 0,0, 0,0, 0,0 ),
-};
+<|KeyPositions|>
 

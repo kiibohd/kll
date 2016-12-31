@@ -23,6 +23,8 @@ KLL Data Organization
 import copy
 import re
 
+import common.expression as expression
+
 
 
 ### Decorators ###
@@ -84,13 +86,14 @@ class Data:
 
 			self.data[ key ] = uniq_expr
 
-	def merge( self, merge_in, debug ):
+	def merge( self, merge_in, map_type, debug ):
 		'''
 		Merge in the given datastructure to this datastructure
 
 		This datastructure serves as the base.
 
 		@param merge_in: Data structure from another organization to merge into this one
+		@param map_type: Used fo map specific merges
 		@param debug:    Enable debug out
 		'''
 		# The default case is just to add the expression in directly
@@ -102,11 +105,18 @@ class Data:
 
 			self.add_expression( kll_expression, debug )
 
-	def reduction( self ):
+	def reduction( self, debug=False ):
 		'''
 		Simplifies datastructure
 
 		Most of the datastructures don't have a reduction. Just do nothing in this case.
+		'''
+		pass
+
+	def cleanup( self, debug=False ):
+		'''
+		Post-processing step for merges that may need to remove some data in the organization.
+		Mainly used for dropping BaseMapContext expressions after generating a PartialMapContext.
 		'''
 		pass
 
@@ -234,7 +244,7 @@ class MappingData( Data ):
 				for identifier in combo:
 					identifier.interconnect_id = interconnect_id
 
-	def merge( self, merge_in, debug ):
+	def merge( self, merge_in, map_type, debug ):
 		'''
 		Merge in the given datastructure to this datastructure
 
@@ -254,6 +264,7 @@ class MappingData( Data ):
 		i:: Lazy Add/Modify  - Replace if found, otherwise drop
 
 		@param merge_in: Data structure from another organization to merge into this one
+		@param map_type: Used fo map specific merges
 		@param debug:    Enable debug out
 		'''
 		# Check what the current interconnectId is
@@ -295,11 +306,8 @@ class MappingData( Data ):
 			# Construct target key
 			target_key = key[0] == 'i' and "i{0}".format( key[2:] ) or key[1:]
 
-			# If target key exists, replace
-			if target_key in self.data.keys():
-				debug_tag = 'mod'
-			else:
-				debug_tag = 'drp'
+			# Lazy expressions will be dropped later at reduction
+			debug_tag = 'mod'
 
 			# Debug output
 			if debug[0]:
@@ -309,6 +317,9 @@ class MappingData( Data ):
 			# Only replace
 			if debug_tag == 'mod':
 				self.data[ target_key ] = merge_in.data[ key ]
+				# Unset BaseMapContext tag if not a BaseMapContext
+				if map_type != 'BaseMapContext':
+					self.data[ target_key ][0].base_map = False
 
 		# Then apply : assignment operators
 		for key in set_keys:
@@ -333,6 +344,10 @@ class MappingData( Data ):
 
 			# Set into new datastructure regardless
 			self.data[ target_key ] = merge_in.data[ key ]
+
+			# Unset BaseMap flag if this is not a BaseMap merge
+			if map_type != 'BaseMapContext':
+				self.data[ target_key ][0].base_map = False
 
 			# Only the : is used to set ScanCodes
 			# We need to set the interconnect_id just in case the base context has it set
@@ -408,7 +423,24 @@ class MappingData( Data ):
 				if debug_tag == 'rem':
 					self.data[ target_key ] = [ value for value in self.data.values() if value != expr ]
 
-	def reduction( self ):
+	def cleanup( self, debug=False ):
+		'''
+		Post-processing step for merges that may need to remove some data in the organization.
+		Mainly used for dropping BaseMapContext expressions after generating a PartialMapContext.
+		'''
+		# Using this dictionary, replace all the trigger USB codes
+		# Iterate over a copy so we can modify the dictionary in place
+		for key, expr in self.data.copy().items():
+			if expr[0].base_map:
+				if debug[0]:
+					output = "\t\033[1;34mDROP\033[0m {0}".format( self.data[ key ][0] )
+					print( debug[1] and output or ansi_escape.sub( '', output ) )
+				del self.data[ key ]
+			elif debug[0]:
+				output = "\t\033[1;32mKEEP\033[0m {0}".format( self.data[ key ][0] )
+				print( debug[1] and output or ansi_escape.sub( '', output ) )
+
+	def reduction( self, debug=False ):
 		'''
 		Simplifies datastructure
 
@@ -416,22 +448,104 @@ class MappingData( Data ):
 
 		NOTE: Make sure to create a new MergeContext before calling this as you lose data and prior context
 		'''
-		scan_code_lookup = {}
+		result_code_lookup = {}
 
 		# Build dictionary of single ScanCodes first
 		for key, expr in self.data.items():
 			if expr[0].elems()[0] == 1 and expr[0].triggers[0][0][0].type == 'ScanCode':
-				scan_code_lookup[ key ] = expr
+				result_code_lookup[ expr[0].result_str() ] = expr
 
 		# Using this dictionary, replace all the trigger USB codes
-		new_data = copy.copy( scan_code_lookup )
+		# Iterate over a copy so we can modify the dictionary in place
+		for key, expr in self.data.copy().items():
+			# 1) Single USB Codes trigger results will replace the original ScanCode result
+			if expr[0].elems()[0] == 1 and expr[0].triggers[0][0][0].type != 'ScanCode':
+				# Debug info
+				if debug:
+					print("\033[1mSingle\033[0m", key, expr )
 
-		# 1) Single USB Codes trigger results will replace the original ScanCode result
-		# 2) 
+				# Lookup trigger to see if it exists
+				trigger_str = expr[0].trigger_str()
+				if trigger_str in result_code_lookup.keys():
+					# Calculate new key
+					new_expr = result_code_lookup[ trigger_str ][0]
+					new_key = "{0}{1}".format(
+						new_expr.operator,
+						new_expr.unique_keys()[0][0]
+					)
 
-		#TODO
-		#print("YAY")
-		#print( scan_code_lookup )
+					if debug:
+						print("\t\033[1;32mREPLACE\033[0m {0} -> {1}\n\t{2} => {3}".format(
+							key,
+							new_key,
+							expr[0],
+							new_expr
+						) )
+
+					# Do replacement
+					orig_expr = self.data[ new_key ][0]
+					self.data[ new_key ] = [ expression.MapExpression(
+						orig_expr.triggers,
+						orig_expr.operator,
+						expr[0].results
+					) ]
+
+					# Unset basemap on expression
+					self.data[ new_key ][0].base_map = False
+
+					# Remove old key
+					del self.data[ key ]
+
+				# Otherwise drop HID expression
+				else:
+					if debug:
+						print("\t\033[1;34mDROP\033[0m" )
+					del self.data[ key ]
+
+			# 2) Complex triggers are processed to replace out any USB Codes with Scan Codes
+			elif expr[0].elems()[0] > 1:
+				# Debug info
+				if debug:
+					print("\033[1;4mMulti\033[0m ", key, expr )
+
+				# Lookup each trigger element and replace
+				# If any trigger element doesn't exist, drop expression
+				# Dive through sequence->combo->identifier (sequence of combos of ids)
+				replace = False
+				drop = False
+				for seq_in, sequence in enumerate( expr[0].triggers ):
+					for com_in, combo in enumerate( sequence ):
+						for ident_in, identifier in enumerate( combo ):
+							ident_str = "({0})".format( identifier )
+
+							# Replace identifier
+							if ident_str in result_code_lookup.keys():
+								match_expr = result_code_lookup[ ident_str ]
+								expr[0].triggers[seq_in][com_in][ident_in] = match_expr[0].triggers[0][0][0]
+								replace = True
+
+							# Ignore ScanCodes
+							elif identifier.type == 'ScanCode':
+								pass
+
+							# Drop everything else
+							else:
+								drop = True
+
+				# Trigger Identifier was replaced
+				if replace:
+					if debug:
+						print("\t\033[1;32mREPLACE\033[0m", expr )
+
+				# Trigger Identifier failed (may still occur if there was a replacement)
+				if drop:
+					if debug:
+						print("\t\033[1;34mDROP\033[0m" )
+					del self.data[ key ]
+
+		# Show results of reduction
+		if debug:
+			print( self )
 
 
 class AnimationData( Data ):
@@ -638,6 +752,27 @@ class Organization:
 			},
 		}
 
+	def __copy__( self ):
+		'''
+		On organization copy, return a safe object
+
+		Attempts to only copy the datastructures that may need to diverge
+		'''
+		new_obj = Organization()
+
+		# Copy only .data from each organization
+		new_obj.animation_data.data          = copy.copy( self.animation_data.data )
+		new_obj.animation_frame_data.data    = copy.copy( self.animation_frame_data.data )
+		new_obj.capability_data.data         = copy.copy( self.capability_data.data )
+		new_obj.define_data.data             = copy.copy( self.define_data.data )
+		new_obj.mapping_data.data            = copy.copy( self.mapping_data.data )
+		new_obj.pixel_channel_data.data      = copy.copy( self.pixel_channel_data.data )
+		new_obj.pixel_position_data.data     = copy.copy( self.pixel_position_data.data )
+		new_obj.scan_code_position_data.data = copy.copy( self.scan_code_position_data.data )
+		new_obj.variable_data.data           = copy.copy( self.variable_data.data )
+
+		return new_obj
+
 	def stores( self ):
 		'''
 		Returns list of sub-datastructures
@@ -680,27 +815,43 @@ class Organization:
 		# Add expression to determined datastructure
 		data.add_expression( expression, debug )
 
-	def merge( self, merge_in, debug ):
+	def merge( self, merge_in, map_type, debug ):
 		'''
 		Merge in the given organization to this organization
 
 		This organization serves as the base.
 
 		@param merge_in: Organization to merge into this one
+		@param map_type: Used fo map specific merges
 		@param debug:    Enable debug out
 		'''
+		# TODO
+		# Lookup interconnect id (if exists)
+		# Apply to all new scan code assignments from merge_in
+		if 'ConnectId' in self.variable_data.data.keys():
+			# TODO Pass ConnectId to each of the expressions to merge in (ScanCode triggers only)
+			print("TODO -> Handle ConnectId for interconnect")
+
 		# Merge each of the sub-datastructures
 		for this, that in zip( self.stores(), merge_in.stores() ):
-			this.merge( that, debug )
+			this.merge( that, map_type, debug )
 
-	def reduction( self ):
+	def cleanup( self, debug=False ):
+		'''
+		Post-processing step for merges that may need to remove some data in the organization.
+		Mainly used for dropping BaseMapContext expressions after generating a PartialMapContext.
+		'''
+		for store in self.stores():
+			store.cleanup( debug )
+
+	def reduction( self, debug=False ):
 		'''
 		Simplifies datastructure
 
 		NOTE: This will remove data, therefore, context is lost
 		'''
 		for store in self.stores():
-			store.reduction()
+			store.reduction( debug )
 
 	def __repr__( self ):
 		return "{0}".format( self.stores() )

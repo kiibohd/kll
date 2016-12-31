@@ -20,13 +20,13 @@ KLL Kiibohd .h/.c File Emitter
 
 ### Imports ###
 
-import re
 import sys
 
 from datetime import date
 
 from common.emitter import Emitter, TextEmitter
-from common.hid_dict import kll_hid_lookup_dictionary
+from common.hid_dict import hid_lookup_dictionary
+from common.id import CapId, HIDId, NoneId, ScanCodeId
 
 
 
@@ -46,7 +46,7 @@ class Kiibohd( Emitter, TextEmitter ):
 	'''
 
 	# List of required capabilities
-	requiredCapabilities = {
+	required_capabilities = {
 		'CONS' : 'consCtrlOut',
 		'NONE' : 'noneOut',
 		'SYS'  : 'sysCtrlOut',
@@ -70,6 +70,13 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.pixel_output   = "generatedPixelmap.c"
 		self.def_output     = "kll_defs.h"
 
+		# Convenience
+		self.capabilities = None
+		self.capabilities_index = dict()
+
+		self.use_pixel_map = False # Default to disabling PixelMap (auto-enables if needed)
+
+		# Fill dictionary
 		self.fill_dict = {}
 
 	def command_line_args( self, args ):
@@ -134,8 +141,142 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.generate( self.map_output )
 
 		# Load pixelmap template and generate
-		self.load_template( self.pixel_template )
-		self.generate( self.pixel_output )
+		if self.use_pixel_map:
+			self.load_template( self.pixel_template )
+			self.generate( self.pixel_output )
+
+		# Remove file if it exists, and create an empty file
+		else:
+			open( self.pixel_output, 'w' ).close()
+
+	def byte_split( self, number, total_bytes ):
+		'''
+		Converts and integer number into a defined length list of byte sized integers
+
+		Used to convert a large number into 8 bit chunks so it can fit inside a C byte array.
+		Little endian byte order is used.
+		'''
+		byte_form = number.to_bytes( total_bytes, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
+		# Convert into a list of strings
+		return [ "{0}".format( int( byte ) ) for byte in byte_form ]
+
+	def result_combo_conversion( self, combo=None ):
+		'''
+		Converts a result combo (list of Ids) to the C array string format
+
+		@param combo: List of Ids/capabilities
+		@return: C array string format
+		'''
+		# If result_elem is None, assume 0-length USB code
+		if combo is None:
+			# <single element>, <usbCodeSend capability>, <USB Code 0x00>
+			return "1, {0}, 0x00".format( self.capabilities_index[ self.required_capabilities['USB'] ] )
+
+		# Determine length of combo
+		output = "{0}".format( len( combo ) )
+
+		# Iterate over each trigger identifier
+		for index, identifier in enumerate( combo ):
+			# Lookup capability index
+			cap = "/* XXX INVALID XXX */"
+
+			# HIDId
+			if isinstance( identifier, HIDId ):
+				# Lookup capability index
+				cap_index = self.capabilities_index[ self.required_capabilities[ identifier.second_type ] ]
+				cap_arg = ""
+
+				# Check for a split argument (e.g. Consumer codes)
+				if identifier.width() > 1:
+					cap_arg = ", ".join(
+						self.byte_split( identifier.uid, identifier.width() )
+					)
+
+				# Do not lookup hid define if USB Keycode and >= 0xF0
+				# These are unofficial HID codes, report error
+				elif identifier.second_type == 'USB' and identifier.uid >= 0xF0:
+					print( "{0} '{1}' Invalid USB HID code, missing FuncMap layout (e.g. stdFuncMap, lcdFuncMap)".format(
+						ERROR,
+						identifier
+					) )
+					cap_arg = "/* XXX INVALID {0} */".format( identifier )
+
+				# Otherwise use the C define instead of the number (increases readability)
+				else:
+					try:
+						cap_arg = hid_lookup_dictionary[ ( identifier.second_type, identifier.uid ) ]
+					except KeyError as err:
+						print( "{0} {1} HID lookup kll bug...please report.".format( ERROR, err ) )
+						raise
+
+				cap = "{0}, {1}".format( cap_index, cap_arg )
+
+			# Capability
+			elif isinstance( identifier, CapId ):
+				# Lookup capability index
+				cap_index = self.capabilities_index[ identifier.name ]
+
+				# Check if we need to add arguments to capability
+				if identifier.total_arg_bytes( self.capabilities.data ) > 0:
+					cap_lookup = self.capabilities.data[ identifier.name ].association
+					cap = "{0}".format( cap_index )
+					for arg, lookup in zip( identifier.arg_list, cap_lookup.arg_list ):
+						cap += ", "
+						cap += ", ".join( self.byte_split( arg.name, lookup.width ) )
+
+				# Otherwise, no arguments necessary
+				else:
+					cap = "{0}".format( cap_index )
+
+			# None
+			elif isinstance( identifier, NoneId ):
+				# <single element>, <usbCodeSend capability>, <USB Code 0x00>
+				return "1, {0}, 0x00".format( self.capabilities_index[ self.required_capabilities['USB'] ] )
+
+			# Unknown/Invalid Id
+			else:
+				print( "{0} Unknown identifier -> {1}".format( ERROR, identifier ) )
+
+			# Generate identifier string for element of the combo
+			output += ", {0}".format(
+				cap,
+			)
+
+		return output
+
+	def trigger_combo_conversion( self, combo ):
+		'''
+		Converts a trigger combo (list of Ids) to the C array string format
+
+		@param combo: List of Ids/capabilities
+		@return: C array string format
+		'''
+
+		# Determine length of combo
+		output = "{0}".format( len( combo ) )
+
+		# Iterate over each trigger identifier
+		for index, identifier in enumerate( combo ):
+			# Construct trigger combo
+			trigger = "/* XXX INVALID XXX */"
+
+			# ScanCodeId
+			if isinstance( identifier, ScanCodeId ):
+				# TODO Add support for Analog keys
+				# TODO Add support for LED states
+				# - TODO - Offset for interconnect?
+				trigger = "0x00, 0x01, 0x{0:02X}".format( identifier.uid )
+
+			# Unknown/Invalid Id
+			else:
+				print( "{0} Unknown identifier -> {1}".format( ERROR, identifier ) )
+
+			# Generate identifier string for element of the combo
+			output += ", {0}".format(
+				trigger,
+			)
+
+		return output
 
 	def process( self ):
 		'''
@@ -146,10 +287,20 @@ class Kiibohd( Emitter, TextEmitter ):
 		'''
 		# Acquire Datastructures
 		early_contexts = self.control.stage('DataOrganizationStage').contexts
-		base_context = self.control.stage('DataFinalizationStage').base_context
-		default_context = self.control.stage('DataFinalizationStage').default_context
-		partial_contexts = self.control.stage('DataFinalizationStage').partial_contexts
 		full_context = self.control.stage('DataFinalizationStage').full_context
+
+		reduced_contexts = self.control.stage('DataAnalysisStage').reduced_contexts # Default + Partial
+
+		trigger_index = self.control.stage('DataAnalysisStage').trigger_index
+		trigger_index_reduced = self.control.stage('DataAnalysisStage').trigger_index_reduced
+		result_index = self.control.stage('DataAnalysisStage').result_index
+		trigger_index_reduced_lookup = self.control.stage('DataAnalysisStage').trigger_index_reduced_lookup
+		trigger_index_lookup = self.control.stage('DataAnalysisStage').trigger_index_lookup
+		result_index_lookup = self.control.stage('DataAnalysisStage').result_index_lookup
+		min_scan_code = self.control.stage('DataAnalysisStage').min_scan_code
+		max_scan_code = self.control.stage('DataAnalysisStage').max_scan_code
+		trigger_lists = self.control.stage('DataAnalysisStage').trigger_lists
+		interconnect_offsets = self.control.stage('DataAnalysisStage').interconnect_offsets
 
 
 		# Build string list of compiler arguments
@@ -254,122 +405,58 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.fill_dict['CapabilitiesIndices'] = "typedef enum CapabilityIndex {\n"
 
 		# Sorted by C Function name
-		capabilities = full_context.query( 'NameAssociationExpression', 'Capability' )
-		for dkey, dvalue in sorted( capabilities.data.items(), key=lambda x: x[1].association.name ):
+		self.capabilities = full_context.query( 'NameAssociationExpression', 'Capability' )
+		self.capabilities_index = dict()
+		count = 0
+		for dkey, dvalue in sorted( self.capabilities.data.items(), key=lambda x: x[1].association.name ):
 			funcName = dvalue.association.name
 			argByteWidth = dvalue.association.total_arg_bytes()
 
-			self.fill_dict['CapabilitiesList'] += "\t{{ {0}, {1} }},\n".format( funcName, argByteWidth )
+			self.fill_dict['CapabilitiesList'] += "\t/* {2} */ {{ {0}, {1} }},\n".format( funcName, argByteWidth, count )
 			self.fill_dict['CapabilitiesFuncDecl'] += \
 				"void {0}( uint8_t state, uint8_t stateType, uint8_t *args );\n".format( funcName )
 			self.fill_dict['CapabilitiesIndices'] += "\t{0}_index,\n".format( funcName )
+
+			# Generate index for result lookup
+			self.capabilities_index[ dkey ] = count
+			count += 1
 
 		self.fill_dict['CapabilitiesList'] += "};"
 		self.fill_dict['CapabilitiesIndices'] += "} CapabilityIndex;"
 
 
-		## TODO MOVE ##
-		## Pixel Buffer Setup ##
-		self.fill_dict['PixelBufferSetup'] = "PixelBuf PixelBuffers[] = {\n"
-
-		# Lookup number of buffers
-		bufsize = len( variables.data[ defines.data['Pixel_Buffer_Size'].name ].value )
-		for index in range( bufsize ):
-			# TODO
-			self.fill_dict['PixelBufferSetup'] += "\tPixelBufElem( {0}, {1}, {2}, {3} ),\n".format(
-				0,
-				#variables.data[ defines.data['Pixel_Buffer_Length'].name ].value[ index ],
-				variables.data[ defines.data['Pixel_Buffer_Width'].name ].value[ index ],
-				variables.data[ defines.data['Pixel_Buffer_Size'].name ].value[ index ],
-				#variables.data[ defines.data['Pixel_Buffer_Buffer'].name ].value[ index ],
-				0,
-			)
-		self.fill_dict['PixelBufferSetup'] += "};"
-		print( self.fill_dict['PixelBufferSetup'] )
-
-
-		## Pixel Mapping ##
-		self.fill_dict['PixelMapping'] = ""
-		# TODO
-
-
-		## Pixel Display Mapping ##
-		self.fill_dict['PixelDisplayMapping'] = "const uint8_t Pixel_DisplayMapping[] = {\n"
-		# TODO
-		self.fill_dict['PixelDisplayMapping'] += "};"
-
-
-		## ScanCode to Pixel Mapping ##
-		self.fill_dict['ScanCodeToPixelMapping'] = "const uint8_t Pixel_ScanCodeToPixel[] = {\n"
-		# TODO
-		self.fill_dict['ScanCodeToPixelMapping'] = "};"
-
-
-		## Animations ##
-		self.fill_dict['Animations'] = ""
-		## TODO MOVE END ##
-		return
-
-
 		## Results Macros ##
 		self.fill_dict['ResultMacros'] = ""
 
-		# Iterate through each of the result macros
-		for result in range( 0, len( macros.resultsIndexSorted ) ):
-			self.fill_dict['ResultMacros'] += "Guide_RM( {0} ) = {{ ".format( result )
+		# Iterate through each of the indexed result macros
+		# This is the full set of result macros, layers are handled separately
+		for index, result in enumerate( result_index ):
+			self.fill_dict['ResultMacros'] += "Guide_RM( {0} ) = {{ ".format( index )
 
 			# Add the result macro capability index guide (including capability arguments)
 			# See kiibohd controller Macros/PartialMap/kll.h for exact formatting details
-			for sequence in range( 0, len( macros.resultsIndexSorted[ result ] ) ):
+			for seq_index, sequence in enumerate( result[0].results ):
 				# If the sequence is longer than 1, prepend a sequence spacer
 				# Needed for USB behaviour, otherwise, repeated keys will not work
-				if sequence > 0:
+				if seq_index > 0:
 					# <single element>, <usbCodeSend capability>, <USB Code 0x00>
-					self.fill_dict['ResultMacros'] += "1, {0}, 0x00, ".format( capabilities.getIndex( self.capabilityLookup('USB') ) )
+					self.fill_dict['ResultMacros'] += "{0}, ".format( self.result_combo_conversion() )
 
-				# For each combo in the sequence, add the length of the combo
-				self.fill_dict['ResultMacros'] += "{0}, ".format( len( macros.resultsIndexSorted[ result ][ sequence ] ) )
-
-				# For each combo, add each of the capabilities used and their arguments
-				for combo in range( 0, len( macros.resultsIndexSorted[ result ][ sequence ] ) ):
-					resultItem = macros.resultsIndexSorted[ result ][ sequence ][ combo ]
-
-					# Add the capability index
-					self.fill_dict['ResultMacros'] += "{0}, ".format( capabilities.getIndex( resultItem[0] ) )
-
-					# Add each of the arguments of the capability
-					for arg in range( 0, len( resultItem[1] ) ):
-						# Special cases
-						if isinstance( resultItem[1][ arg ], str ):
-							# If this is a CONSUMER_ element, needs to be split into 2 elements
-							# AC_ and AL_ are other sections of consumer control
-							if re.match( r'^(CONSUMER|AC|AL)_', resultItem[1][ arg ] ):
-								tag = resultItem[1][ arg ].split( '_', 1 )[1]
-								if '_' in tag:
-									tag = tag.replace( '_', '' )
-								try:
-									lookupNum = kll_hid_lookup_dictionary['ConsCode'][ tag ][1]
-								except KeyError as err:
-									print ( "{0} {1} Consumer HID kll bug...please report.".format( ERROR, err ) )
-									raise
-								byteForm = lookupNum.to_bytes( 2, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
-								self.fill_dict['ResultMacros'] += "{0}, {1}, ".format( *byteForm )
-								continue
-
-							# None, fall-through disable
-							elif resultItem[0] is self.capabilityLookup('NONE'):
-								continue
-
-						self.fill_dict['ResultMacros'] += "{0}, ".format( resultItem[1][ arg ] )
+				# Iterate over each combo (element of the sequence)
+				for com_index, combo in enumerate( sequence ):
+					# Convert capability and arguments to output spring
+					self.fill_dict['ResultMacros'] += "{0}, ".format( self.result_combo_conversion( combo ) )
 
 			# If sequence is longer than 1, append a sequence spacer at the end of the sequence
 			# Required by USB to end at sequence without holding the key down
-			if len( macros.resultsIndexSorted[ result ] ) > 1:
+			if len( result[0].results[0] ) > 1:
 				# <single element>, <usbCodeSend capability>, <USB Code 0x00>
-				self.fill_dict['ResultMacros'] += "1, {0}, 0x00, ".format( capabilities.getIndex( self.capabilityLookup('USB') ) )
+				self.fill_dict['ResultMacros'] += "{0}, ".format( self.result_combo_conversion() )
 
 			# Add list ending 0 and end of list
-			self.fill_dict['ResultMacros'] += "0 };\n"
+			self.fill_dict['ResultMacros'] += "0 }}; // {0}\n".format(
+				result[0].result_str()
+			)
 		self.fill_dict['ResultMacros'] = self.fill_dict['ResultMacros'][:-1] # Remove last newline
 
 
@@ -377,8 +464,12 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.fill_dict['ResultMacroList'] = "const ResultMacro ResultMacroList[] = {\n"
 
 		# Iterate through each of the result macros
-		for result in range( 0, len( macros.resultsIndexSorted ) ):
-			self.fill_dict['ResultMacroList'] += "\tDefine_RM( {0} ),\n".format( result )
+		for index, result in enumerate( result_index ):
+			# Include debug string for each result macro
+			self.fill_dict['ResultMacroList'] += "\tDefine_RM( {0} ), // {1}\n".format(
+				index,
+				result[0].result_str()
+			)
 		self.fill_dict['ResultMacroList'] += "};"
 
 
@@ -390,39 +481,40 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.fill_dict['TriggerMacros'] = ""
 
 		# Iterate through each of the trigger macros
-		for trigger in range( 0, len( macros.triggersIndexSorted ) ):
-			self.fill_dict['TriggerMacros'] += "Guide_TM( {0} ) = {{ ".format( trigger )
+		for index, trigger in enumerate( trigger_index_reduced ):
+			self.fill_dict['TriggerMacros'] += "Guide_TM( {0} ) = {{ ".format( index )
 
 			# Add the trigger macro scan code guide
 			# See kiibohd controller Macros/PartialMap/kll.h for exact formatting details
-			for sequence in range( 0, len( macros.triggersIndexSorted[ trigger ][0] ) ):
-				# For each combo in the sequence, add the length of the combo
-				self.fill_dict['TriggerMacros'] += "{0}, ".format( len( macros.triggersIndexSorted[ trigger ][0][ sequence ] ) )
+			for seq_index, sequence in enumerate( trigger[0].triggers ):
 
-				# For each combo, add the key type, key state and scan code
-				for combo in range( 0, len( macros.triggersIndexSorted[ trigger ][0][ sequence ] ) ):
-					triggerItemId = macros.triggersIndexSorted[ trigger ][0][ sequence ][ combo ]
-
-					# Lookup triggerItem in ScanCodeStore
-					triggerItemObj = macros.scanCodeStore[ triggerItemId ]
-					triggerItem = triggerItemObj.offset( macros.interconnectOffset )
-
-					# TODO Add support for Analog keys
-					# TODO Add support for LED states
-					self.fill_dict['TriggerMacros'] += "0x00, 0x01, 0x{0:02X}, ".format( triggerItem )
+				# Iterate over each combo (element of the sequence)
+				# For each combo, add the length, key type, key state and scan code
+				for com_index, combo in enumerate( sequence ):
+					# Convert each combo into an array of bytes
+					self.fill_dict['TriggerMacros'] += "{0}, ".format(
+						self.trigger_combo_conversion( combo )
+					)
 
 			# Add list ending 0 and end of list
-			self.fill_dict['TriggerMacros'] += "0 };\n"
-		self.fill_dict['TriggerMacros'] = self.fill_dict['TriggerMacros'][ :-1 ] # Remove last newline
+			self.fill_dict['TriggerMacros'] += "0 }}; // {0}\n".format(
+				trigger[0].trigger_str()
+			)
+		self.fill_dict['TriggerMacros'] = self.fill_dict['TriggerMacros'][:-1] # Remove last newline
 
 
 		## Trigger Macro List ##
 		self.fill_dict['TriggerMacroList'] = "const TriggerMacro TriggerMacroList[] = {\n"
 
 		# Iterate through each of the trigger macros
-		for trigger in range( 0, len( macros.triggersIndexSorted ) ):
-			# Use TriggerMacro Index, and the corresponding ResultMacro Index
-			self.fill_dict['TriggerMacroList'] += "\tDefine_TM( {0}, {1} ),\n".format( trigger, macros.triggersIndexSorted[ trigger ][1] )
+		for index, trigger in enumerate( trigger_index ):
+			# Use TriggerMacro Index, and the corresponding ResultMacro Index, including debug string
+			self.fill_dict['TriggerMacroList'] += "\t/* {3} */ Define_TM( {0}, {1} ), // {2}\n".format(
+				trigger_index_reduced_lookup[ trigger[0].sort_trigger() ],
+				result_index_lookup[ trigger[0].sort_result() ],
+				trigger[0],
+				index
+			)
 		self.fill_dict['TriggerMacroList'] += "};"
 
 
@@ -431,18 +523,22 @@ class Kiibohd( Emitter, TextEmitter ):
 
 
 		## Max Scan Code ##
-		self.fill_dict['MaxScanCode'] = "#define MaxScanCode 0x{0:X}".format( macros.overallMaxScanCode )
+		self.fill_dict['MaxScanCode'] = "#define MaxScanCode 0x{0:X}".format( max( max_scan_code ) )
 
 
 		## Interconnect ScanCode Offset List ##
 		self.fill_dict['ScanCodeInterconnectOffsetList'] = "const uint8_t InterconnectOffsetList[] = {\n"
-		for offset in range( 0, len( macros.interconnectOffset ) ):
-			self.fill_dict['ScanCodeInterconnectOffsetList'] += "\t0x{0:02X},\n".format( macros.interconnectOffset[ offset ] )
+		for index, offset in enumerate( interconnect_offsets ):
+			self.fill_dict['ScanCodeInterconnectOffsetList'] += "\t0x{0:02X},\n".format(
+				offset
+			)
 		self.fill_dict['ScanCodeInterconnectOffsetList'] += "};"
 
 
 		## Max Interconnect Nodes ##
-		self.fill_dict['InterconnectNodeMax'] = "#define InterconnectNodeMax 0x{0:X}\n".format( len( macros.interconnectOffset ) )
+		self.fill_dict['InterconnectNodeMax'] = "#define InterconnectNodeMax 0x{0:X}\n".format(
+			len( interconnect_offsets )
+		)
 
 
 		## Default Layer and Default Layer Scan Map ##
@@ -450,16 +546,19 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.fill_dict['DefaultLayerScanMap'] = "const nat_ptr_t *default_scanMap[] = {\n"
 
 		# Iterate over triggerList and generate a C trigger array for the default map and default map array
-		for triggerList in range( macros.firstScanCode[0], len( macros.triggerList[0] ) ):
+		for index, trigger_list in enumerate( trigger_lists[0][ min_scan_code[0]: ] ):
 			# Generate ScanCode index and triggerList length
-			self.fill_dict['DefaultLayerTriggerList'] += "Define_TL( default, 0x{0:02X} ) = {{ {1}".format( triggerList, len( macros.triggerList[0][ triggerList ] ) )
+			self.fill_dict['DefaultLayerTriggerList'] += "Define_TL( default, 0x{0:02X} ) = {{ {1}".format(
+				index,
+				len( trigger_list )
+			)
 
 			# Add scanCode trigger list to Default Layer Scan Map
-			self.fill_dict['DefaultLayerScanMap'] += "default_tl_0x{0:02X}, ".format( triggerList )
+			self.fill_dict['DefaultLayerScanMap'] += "default_tl_0x{0:02X}, ".format( index )
 
 			# Add each item of the trigger list
-			for triggerItem in macros.triggerList[0][ triggerList ]:
-				self.fill_dict['DefaultLayerTriggerList'] += ", {0}".format( triggerItem )
+			for trigger_code in trigger_list:
+				self.fill_dict['DefaultLayerTriggerList'] += ", {0}".format( trigger_code )
 
 			self.fill_dict['DefaultLayerTriggerList'] += " };\n"
 		self.fill_dict['DefaultLayerTriggerList'] = self.fill_dict['DefaultLayerTriggerList'][:-1] # Remove last newline
@@ -472,23 +571,47 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.fill_dict['PartialLayerScanMaps'] = ""
 
 		# Iterate over each of the layers, excluding the default layer
-		for layer in range( 1, len( macros.triggerList ) ):
+		for lay_index, layer in enumerate( trigger_lists ):
+			# Skip first layer (already done)
+			if lay_index == 0:
+				continue
+
 			# Prepare each layer
-			self.fill_dict['PartialLayerScanMaps'] += "// Partial Layer {0}\n".format( layer )
-			self.fill_dict['PartialLayerScanMaps'] += "const nat_ptr_t *layer{0}_scanMap[] = {{\n".format( layer )
-			self.fill_dict['PartialLayerTriggerLists'] += "// Partial Layer {0}\n".format( layer )
+			self.fill_dict['PartialLayerScanMaps'] += "// Partial Layer {0}\n".format( lay_index )
+			self.fill_dict['PartialLayerScanMaps'] += "const nat_ptr_t *layer{0}_scanMap[] = {{\n".format( lay_index )
+			self.fill_dict['PartialLayerTriggerLists'] += "// Partial Layer {0}\n".format( lay_index )
 
 			# Iterate over triggerList and generate a C trigger array for the layer
-			for triggerList in range( macros.firstScanCode[ layer ], len( macros.triggerList[ layer ] ) ):
-				# Generate ScanCode index and triggerList length
-				self.fill_dict['PartialLayerTriggerLists'] += "Define_TL( layer{0}, 0x{1:02X} ) = {{ {2}".format( layer, triggerList, len( macros.triggerList[ layer ][ triggerList ] ) )
+			for trig_index, trigger_list in enumerate( layer[ min_scan_code[lay_index]:max_scan_code[lay_index] ] ):
+				# Generate ScanCode index and layer
+				self.fill_dict['PartialLayerTriggerLists'] += \
+					"Define_TL( layer{0}, 0x{1:02X} ) = {{".format(
+						lay_index,
+						trig_index,
+				)
+
+				# TriggerList length
+				if trigger_list is not None:
+					self.fill_dict['PartialLayerTriggerLists'] += " {0}".format(
+						len( trigger_list )
+					)
+
+				# Blank trigger (Dropped), zero length
+				else:
+					self.fill_dict['PartialLayerTriggerLists'] += " 0"
 
 				# Add scanCode trigger list to Default Layer Scan Map
-				self.fill_dict['PartialLayerScanMaps'] += "layer{0}_tl_0x{1:02X}, ".format( layer, triggerList )
+				self.fill_dict['PartialLayerScanMaps'] += "layer{0}_tl_0x{1:02X}, ".format(
+					lay_index,
+					trig_index,
+				)
 
 				# Add each item of the trigger list
-				for trigger in macros.triggerList[ layer ][ triggerList ]:
-					self.fill_dict['PartialLayerTriggerLists'] += ", {0}".format( trigger )
+				if trigger_list is not None:
+					for trigger_code in trigger_list:
+						self.fill_dict['PartialLayerTriggerLists'] += ", {0}".format(
+							trigger_code
+						)
 
 				self.fill_dict['PartialLayerTriggerLists'] += " };\n"
 			self.fill_dict['PartialLayerTriggerLists'] += "\n"
@@ -502,25 +625,145 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.fill_dict['LayerIndexList'] = "const Layer LayerIndex[] = {\n"
 
 		# Iterate over each layer, adding it to the list
-		for layer in range( 0, len( macros.triggerList ) ):
-			# Lookup first scancode in map
-			firstScanCode = macros.firstScanCode[ layer ]
+		for layer, layer_context in enumerate( reduced_contexts ):
+			# Generate stacked name (ignore capabilities.kll and scancode_map.kll)
+			stack_name = ""
+			for name in layer_context.files():
+				if name not in ["capabilities.kll", "scancode_map.kll"]:
+					stack_name += "{0} + ".format( name )
 
-			# Generate stacked name
-			stackName = ""
-			if '*NameStack' in variables.layerVariables[ layer ].keys():
-				for name in range( 0, len( variables.layerVariables[ layer ]['*NameStack'] ) ):
-					stackName += "{0} + ".format( variables.layerVariables[ layer ]['*NameStack'][ name ] )
-				stackName = stackName[:-3]
+			# Apply default name if using standard layout
+			if stack_name == "":
+				stack_name = "StandardLayer"
+			else:
+				stack_name = stack_name[:-3]
 
 			# Default map is a special case, always the first index
 			if layer == 0:
-				self.fill_dict['LayerIndexList'] += '\tLayer_IN( default_scanMap, "D: {1}", 0x{0:02X} ),\n'.format( firstScanCode, stackName )
+				self.fill_dict['LayerIndexList'] += '\tLayer_IN( default_scanMap, "D: {1}", 0x{0:02X} ),\n'.format( min_scan_code[ layer ], stack_name )
 			else:
-				self.fill_dict['LayerIndexList'] += '\tLayer_IN( layer{0}_scanMap, "{0}: {2}", 0x{1:02X} ),\n'.format( layer, firstScanCode, stackName )
+				self.fill_dict['LayerIndexList'] += '\tLayer_IN( layer{0}_scanMap, "{0}: {2}", 0x{1:02X} ),\n'.format( layer, min_scan_code[ layer ], stack_name )
 		self.fill_dict['LayerIndexList'] += "};"
 
 
 		## Layer State ##
 		self.fill_dict['LayerState'] = "uint8_t LayerState[ LayerNum ];"
+
+
+		## Pixel Buffer Setup ##
+		# Only add sections if Pixel Buffer is defined
+		self.use_pixel_map = 'Pixel_Buffer_Size' in defines.data.keys()
+		if self.use_pixel_map:
+			self.fill_dict['PixelBufferSetup'] = "PixelBuf Pixel_Buffers[] = {\n"
+
+			# Lookup number of buffers
+			bufsize = len( variables.data[ defines.data['Pixel_Buffer_Size'].name ].value )
+			for index in range( bufsize ):
+				self.fill_dict['PixelBufferSetup'] += "\tPixelBufElem( {0}, {1}, {2}, {3} ),\n".format(
+					variables.data[ defines.data['Pixel_Buffer_Length'].name ].value[ index ],
+					variables.data[ defines.data['Pixel_Buffer_Width'].name ].value[ index ],
+					variables.data[ defines.data['Pixel_Buffer_Size'].name ].value[ index ],
+					variables.data[ defines.data['Pixel_Buffer_Buffer'].name ].value[ index ],
+				)
+			self.fill_dict['PixelBufferSetup'] += "};"
+
+			# Compute total number of channels
+			totalchannels = "{0} + {1}".format(
+				variables.data[ defines.data['Pixel_Buffer_Length'].name ].value[ bufsize - 1],
+				variables.data[ defines.data['Pixel_Buffer_Size'].name ].value[ bufsize - 1],
+			)
+
+
+			## Pixel Mapping ##
+			## ScanCode to Pixel Mapping ##
+			pixel_indices = full_context.query( 'MapExpression', 'PixelChannel' )
+
+			self.fill_dict['PixelMapping'] = "const PixelElement Pixel_Mapping[] = {\n"
+			self.fill_dict['ScanCodeToPixelMapping'] = "const uint8_t Pixel_ScanCodeToPixel[] = {\n"
+
+			last_uid = 0
+			for key, item in sorted( pixel_indices.data.items(), key=lambda x: x[1].pixel.uid.index ):
+				last_uid += 1
+				# If last_uid isn't directly before, insert placeholder(s)
+				while last_uid != item.pixel.uid.index:
+					self.fill_dict['PixelMapping'] += "\tPixel_Blank(), // {0}\n".format( last_uid )
+					self.fill_dict['ScanCodeToPixelMapping'] += "\t0, // {0}\n".format( last_uid )
+					last_uid += 1
+
+				# Lookup width and number of channels
+				width = item.pixel.channels[0].width
+				channels = len( item.pixel.channels )
+				self.fill_dict['PixelMapping'] += "\t{{ {0}, {1}, {{".format( width, channels )
+
+				# Iterate over the channels (assuming same width)
+				for ch in range( channels ):
+					# Add comma if not first channel
+					if ch != 0:
+						self.fill_dict['PixelMapping'] += ","
+					self.fill_dict['PixelMapping'] += "{0}".format( item.pixel.channels[ch].uid )
+				self.fill_dict['PixelMapping'] += "}} }}, // {0}\n".format( key )
+
+				# Add ScanCodeToPixelMapping entry
+				self.fill_dict['ScanCodeToPixelMapping'] += "\t{0}, // {1}\n".format( item.position.uid, key )
+			totalpixels = last_uid
+			self.fill_dict['PixelMapping'] += "};"
+			self.fill_dict['ScanCodeToPixelMapping'] += "};"
+
+
+			## Pixel Display Mapping ##
+			#self.fill_dict['PixelDisplayMapping'] = "const uint8_t Pixel_DisplayMapping[] = {\n"
+			# TODO
+			#self.fill_dict['PixelDisplayMapping'] += "};"
+
+
+			## Animations ##
+			# TODO
+			#self.fill_dict['Animations'] = ""
+
+
+		## ScanCode Physical Positions ##
+		scancode_physical = full_context.query( 'DataAssociationExpression', 'ScanCodePosition' )
+		self.fill_dict['KeyPositions'] = "const Position Key_Positions[] = {\n"
+		for key, item in sorted( scancode_physical.data.items(), key=lambda x: x[1].association[0].uid ):
+			entry = dict()
+			# Acquire each dimension
+			entry['x'] = item.association[0].x
+			entry['y'] = item.association[0].y
+			entry['z'] = item.association[0].z
+			entry['rx'] = item.association[0].rx
+			entry['ry'] = item.association[0].ry
+			entry['rz'] = item.association[0].rz
+
+			# Check each dimension, set to 0 if None
+			for k in entry.keys():
+				if entry[ k ] is None:
+					entry[ k ] = 0.0
+				else:
+					entry[ k ] = float( entry[ k ] )
+
+			# Generate PositionEntry
+			self.fill_dict['KeyPositions'] += "\tPositionEntry( {0}, {1}, {2}, {3}, {4}, {5} ), // {6}\n".format(
+				entry['x'],
+				entry['y'],
+				entry['z'],
+				entry['rx'],
+				entry['ry'],
+				entry['rz'],
+				item,
+			)
+		self.fill_dict['KeyPositions'] += "};"
+
+
+		## KLL Defines ##
+		self.fill_dict['KLLDefines'] = "";
+		self.fill_dict['KLLDefines'] += "#define CapabilitiesNum_KLL {0}\n".format( len( self.capabilities_index ) )
+		self.fill_dict['KLLDefines'] += "#define LayerNum_KLL {0}\n".format( len( reduced_contexts ) )
+		self.fill_dict['KLLDefines'] += "#define ResultMacroNum_KLL {0}\n".format( len( result_index ) )
+		self.fill_dict['KLLDefines'] += "#define TriggerMacroNum_KLL {0}\n".format( len( trigger_index ) )
+
+		# Only add defines if Pixel Buffer is defined
+		if self.use_pixel_map:
+			self.fill_dict['KLLDefines'] += "#define Pixel_BuffersLen_KLL {0}\n".format( bufsize )
+			self.fill_dict['KLLDefines'] += "#define Pixel_TotalChannels_KLL {0}\n".format( totalchannels )
+			self.fill_dict['KLLDefines'] += "#define Pixel_TotalPixels_KLL {0}\n".format( totalpixels )
 

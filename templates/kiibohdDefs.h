@@ -26,15 +26,14 @@
 
 
 
-// ----- KLL Variables -----
-<|VariableInformation|>
-
-
-
 // ----- Defines -----
 
 // -- Interconnect Node Maximum --
 <|InterconnectNodeMax|>
 
+// -- Capability / KLL Defines --
 <|Defines|>
+
+// -- Built-in Defines --
+<|KLLDefines|>
 

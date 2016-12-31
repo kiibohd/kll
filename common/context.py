@@ -168,13 +168,14 @@ class MergeContext( Context ):
 		if base_context.__class__.__name__ == 'PartialMapContext':
 			self.layer = base_context.layer
 
-	def merge( self, merge_in, debug ):
+	def merge( self, merge_in, map_type, debug ):
 		'''
 		Merge in context
 
 		Another MergeContext can be merged into a MergeContext
 
 		@param merge_in: Context to merge in to this one
+		@param map_type: Used for map specific merges (e.g. BaseMap reductions)
 		@param debug:    Enable debug out
 		'''
 		# Append to context list
@@ -183,6 +184,7 @@ class MergeContext( Context ):
 		# Merge context
 		self.organization.merge(
 			merge_in.organization,
+			map_type,
 			debug
 		)
 
@@ -190,13 +192,20 @@ class MergeContext( Context ):
 		if merge_in.__class__.__name__ == 'PartialMapContext':
 			self.layer = merge_in.layer
 
-	def reduction( self ):
+	def cleanup( self, debug=False ):
+		'''
+		Post-processing step for merges that may need to remove some data in the organization.
+		Mainly used for dropping BaseMapContext expressions after generating a PartialMapContext.
+		'''
+		self.organization.cleanup( debug )
+
+	def reduction( self, debug=False ):
 		'''
 		Simplifies datastructure
 
 		NOTE: This will remove data, therefore, context is lost
 		'''
-		self.organization.reduction()
+		self.organization.reduction( debug )
 
 	def paths( self ):
 		'''

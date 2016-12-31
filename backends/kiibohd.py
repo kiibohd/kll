@@ -122,6 +122,9 @@ class Backend( BackendBase ):
 		# Output separate tables per file, per table and overall
 		# TODO
 
+		# XXX Backport
+		self.fill_dict['KeyPositions'] = ""
+
 
 		## Defines ##
 		self.fill_dict['Defines'] = ""

@@ -59,6 +59,9 @@ class Expression:
 		self.lparam_sub_tokens = []
 		self.rparam_sub_tokens = []
 
+		# BaseMap expression
+		self.base_map = False
+
 		# Mutate class into the desired type
 		self.__class__ = {
 			'=>' : NameAssociationExpression,
@@ -522,6 +525,21 @@ class MapExpression( Expression ):
 	pixels = None
 	position = None
 
+	def __init__( self, triggers, operator, results ):
+		'''
+		Initialize MapExpression
+
+		Used when copying MapExpressions from different expressions
+
+		@param triggers: Sequence of combos of ranges of namedtuples
+		@param operator: Type of map operation
+		@param results: Sequence of combos of ranges of namedtuples
+		'''
+		self.type = 'ScanCode'
+		self.triggers = triggers
+		self.operator = operator
+		self.results = results
+
 	## Setters ##
 	def scanCode( self, triggers, operator, results ):
 		'''
@@ -656,6 +674,51 @@ class MapExpression( Expression ):
 
 		return output
 
+	def trigger_id_list( self ):
+		'''
+		Returns a list of ids within the sequence of combos
+		May contain duplicates
+		'''
+		id_list = []
+
+		# Iterate over each trigger/result variants (expanded from ranges)
+		for sequence in self.triggers:
+			# Iterate over each combo (element of the sequence)
+			for combo in sequence:
+				# Iterate over each trigger identifier
+				for identifier in combo:
+					id_list.append( identifier )
+
+		return id_list
+
+	def min_trigger_uid( self ):
+		'''
+		Returns the min numerical uid
+		Used for ScanCodes
+		'''
+		min_uid = 0xFFFF
+
+		# Iterate over list of identifiers in trigger
+		for identifier in self.trigger_id_list():
+			if identifier.type == 'ScanCode' and identifier.uid < min_uid:
+				min_uid = identifier.uid
+
+		return min_uid
+
+	def max_trigger_uid( self ):
+		'''
+		Returns the max numerical uid
+		Used for ScanCodes
+		'''
+		max_uid = 0
+
+		# Iterate over list of identifiers in trigger
+		for identifier in self.trigger_id_list():
+			if identifier.type == 'ScanCode' and identifier.uid > max_uid:
+				max_uid = identifier.uid
+
+		return max_uid
+
 	def elems( self ):
 		'''
 		Return number of trigger and result elements
@@ -722,6 +785,32 @@ class MapExpression( Expression ):
 			self.sequencesOfCombosOfIds( self.triggers ),
 			self.operator,
 			self.sequencesOfCombosOfIds( self.results ),
+		)
+
+	def sort_trigger( self ):
+		'''
+		Returns sortable trigger
+		'''
+		if self.type == 'PixelChannel':
+			return "{0}".format( self.pixel.kllify() )
+
+		return "{0}".format(
+			self.sequencesOfCombosOfIds_kll( self.triggers )[0],
+		)
+
+	def sort_result( self ):
+		'''
+		Returns sortable result
+		'''
+		if self.type == 'PixelChannel':
+			result = self.position
+			# Handle None pixel mapping case
+			if isinstance( self.position, list ):
+				result = self.sequencesOfCombosOfIds_kll( self.position )[0]
+			return "{0}".format( result )
+
+		return "{0}".format(
+			self.sequencesOfCombosOfIds_kll( self.results )[0],
 		)
 
 	def kllify( self ):

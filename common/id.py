@@ -76,6 +76,13 @@ class HIDId( Id, Schedule ):
 		'IndCode'  : 'IND',
 	}
 
+	type_width = {
+		'USBCode'  : 1,
+		'SysCode'  : 1,
+		'ConsCode' : 2,
+		'IndCode'  : 1,
+	}
+
 	def __init__( self, type, uid ):
 		'''
 		@param type: String type of the Id
@@ -96,6 +103,15 @@ class HIDId( Id, Schedule ):
 		# TODO Validate HID specifier
 		#print ( "{0} Unknown HID Specifier '{1}'".format( ERROR, type ) )
 		#raise
+
+	def width( self ):
+		'''
+		Returns the bit width of the HIDId
+
+		This is the maximum number of bytes required for each type of HIDId as per the USB spec.
+		Generally this is just 1 byte, however, Consumer elements (ConsCode) requires 2 bytes.
+		'''
+		return self.type_width[ self.type ]
 
 	def __repr__( self ):
 		'''
@@ -417,16 +433,24 @@ class CapId( Id ):
 
 		return "{0}({1})".format( self.name, arg_string )
 
-	def total_arg_bytes( self ):
+	def total_arg_bytes( self, capabilities_dict=None ):
 		'''
 		Calculate the total number of bytes needed for the args
+
+		@param capabilities_dict: Dictionary of capabilities used, just in case no widths have been assigned
 
 		return: Number of bytes
 		'''
 		# Zero if no args
 		total_bytes = 0
-		for arg in self.arg_list:
-			total_bytes += arg.width
+		for index, arg in enumerate( self.arg_list ):
+			# Lookup actual width if necessary (wasn't set explicitly)
+			if capabilities_dict is not None and arg.width is None:
+				total_bytes += capabilities_dict[ self.name ].association.arg_list[ index ].width
+
+			# Otherwise use the set width
+			else:
+				total_bytes += arg.width
 
 		return total_bytes
 
