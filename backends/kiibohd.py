@@ -124,6 +124,7 @@ class Backend( BackendBase ):
 
 		# XXX Backport
 		self.fill_dict['KeyPositions'] = ""
+		self.fill_dict['KLLDefines'] = ""
 
 
 		## Defines ##
