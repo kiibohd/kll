@@ -3,7 +3,7 @@
 KLL Modifier Containers
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -106,6 +106,21 @@ class PixelModifier:
 		if self.operator is None:
 			return "{0}".format( self.value )
 		return "{0}{1}".format( self.operator, self.value )
+
+	def operator_type( self ):
+		'''
+		Returns operator type
+		'''
+		types = {
+			None : 'Set',
+			'+'  : 'Add',
+			'-'  : 'Subtract',
+			'+:' : 'NoRoll_Add',
+			'-:' : 'NoRoll_Subtract',
+			'<<' : 'LeftShift',
+			'>>' : 'RightShift',
+		}
+		return types[ self.operator ]
 
 	def kllify( self ):
 		'''

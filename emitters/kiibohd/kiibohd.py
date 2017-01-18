@@ -3,7 +3,7 @@
 KLL Kiibohd .h/.c File Emitter
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -278,6 +278,29 @@ class Kiibohd( Emitter, TextEmitter ):
 
 		return output
 
+	def animation_frameset( self, name, aniframe ):
+		'''
+		Generates an animation frame set, and may also generate filler frames if necessary
+
+		@param name:     Name for animation
+		@param aniframe: Animation frame data
+		'''
+		# Frame set header
+		self.fill_dict['AnimationFrames'] += "//// {0} Animation Frame Set ////\n".format(
+			name
+		)
+		self.fill_dict['AnimationFrames'] += "const uint8_t *{0}_frames[] = {{".format(
+			name
+		)
+
+		# Generate entry for each of the frames (even blank inbetweens)
+		for index in range( 1, aniframe + 1 ):
+			self.fill_dict['AnimationFrames'] += "\n\t{0}_frame{1},".format(
+				name,
+				index
+			)
+		self.fill_dict['AnimationFrames'] += "\n\t0\n};\n\n\n"
+
 	def process( self ):
 		'''
 		Emitter Processing
@@ -301,6 +324,9 @@ class Kiibohd( Emitter, TextEmitter ):
 		max_scan_code = self.control.stage('DataAnalysisStage').max_scan_code
 		trigger_lists = self.control.stage('DataAnalysisStage').trigger_lists
 		interconnect_offsets = self.control.stage('DataAnalysisStage').interconnect_offsets
+
+		pixel_display_mapping = self.control.stage('DataAnalysisStage').pixel_display_mapping
+		pixel_display_params = self.control.stage('DataAnalysisStage').pixel_display_params
 
 
 		# Build string list of compiler arguments
@@ -547,18 +573,23 @@ class Kiibohd( Emitter, TextEmitter ):
 
 		# Iterate over triggerList and generate a C trigger array for the default map and default map array
 		for index, trigger_list in enumerate( trigger_lists[0][ min_scan_code[0]: ] ):
+			trigger_list_len = 0
+			if trigger_list is not None:
+				trigger_list_len = len( trigger_list )
+
 			# Generate ScanCode index and triggerList length
 			self.fill_dict['DefaultLayerTriggerList'] += "Define_TL( default, 0x{0:02X} ) = {{ {1}".format(
 				index,
-				len( trigger_list )
+				trigger_list_len
 			)
 
 			# Add scanCode trigger list to Default Layer Scan Map
 			self.fill_dict['DefaultLayerScanMap'] += "default_tl_0x{0:02X}, ".format( index )
 
 			# Add each item of the trigger list
-			for trigger_code in trigger_list:
-				self.fill_dict['DefaultLayerTriggerList'] += ", {0}".format( trigger_code )
+			if trigger_list_len > 0:
+				for trigger_code in trigger_list:
+					self.fill_dict['DefaultLayerTriggerList'] += ", {0}".format( trigger_code )
 
 			self.fill_dict['DefaultLayerTriggerList'] += " };\n"
 		self.fill_dict['DefaultLayerTriggerList'] = self.fill_dict['DefaultLayerTriggerList'][:-1] # Remove last newline
@@ -703,6 +734,10 @@ class Kiibohd( Emitter, TextEmitter ):
 					self.fill_dict['PixelMapping'] += "{0}".format( item.pixel.channels[ch].uid )
 				self.fill_dict['PixelMapping'] += "}} }}, // {0}\n".format( key )
 
+				# Skip if not mapped to a scancode
+				if isinstance( item.position, list ):
+					continue
+
 				# Add ScanCodeToPixelMapping entry
 				self.fill_dict['ScanCodeToPixelMapping'] += "\t{0}, // {1}\n".format( item.position.uid, key )
 			totalpixels = last_uid
@@ -711,14 +746,143 @@ class Kiibohd( Emitter, TextEmitter ):
 
 
 			## Pixel Display Mapping ##
-			#self.fill_dict['PixelDisplayMapping'] = "const uint8_t Pixel_DisplayMapping[] = {\n"
-			# TODO
-			#self.fill_dict['PixelDisplayMapping'] += "};"
+			self.fill_dict['PixelDisplayMapping'] = "const uint8_t Pixel_DisplayMapping[] = {\n"
+			for y_list in pixel_display_mapping:
+				self.fill_dict['PixelDisplayMapping'] += \
+					",".join( "{0: >3}".format( x ) for x in y_list ) + ",\n"
+			self.fill_dict['PixelDisplayMapping'] += "};"
 
 
 			## Animations ##
-			# TODO
-			#self.fill_dict['Animations'] = ""
+			# TODO - Use reduced_contexts and generate per-layer (naming gets tricky)
+			#        Currently using full_context which is not as configurable
+			# TODO - Generate initial/default modifier table
+			self.fill_dict['Animations'] = "const uint8_t **Pixel_Animations[] = {"
+			animations = full_context.query( 'DataAssociationExpression', 'Animation' )
+			for key, animation in sorted( animations.data.items() ):
+				self.fill_dict['Animations'] += "\n\t{0}_frames,".format( animation.association.name )
+			self.fill_dict['Animations'] += "\n};"
+
+
+			## Animation Frames ##
+			# TODO - Use reduced_contexts and generate per-layer (naming gets tricky)
+			#        Currently using full_context which is not as configurable
+			self.fill_dict['AnimationFrames'] = ""
+			animation_frames = full_context.query( 'DataAssociationExpression', 'AnimationFrame' )
+			prev_aniframe_name = ""
+			prev_aniframe = 0
+			for key, aniframe in sorted( animation_frames.data.items(), key=lambda x: ( x[1].association[0].name, x[1].association[0].index ) ):
+				aniframeid = aniframe.association[0]
+				aniframedata = aniframe.value
+				name = aniframeid.name
+
+				# Generate frame-set
+				if prev_aniframe_name != "" and name != prev_aniframe_name:
+					self.animation_frameset( prev_aniframe_name, prev_aniframe )
+
+					# Reset frame count
+					prev_aniframe = 0
+
+				# Fill in frames if necessary
+				while aniframeid.index > prev_aniframe + 1:
+					prev_aniframe += 1
+					self.fill_dict['AnimationFrames'] += "const uint8_t *{0}_frame{1} = {{ PixelAddressType_End }};\n".format(
+						name,
+						prev_aniframe
+					)
+				prev_aniframe_name = name
+
+				# Address type lookup for frames
+				# See Macros/PixelMap/pixel.h for list of types
+				address_type = {
+					'PixelAddressId_Index'              : 'PixelAddressType_Index',
+					'PixelAddressId_Rect'               : 'PixelAddressType_Rect',
+					'PixelAddressId_ColumnFill'         : 'PixelAddressType_ColumnFill',
+					'PixelAddressId_RowFill'            : 'PixelAddressType_RowFill',
+					'PixelAddressId_ScanCode'           : 'PixelAddressType_ScanCode',
+					'PixelAddressId_RelativeRect'       : 'PixelAddressType_RelativeRect',
+					'PixelAddressId_RelativeColumnFill' : 'PixelAddressType_RelativeColumnFill',
+					'PixelAddressId_RelativeRowFill'    : 'PixelAddressType_RelativeRowFill',
+				}
+
+				# Frame information
+				self.fill_dict['AnimationFrames'] += "// {0}".format(
+					aniframe.kllify()
+				)
+
+				# Generate frame
+				self.fill_dict['AnimationFrames'] += "\nconst uint8_t {0}_frame{1}[] = {{".format(
+					name,
+					aniframeid.index
+				)
+				for elem in aniframedata:
+					# TODO Determine widths (possibly do checks at an earlier stage to validate)
+
+					# Select pixel address type
+					self.fill_dict['AnimationFrames'] += "\n\t{0},".format(
+						address_type[ elem[0].uid.inferred_type() ]
+					)
+
+					# For each channel select a pixel address
+					channels = elem[0].uid.uid_set()
+					channel_str = "/* UNKNOWN CHANNEL {0} */".format( len( channels ) )
+					if len( channels ) == 1:
+						channel_str = " /*{0}*/{1},".format(
+							channels[0],
+							",".join( self.byte_split( channels[0], 4 ) )
+						)
+					elif len( channels ) == 2:
+						channel_str = ""
+						for index, ch in enumerate( channels ):
+							value = 0
+
+							# Convert to pixelmap position as we defined a percentage
+							if isinstance( ch, float ):
+								# Calculate percentage of displaymap
+								if index == 0:
+									value = (pixel_display_params['Columns'] - 1) * ch
+								elif index == 1:
+									value = (pixel_display_params['Rows'] - 1) * ch
+
+								value = int( round( value ) )
+
+							# No value, set to 0
+							elif ch is None:
+								value = 0
+
+							# Otherwise it's an integer
+							else:
+								value = int( ch )
+
+							channel_str += " /*{0}*/{1},".format(
+								ch, ",".join( self.byte_split( value, 2 ) ),
+							)
+					self.fill_dict['AnimationFrames'] += channel_str
+
+					# For each channel, select an operator and value
+					for pixelmod in elem[0].modifiers:
+						# Set operator type
+						channel_str = " PixelChange_{0},".format(
+							pixelmod.operator_type()
+						)
+
+						# Set channel value
+						# TODO Support non-8bit values
+						channel_str += " {0},".format( pixelmod.value )
+
+						self.fill_dict['AnimationFrames'] += channel_str
+				self.fill_dict['AnimationFrames'] += "\n\tPixelAddressType_End\n};\n\n"
+
+				# Set frame number, for next frame evaluation
+				prev_aniframe = aniframeid.index
+
+			# Last frame set
+			if prev_aniframe_name != "":
+				self.animation_frameset( prev_aniframe_name, prev_aniframe )
+
+
+		## LED Buffer Struct ##
+		self.fill_dict['LEDBufferStruct'] = variables.data['LED_BufferStruct'].value
 
 
 		## ScanCode Physical Positions ##
@@ -766,4 +930,10 @@ class Kiibohd( Emitter, TextEmitter ):
 			self.fill_dict['KLLDefines'] += "#define Pixel_BuffersLen_KLL {0}\n".format( bufsize )
 			self.fill_dict['KLLDefines'] += "#define Pixel_TotalChannels_KLL {0}\n".format( totalchannels )
 			self.fill_dict['KLLDefines'] += "#define Pixel_TotalPixels_KLL {0}\n".format( totalpixels )
+			self.fill_dict['KLLDefines'] += "#define Pixel_DisplayMapping_Cols_KLL {0}\n".format(
+				pixel_display_params['Columns']
+			)
+			self.fill_dict['KLLDefines'] += "#define Pixel_DisplayMapping_Rows_KLL {0}\n".format(
+				pixel_display_params['Rows']
+			)
 

@@ -1,0 +1,43 @@
+# Animation Example Configuration
+
+Name = Animation Example;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2017";
+KLL = 0.5;
+
+# Modified Date
+Date = 2017-01-01;
+
+
+### Animations ###
+
+# Pixel index 1 test
+A[testanimation] <= stop; # initially stopped
+A[testanimation, 1] <= P[1](30,70,120);
+A[testanimation, 2] <= P[1](0,0,0);
+A[testanimation, 3] <= P[1](60,90,140);
+
+# Pixel clear test (scancodes)
+A[clear_pixels] <= stop; # initially stopped
+A[clear_pixels, 1] <=
+	S[18](0,0,0),
+	S[19](0,0,0),
+	S[20](0,0,0),
+	S[29](0,0,0),
+	S[38](0,0,0);
+
+# Rainbow, static interpolation test
+A[rainbow_static_fill_interp] <= start, interp:on;
+A[rainbow_static_fill_interp, 1] <=
+	P[c:0%](0,255,0),
+	P[c:25%](255,255,0),
+	P[c:50%](255,0,0),
+	P[c:75%](127,0,255),
+	P[c:100%](0,0,255);
+
+# Full fill example
+A[blue_fill_interp] <= interp:on;
+A[blue_fill_interp, 1] <=
+	P[c:0%](0x00,0xAE,0xDA),
+	P[c:100%](0x00,0xAE,0xDA);
+

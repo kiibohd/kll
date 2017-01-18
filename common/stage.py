@@ -3,7 +3,7 @@
 KLL Compiler Stage Definitions
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ import sys
 import common.context as context
 import common.expression as expression
 import common.file as file
+import common.id as id
 
 import emitters.emitters as emitters
 
@@ -1931,6 +1932,9 @@ class DataAnalysisStage( Stage ):
 
 		self.interconnect_offsets = []
 
+		self.pixel_display_mapping = []
+		self.pixel_display_params = {}
+
 		self.partial_contexts = None
 		self.layer_contexts = None
 		self.full_context = None
@@ -2117,6 +2121,123 @@ class DataAnalysisStage( Stage ):
 			if self.data_analysis_debug:
 				print( "\033[1mTrigger List\033[0m: {0} {1}".format( index, self.trigger_lists[ index ] ) )
 
+	def generate_pixel_display_mapping( self ):
+		'''
+		Generate Pixel Display Mapping
+
+		First generate a position dictionary of all pixels using Pixel Index addresses and x,y,z positions
+
+		Build a 2-dimensinoal mapping of all Pixels.
+		Use UnitSize, ColumnSize and RowSize to determine pixel fit.
+		* Build list of all pixels in a rows/columns
+		* Find min/max x/y to determine size of grid
+		* Use UnitSize to determine where to place each Pixel
+		* Error if we cannot fit all Pixels
+		'''
+		# Query the scancode and pixels positions
+		scancode_physical = self.full_context.query( 'DataAssociationExpression', 'ScanCodePosition' )
+		pixel_physical = self.full_context.query( 'DataAssociationExpression', 'PixelPosition' )
+		physical = scancode_physical.data.copy()
+		physical.update( pixel_physical.data )
+
+		positions = dict()
+		for key, item in physical.items():
+			entry = dict()
+			# Acquire each dimension
+			entry['x'] = item.association[0].x
+			entry['y'] = item.association[0].y
+			entry['z'] = item.association[0].z
+
+			# Check each dimension, set to 0 if None
+			for k in entry.keys():
+				if entry[ k ] is None:
+					entry[ k ] = 0.0
+				else:
+					entry[ k ] = float( entry[ k ] )
+
+			# Query Pixel index
+			uid = item.association[0].uid
+			if isinstance( uid, id.PixelAddressId ):
+				uid = uid.index
+
+			positions[ uid ] = entry
+
+		# Lookup Pixel Display Mapping parameters
+		variables = self.full_context.query( 'AssignmentExpression', 'Variable' )
+		try:
+			unit_size = float( variables.data['Pixel_DisplayMapping_UnitSize'].value )
+			column_size = int( variables.data['Pixel_DisplayMapping_ColumnSize'].value )
+			row_size = int( variables.data['Pixel_DisplayMapping_RowSize'].value )
+			column_direction = int( variables.data['Pixel_DisplayMapping_ColumnDirection'].value )
+			row_direction = int( variables.data['Pixel_DisplayMapping_RowDirection'].value )
+		except KeyError:
+			unit_size = 1
+			column_size = 20
+			row_size = 20
+			column_direction = 1
+			row_direction = 1
+
+		# Determine the min/max x/y for defining the mapping bounds
+		minval = { 'x' : 0, 'y' : 0 }
+		maxval = { 'x' : 0, 'y' : 0 }
+		for key, item in positions.items():
+			for val in ['x', 'y']:
+				if item[ val ] > maxval[ val ]:
+					maxval[ val ] = item[ val ]
+				if item[ val ] < minval[ val ]:
+					minval[ val ] = item[ val ]
+
+		# Calculate grid parameters
+		height_val = maxval['y'] - minval['y']
+		width_val = maxval['x'] - minval['x']
+		height = int( round( height_val / unit_size * column_size ) ) + 1
+		width = int( round(  width_val / unit_size * row_size ) ) + 1
+		height_offset = minval['y'] * -1
+		width_offset = minval['x'] * -1
+
+		# Set parameters
+		self.pixel_display_params['Columns'] = width
+		self.pixel_display_params['Rows'] = height
+
+		# Define grid
+		self.pixel_display_mapping = [ [ 0 for x in range( width ) ] for y in range( height ) ]
+
+		# Place each of the pixels within the x,y mapping
+		# Display an error if any pixel is overwritten (i.e. replacing non-0 value)
+		for key, item in positions.items():
+			# Calculate the percentage position in the grid
+			x_percent = ( ( item['x'] + width_offset ) / width_val )
+			y_percent = ( ( item['y'] + height_offset ) / height_val )
+
+			# Direction
+			if column_direction == -1:
+				y_percent = 1 - y_percent
+			if row_direction == -1:
+				x_percent = 1 - x_percent
+
+			# Determine the exact position
+			x = x_percent * ( width - 1 )
+			y = y_percent * ( height - 1 )
+
+			# First check with rounding
+			x_round = int( round( x ) )
+			y_round = int( round( y ) )
+
+			# Make sure we don't overwrite another pixel
+			if self.pixel_display_mapping[ y_round ][ x_round ] == 0:
+				self.pixel_display_mapping[ y_round ][ x_round ] = key
+			# Error out
+			# XXX We should try additional fitting locations -HaaTa
+			else:
+				print( "{0} Cannot fit:".format( WARNING ),
+					key, item, x_round, y_round, self.pixel_display_mapping[ y_round ][ x_round ]
+				)
+
+		# Debug info
+		if self.data_analysis_debug:
+			for row in self.pixel_display_mapping:
+				print( row )
+
 	def analyze( self ):
 		'''
 		Analyze the set of configured contexts
@@ -2135,6 +2256,9 @@ class DataAnalysisStage( Stage ):
 
 		# Generate Trigger Lists
 		self.generate_trigger_lists()
+
+		# Generate 2D Pixel Display Mapping
+		self.generate_pixel_display_mapping()
 
 	def process( self ):
 		'''

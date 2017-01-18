@@ -3,7 +3,7 @@
 KLL Id Containers
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -152,6 +152,18 @@ class ScanCodeId( Id, Schedule, Position ):
 		# By default, interconnect_id of 0
 		# Will be set during the merge process if it needs to change
 		self.interconnect_id = 0
+
+	def inferred_type( self ):
+		'''
+		Always returns ScanCode (simplifies code when mixed with PixelAddressId)
+		'''
+		return 'PixelAddressId_ScanCode'
+
+	def uid_set( self ):
+		'''
+		Returns a tuple of uids, always a single element for ScanCodeId
+		'''
+		return tuple([ self.uid ])
 
 	def unique_key( self ):
 		'''
@@ -306,6 +318,51 @@ class PixelAddressId( Id ):
 		self.relRow = relRow
 
 		self.type = 'PixelAddress'
+
+	def inferred_type( self ):
+		'''
+		Determine which PixelAddressType based on set values
+		'''
+
+		if self.index is not None:
+			return 'PixelAddressId_Index'
+		if self.col is not None and self.row is None:
+			return 'PixelAddressId_ColumnFill'
+		if self.col is None and self.row is not None:
+			return 'PixelAddressId_RowFill'
+		if self.col is not None and self.row is not None:
+			return 'PixelAddressId_Rect'
+		if self.relCol is not None and self.relRow is None:
+			return 'PixelAddressId_RelativeColumnFill'
+		if self.relCol is None and self.relRow is not None:
+			return 'PixelAddressId_RelativeRowFill'
+		if sell.relCol is not None and self.relRow is not None:
+			return 'PixelAddressId_RelativeRect'
+
+		print( "{0} Unknown PixelAddressId, this is a bug!".format( ERROR ) )
+		return "<UNKNOWN PixelAddressId>"
+
+	def uid_set( self ):
+		'''
+		Returns a tuple of uids, depends on what has been set.
+		'''
+		if self.index is not None:
+			return tuple([ self.index ])
+		if self.col is not None and self.row is None:
+			return tuple([ self.col, self.row ])
+		if self.col is None and self.row is not None:
+			return tuple([ self.col, self.row ])
+		if self.col is not None and self.row is not None:
+			return tuple([ self.col, self.row ])
+		if self.relCol is not None and self.relRow is None:
+			return tuple([ self.relCol, self.relRow ])
+		if self.relCol is None and self.relRow is not None:
+			return tuple([ self.relCol, self.relRow ])
+		if sell.relCol is not None and self.relRow is not None:
+			return tuple([ self.relCol, self.relRow ])
+
+		print( "{0} Unknown uid set, this is a bug!".format( ERROR ) )
+		return "<UNKNOWN uid set"
 
 	def merge( self, address ):
 		'''
