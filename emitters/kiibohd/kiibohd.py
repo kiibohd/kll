@@ -882,7 +882,10 @@ class Kiibohd( Emitter, TextEmitter ):
 
 
 		## LED Buffer Struct ##
-		self.fill_dict['LEDBufferStruct'] = variables.data['LED_BufferStruct'].value
+		if 'LED_BufferStruct' in variables.data.keys():
+			self.fill_dict['LEDBufferStruct'] = variables.data['LED_BufferStruct'].value
+		else:
+			self.fill_dict['LEDBufferStruct'] = ""
 
 
 		## ScanCode Physical Positions ##
