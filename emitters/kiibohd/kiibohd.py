@@ -710,15 +710,16 @@ class Kiibohd( Emitter, TextEmitter ):
 			pixel_indices = full_context.query( 'MapExpression', 'PixelChannel' )
 
 			self.fill_dict['PixelMapping'] = "const PixelElement Pixel_Mapping[] = {\n"
-			self.fill_dict['ScanCodeToPixelMapping'] = "const uint8_t Pixel_ScanCodeToPixel[] = {\n"
+			self.fill_dict['ScanCodeToPixelMapping'] = "const uint16_t Pixel_ScanCodeToPixel[] = {\n"
 
 			last_uid = 0
+			last_scancode = 0
 			for key, item in sorted( pixel_indices.data.items(), key=lambda x: x[1].pixel.uid.index ):
 				last_uid += 1
+				last_scancode += 1
 				# If last_uid isn't directly before, insert placeholder(s)
 				while last_uid != item.pixel.uid.index:
 					self.fill_dict['PixelMapping'] += "\tPixel_Blank(), // {0}\n".format( last_uid )
-					self.fill_dict['ScanCodeToPixelMapping'] += "\t0, // {0}\n".format( last_uid )
 					last_uid += 1
 
 				# Lookup width and number of channels
@@ -739,14 +740,21 @@ class Kiibohd( Emitter, TextEmitter ):
 					continue
 
 				# Add ScanCodeToPixelMapping entry
-				self.fill_dict['ScanCodeToPixelMapping'] += "\t{0}, // {1}\n".format( item.position.uid, key )
+				while item.position.uid != last_scancode:
+					self.fill_dict['ScanCodeToPixelMapping'] += "\t0, // {0}\n".format( last_scancode )
+					last_scancode += 1
+				self.fill_dict['ScanCodeToPixelMapping'] += "\t/*{0}*/ {1}, // {2}\n".format(
+					item.position.uid,
+					item.pixel.uid.index,
+					key
+				)
 			totalpixels = last_uid
 			self.fill_dict['PixelMapping'] += "};"
 			self.fill_dict['ScanCodeToPixelMapping'] += "};"
 
 
 			## Pixel Display Mapping ##
-			self.fill_dict['PixelDisplayMapping'] = "const uint8_t Pixel_DisplayMapping[] = {\n"
+			self.fill_dict['PixelDisplayMapping'] = "const uint16_t Pixel_DisplayMapping[] = {\n"
 			for y_list in pixel_display_mapping:
 				self.fill_dict['PixelDisplayMapping'] += \
 					",".join( "{0: >3}".format( x ) for x in y_list ) + ",\n"
@@ -759,8 +767,13 @@ class Kiibohd( Emitter, TextEmitter ):
 			# TODO - Generate initial/default modifier table
 			self.fill_dict['Animations'] = "const uint8_t **Pixel_Animations[] = {"
 			animations = full_context.query( 'DataAssociationExpression', 'Animation' )
+			count = 0
 			for key, animation in sorted( animations.data.items() ):
-				self.fill_dict['Animations'] += "\n\t{0}_frames,".format( animation.association.name )
+				self.fill_dict['Animations'] += "\n\t/*{0}*/ {1}_frames,".format(
+					count,
+					animation.association.name
+				)
+				count += 1
 			self.fill_dict['Animations'] += "\n};"
 
 
@@ -786,7 +799,7 @@ class Kiibohd( Emitter, TextEmitter ):
 				# Fill in frames if necessary
 				while aniframeid.index > prev_aniframe + 1:
 					prev_aniframe += 1
-					self.fill_dict['AnimationFrames'] += "const uint8_t *{0}_frame{1} = {{ PixelAddressType_End }};\n".format(
+					self.fill_dict['AnimationFrames'] += "const uint8_t {0}_frame{1}[] = {{ PixelAddressType_End }};\n\n".format(
 						name,
 						prev_aniframe
 					)
@@ -927,6 +940,7 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.fill_dict['KLLDefines'] += "#define LayerNum_KLL {0}\n".format( len( reduced_contexts ) )
 		self.fill_dict['KLLDefines'] += "#define ResultMacroNum_KLL {0}\n".format( len( result_index ) )
 		self.fill_dict['KLLDefines'] += "#define TriggerMacroNum_KLL {0}\n".format( len( trigger_index ) )
+		self.fill_dict['KLLDefines'] += "#define MaxScanCode_KLL {0}\n".format( max( max_scan_code ) )
 
 		# Only add defines if Pixel Buffer is defined
 		if self.use_pixel_map:

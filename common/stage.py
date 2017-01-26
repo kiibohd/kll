@@ -2137,6 +2137,12 @@ class DataAnalysisStage( Stage ):
 		# Query the scancode and pixels positions
 		scancode_physical = self.full_context.query( 'DataAssociationExpression', 'ScanCodePosition' )
 		pixel_physical = self.full_context.query( 'DataAssociationExpression', 'PixelPosition' )
+		pixel_indices = self.full_context.query( 'MapExpression', 'PixelChannel' )
+
+		pixel_indices_filtered = list( filter( lambda x: not isinstance( x.position, list ), pixel_indices.data.values() ) )
+		#print( list( pixel_indices_filtered ) )
+		#for item in list( pixel_indices_filtered ):
+		#	print( item )
 		physical = scancode_physical.data.copy()
 		physical.update( pixel_physical.data )
 
@@ -2159,6 +2165,19 @@ class DataAnalysisStage( Stage ):
 			uid = item.association[0].uid
 			if isinstance( uid, id.PixelAddressId ):
 				uid = uid.index
+
+			# Use the ScanCode to perform a pixel uid lookup
+			else:
+				# Filter list, looking for ScanCode uid
+				lookup = list( filter( lambda x: x.position.uid == uid, pixel_indices_filtered ) )
+
+				# Then lookup the pixel uid
+				if len( lookup ) > 0:
+					uid = lookup[0].pixel.uid.index
+
+				# Unused scancode position
+				else:
+					uid = 0
 
 			positions[ uid ] = entry
 
