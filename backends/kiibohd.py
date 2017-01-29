@@ -151,7 +151,7 @@ class Backend( BackendBase ):
 			funcName = capabilities.funcName( key )
 			argByteWidth = capabilities.totalArgBytes( key )
 			self.fill_dict['CapabilitiesList'] += "\t{{ {0}, {1} }},\n".format( funcName, argByteWidth )
-			self.fill_dict['CapabilitiesFuncDecl'] += "void {0}( uint8_t state, uint8_t stateType, uint8_t *args );\n".format( funcName )
+			self.fill_dict['CapabilitiesFuncDecl'] += "void {0}( TriggerMacro *trigger, uint8_t state, uint8_t stateType, uint8_t *args );\n".format( funcName )
 			self.fill_dict['CapabilitiesIndices'] += "\t{0}_index,\n".format( funcName )
 
 		self.fill_dict['CapabilitiesList'] += "};"
