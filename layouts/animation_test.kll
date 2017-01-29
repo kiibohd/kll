@@ -146,3 +146,7 @@ A[z4_fade_out, 1] <= P[c:0%](100,100,100), P[c:100%](100,100,100);
 
 #U"B" : animation();
 
+# Relative animation test
+A[z5_relative_add] <= start;
+A[z5_relative_add, 1] <= P[r:i,c:i](+100,+100,+100);
+

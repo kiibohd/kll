@@ -292,6 +292,15 @@ class Make:
 			elif isinstance( elems[0], PixelId ):
 				pixel_address_list.append( elems[0] )
 
+		# No value
+		elif isinstance( elems, Token ):
+			# Row
+			if "r:i" in elems.name:
+				pixel_address_list.append( PixelAddressId( relRow=0 ) )
+			# Column
+			if "c:i" in elems.name:
+				pixel_address_list.append( PixelAddressId( relCol=0 ) )
+
 		# Operator with value
 		elif isinstance( elems[0], Token ):
 			# Prepare address value
@@ -308,14 +317,15 @@ class Make:
 
 			# Relative Positioning
 			elif elems[0].type == "RelCROperator":
-				relative_sign = '-' in elems[0].name and '-' or '+'
+				if '-' in elems[0].name:
+					value *= -1
 
 				# Row
 				if "r:i" in elems[0].name:
-					pixel_address_list.append( PixelAddressId( row=value, relRow=relative_sign ) )
+					pixel_address_list.append( PixelAddressId( relRow=value ) )
 				# Column
 				if "c:i" in elems[0].name:
-					pixel_address_list.append( PixelAddressId( col=value, relCol=relative_sign ) )
+					pixel_address_list.append( PixelAddressId( relCol=value ) )
 
 		return pixel_address_list
 
@@ -868,7 +878,8 @@ pixel_range       = ( number ) + skip( dash ) + ( number ) >> unarg( Make.range 
 pixel_listElem    = number >> listElem >> Make.pixel_address
 pixel_pos         = ( colRowOperator('c:') | colRowOperator('r:') ) + ( number | percent ) >> Make.pixel_address
 pixel_posRel      = ( relCROperator('c:i+') | relCROperator('c:i-') | relCROperator('r:i+') | relCROperator('r:i-') ) + ( number | percent ) >> Make.pixel_address
-pixel_posMerge    = oneplus( ( pixel_pos | pixel_posRel ) + skip( maybe( comma ) ) ) >> flatten >> Make.pixel_address_merge
+pixel_posRelHere  = ( relCROperator('c:i') | relCROperator('r:i') ) >> Make.pixel_address
+pixel_posMerge    = oneplus( ( pixel_pos | pixel_posRel | pixel_posRelHere ) + skip( maybe( comma ) ) ) >> flatten >> Make.pixel_address_merge
 pixel_innerList   = ( ( oneplus( ( pixel_range | pixel_listElem | pixel_posMerge ) + skip( maybe( comma ) ) ) >> flatten ) | ( pixel_posMerge ) ) >> Make.pixel_list
 pixel_expanded    = skip( pixel_start ) + pixel_innerList + skip( code_end )
 pixel_elem        = pixel >> listElem >> Make.pixel_address

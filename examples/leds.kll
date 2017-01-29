@@ -55,6 +55,9 @@ A[BLEEdsing2, 7] <= U["A"](40,50,0x60);
 A[BLEEdsing2, 8] <= U"B"(40,50,0x60);
 A[BLEEdsing2, 9] <= S120(40,50,0x60);
 A[BLEEdsing2, 10] <= S[0x10](40,50,0x60);
+A[BLEEdsing2, 11] <= P[r:i](40,50,0x60);
+A[BLEEdsing2, 12] <= P[c:i](40,50,0x60);
+A[BLEEdsing2, 13] <= P[r:i,c:i](40,50,0x60);
 
 A[RainbowFillInterp] <= start, interp:on;
 A[RainbowFillInterp, 1] <= P[c:20%](255,255,0), P[c:40%](255,0,0), P[c:60%](127,0,255), P[c:80%](0,0,255);

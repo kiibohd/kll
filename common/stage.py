@@ -891,7 +891,7 @@ class OperationSpecificsStage( Stage ):
 			( 'CodeEnd',          ( r'\]', ) ),
 			( 'Position',         ( r'r?[xyz]:-?[0-9]+(.[0-9]+)?', ) ),
 			( 'PixelOperator',    ( r'(\+:|-:|>>|<<)', ) ),
-			( 'RelCROperator',    ( r'[cr]:i[+-]', ) ),
+			( 'RelCROperator',    ( r'[cr]:i[+-]?', ) ),
 			( 'ColRowOperator',   ( r'[cr]:', ) ),
 
 			( 'String',           ( r'"[^"]*"', ) ),

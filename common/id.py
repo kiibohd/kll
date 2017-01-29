@@ -308,7 +308,7 @@ class PixelAddressId( Id ):
 		Id.__init__( self )
 
 		# Check to make sure index, col or row is set
-		if index is None and col is None and row is None:
+		if index is None and col is None and row is None and relRow is None and relCol is None:
 			print ( "{0} index, col or row must be set".format( ERROR ) )
 
 		self.index = index
@@ -336,7 +336,7 @@ class PixelAddressId( Id ):
 			return 'PixelAddressId_RelativeColumnFill'
 		if self.relCol is None and self.relRow is not None:
 			return 'PixelAddressId_RelativeRowFill'
-		if sell.relCol is not None and self.relRow is not None:
+		if self.relCol is not None and self.relRow is not None:
 			return 'PixelAddressId_RelativeRect'
 
 		print( "{0} Unknown PixelAddressId, this is a bug!".format( ERROR ) )
@@ -358,7 +358,7 @@ class PixelAddressId( Id ):
 			return tuple([ self.relCol, self.relRow ])
 		if self.relCol is None and self.relRow is not None:
 			return tuple([ self.relCol, self.relRow ])
-		if sell.relCol is not None and self.relRow is not None:
+		if self.relCol is not None and self.relRow is not None:
 			return tuple([ self.relCol, self.relRow ])
 
 		print( "{0} Unknown uid set, this is a bug!".format( ERROR ) )
@@ -425,16 +425,20 @@ class PixelAddressId( Id ):
 		if not self.index is None:
 			output.append( "{0}".format( self.valueStr( self.index ) ) )
 		if not self.row is None:
-			cur_out = "r:"
-			if not self.relRow is None:
-				cur_out += "i{0}".format( self.relRow )
-			cur_out += "{0}".format( self.valueStr( self.row ) )
+			cur_out = "r:{0}".format( self.valueStr( self.row ) )
 			output.append( cur_out )
 		if not self.col is None:
-			cur_out = "c:"
-			if not self.relCol is None:
-				cur_out += "i{0}".format( self.relCol )
-			cur_out += "{0}".format( self.valueStr( self.col ) )
+			cur_out = "c:{0}".format( self.valueStr( self.col ) )
+			output.append( cur_out )
+		if not self.relRow is None:
+			cur_out = "r:i"
+			cur_out += self.relRow >= 0 and "+" or ""
+			cur_out += "{0}".format( self.valueStr( self.relRow ) )
+			output.append( cur_out )
+		if not self.relCol is None:
+			cur_out = "c:i"
+			cur_out += self.relCol >= 0 and "+" or ""
+			cur_out += "{0}".format( self.valueStr( self.relCol ) )
 			output.append( cur_out )
 
 		return output
