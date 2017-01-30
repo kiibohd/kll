@@ -711,6 +711,7 @@ class Kiibohd( Emitter, TextEmitter ):
 
 			self.fill_dict['PixelMapping'] = "const PixelElement Pixel_Mapping[] = {\n"
 			self.fill_dict['ScanCodeToPixelMapping'] = "const uint16_t Pixel_ScanCodeToPixel[] = {\n"
+			self.fill_dict['ScanCodeToDisplayMapping'] = "const uint16_t Pixel_ScanCodeToDisplay[] = {\n"
 
 			last_uid = 0
 			last_scancode = 0
@@ -740,17 +741,48 @@ class Kiibohd( Emitter, TextEmitter ):
 					continue
 
 				# Add ScanCodeToPixelMapping entry
+				# Add ScanCodeToDisplayMapping entry
 				while item.position.uid != last_scancode:
-					self.fill_dict['ScanCodeToPixelMapping'] += "\t0, // {0}\n".format( last_scancode )
+					# Fill in unused scancodes
+					self.fill_dict['ScanCodeToPixelMapping'] += "\t/*{0}*/ 0,\n".format( last_scancode )
+					self.fill_dict['ScanCodeToDisplayMapping'] += "\t/*__,__ {0}*/ 0,\n".format( last_scancode )
 					last_scancode += 1
+
 				self.fill_dict['ScanCodeToPixelMapping'] += "\t/*{0}*/ {1}, // {2}\n".format(
-					item.position.uid,
+					last_scancode,
 					item.pixel.uid.index,
 					key
+				)
+
+				# Find Pixel_DisplayMapping offset
+				offset_row = 0
+				offset_col = 0
+				offset = 0
+				for y_list in pixel_display_mapping:
+					#print( y_list )
+					for x_item in y_list:
+						if x_item == item.pixel.uid.index:
+							offset = offset_row * pixel_display_params['Columns'] + offset_col
+							break
+						offset_col += 1
+
+					# Offset found
+					if offset != 0:
+						break
+					offset_row += 1
+					offset_col = 0
+
+				self.fill_dict['ScanCodeToDisplayMapping'] += "\t/*{3: >2},{4: >2} {0}*/ {1}, // {2}\n".format(
+					last_scancode,
+					offset,
+					key,
+					offset_col,
+					offset_row,
 				)
 			totalpixels = last_uid
 			self.fill_dict['PixelMapping'] += "};"
 			self.fill_dict['ScanCodeToPixelMapping'] += "};"
+			self.fill_dict['ScanCodeToDisplayMapping'] += "};"
 
 
 			## Pixel Display Mapping ##

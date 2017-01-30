@@ -59,3 +59,7 @@
 // ScanCode to Pixel Mapping
 <|ScanCodeToPixelMapping|>
 
+
+// ScanCode to Display Mapping
+<|ScanCodeToDisplayMapping|>
+
