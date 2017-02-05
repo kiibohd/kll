@@ -144,10 +144,10 @@ A[z4_fade_out, 3] <= P[c:0%](200,200,200), P[c:100%](200,200,200);
 A[z4_fade_out, 2] <= P[c:0%](150,150,150), P[c:100%](150,150,150);
 A[z4_fade_out, 1] <= P[c:0%](100,100,100), P[c:100%](100,100,100);
 
-U"Esc" : animation(8, 2, 0, 1, 1); # Index, loops, pfunc, divmask, divshift
-U"B" : animation(8, 2, 0, 1, 1);
-U"F4" : animation(8, 2, 0, 1, 1);
-U"F6" : animation(8, 2, 0, 1, 1);
+U"Esc" :+ animation(8, 2, 0, 1, 1); # Index, loops, pfunc, divmask, divshift
+U"B" :+ animation(8, 2, 0, 1, 1);
+U"F4" :+ animation(8, 2, 0, 1, 1);
+U"F6" :+ animation(8, 2, 0, 1, 1);
 
 # Relative animation test
 A[z5_relative_add] <= start;

@@ -474,24 +474,58 @@ class MappingData( Data ):
 						new_expr.unique_keys()[0][0]
 					)
 
-					if debug:
-						print("\t\033[1;32mREPLACE\033[0m {0} -> {1}\n\t{2} => {3}".format(
-							key,
-							new_key,
-							expr[0],
-							new_expr
+					# Determine action based on the new_expr.operator
+					orig_expr = self.data[ new_key ][0]
+					# Replace expression
+					if expr[0].operator in ['::', ':']:
+						if debug:
+							print("\t\033[1;32mREPLACE\033[0m {0} -> {1}\n\t{2} => {3}".format(
+								key,
+								new_key,
+								expr[0],
+								new_expr
+							) )
+
+						# Do replacement
+						self.data[ new_key ] = [ expression.MapExpression(
+							orig_expr.triggers,
+							orig_expr.operator,
+							expr[0].results
+						) ]
+
+						# Unset basemap on expression
+						self.data[ new_key ][0].base_map = False
+
+					# Add expression
+					elif expr[0].operator in [':+']:
+						if debug:
+							print("\t\033[1;42mADD\033[0m {0} -> {1}\n\t{2} => {3}".format(
+								key,
+								new_key,
+								expr[0],
+								new_expr
+							) )
+
+						# Add expression
+						self.data[ new_key ].append( expression.MapExpression(
+							orig_expr.triggers,
+							orig_expr.operator,
+							expr[0].results
 						) )
 
-					# Do replacement
-					orig_expr = self.data[ new_key ][0]
-					self.data[ new_key ] = [ expression.MapExpression(
-						orig_expr.triggers,
-						orig_expr.operator,
-						expr[0].results
-					) ]
+						# Unset basemap on sub results
+						for sub_expr in self.data[ new_key ]:
+							sub_expr.base_map = False
 
-					# Unset basemap on expression
-					self.data[ new_key ][0].base_map = False
+					# Remove expression
+					elif expr[0].operator in [':-']:
+						if debug:
+							print("\t\033[1;41mREMOVE\033[0m {0} -> {1}\n\t{2} => {3}".format(
+								key,
+								new_key,
+								expr[0],
+								new_expr
+							) )
 
 					# Remove old key
 					del self.data[ key ]
