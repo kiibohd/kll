@@ -149,6 +149,8 @@ U"B" :+ animation(8, 2, 0, 1, 1);
 U"F4" :+ animation(8, 2, 0, 1, 1);
 U"F6" :+ animation(8, 2, 0, 1, 1);
 
+U["A"-"Z"] :+ animation(5, 1, 1, 0, 0);
+
 # Relative animation test
 A[z5_relative_add] <= start;
 A[z5_relative_add, 1] <= P[r:i](+10,+10,+10), P[c:i](+10,+10,+10), P[r:i,c:i](-10,-10,-10);

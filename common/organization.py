@@ -458,124 +458,126 @@ class MappingData( Data ):
 		# Using this dictionary, replace all the trigger USB codes
 		# Iterate over a copy so we can modify the dictionary in place
 		for key, expr in self.data.copy().items():
-			# 1) Single USB Codes trigger results will replace the original ScanCode result
-			if expr[0].elems()[0] == 1 and expr[0].triggers[0][0][0].type != 'ScanCode':
-				# Debug info
-				if debug:
-					print("\033[1mSingle\033[0m", key, expr )
+			for sub_expr in expr:
+				# 1) Single USB Codes trigger results will replace the original ScanCode result
+				if sub_expr.elems()[0] == 1 and sub_expr.triggers[0][0][0].type != 'ScanCode':
+					# Debug info
+					if debug:
+						print("\033[1mSingle\033[0m", key, expr )
 
-				# Lookup trigger to see if it exists
-				trigger_str = expr[0].trigger_str()
-				if trigger_str in result_code_lookup.keys():
-					# Calculate new key
-					new_expr = result_code_lookup[ trigger_str ][0]
-					new_key = "{0}{1}".format(
-						new_expr.operator,
-						new_expr.unique_keys()[0][0]
-					)
+					# Lookup trigger to see if it exists
+					trigger_str = sub_expr.trigger_str()
+					if trigger_str in result_code_lookup.keys():
+						# Calculate new key
+						new_expr = result_code_lookup[ trigger_str ][0]
+						new_key = "{0}{1}".format(
+							new_expr.operator,
+							new_expr.unique_keys()[0][0]
+						)
 
-					# Determine action based on the new_expr.operator
-					orig_expr = self.data[ new_key ][0]
-					# Replace expression
-					if expr[0].operator in ['::', ':']:
-						if debug:
-							print("\t\033[1;32mREPLACE\033[0m {0} -> {1}\n\t{2} => {3}".format(
-								key,
-								new_key,
-								expr[0],
-								new_expr
-							) )
+						# Determine action based on the new_expr.operator
+						orig_expr = self.data[ new_key ][0]
+						# Replace expression
+						if sub_expr.operator in ['::', ':']:
+							if debug:
+								print("\t\033[1;32mREPLACE\033[0m {0} -> {1}\n\t{2} => {3}".format(
+									key,
+									new_key,
+									sub_expr,
+									new_expr
+								) )
 
-						# Do replacement
-						self.data[ new_key ] = [ expression.MapExpression(
-							orig_expr.triggers,
-							orig_expr.operator,
-							expr[0].results
-						) ]
+							# Do replacement
+							self.data[ new_key ] = [ expression.MapExpression(
+								orig_expr.triggers,
+								orig_expr.operator,
+								sub_expr.results
+							) ]
 
-						# Unset basemap on expression
-						self.data[ new_key ][0].base_map = False
-
-					# Add expression
-					elif expr[0].operator in [':+']:
-						if debug:
-							print("\t\033[1;42mADD\033[0m {0} -> {1}\n\t{2} => {3}".format(
-								key,
-								new_key,
-								expr[0],
-								new_expr
-							) )
+							# Unset basemap on expression
+							self.data[ new_key ][0].base_map = False
 
 						# Add expression
-						self.data[ new_key ].append( expression.MapExpression(
-							orig_expr.triggers,
-							orig_expr.operator,
-							expr[0].results
-						) )
+						elif sub_expr.operator in [':+']:
+							if debug:
+								print("\t\033[1;42mADD\033[0m {0} -> {1}\n\t{2} => {3}".format(
+									key,
+									new_key,
+									sub_expr,
+									new_expr
+								) )
 
-						# Unset basemap on sub results
-						for sub_expr in self.data[ new_key ]:
-							sub_expr.base_map = False
-
-					# Remove expression
-					elif expr[0].operator in [':-']:
-						if debug:
-							print("\t\033[1;41mREMOVE\033[0m {0} -> {1}\n\t{2} => {3}".format(
-								key,
-								new_key,
-								expr[0],
-								new_expr
+							# Add expression
+							self.data[ new_key ].append( expression.MapExpression(
+								orig_expr.triggers,
+								orig_expr.operator,
+								sub_expr.results
 							) )
 
-					# Remove old key
-					del self.data[ key ]
+							# Unset basemap on sub results
+							for sub_expr in self.data[ new_key ]:
+								sub_expr.base_map = False
 
-				# Otherwise drop HID expression
-				else:
+						# Remove expression
+						elif sub_expr.operator in [':-']:
+							if debug:
+								print("\t\033[1;41mREMOVE\033[0m {0} -> {1}\n\t{2} => {3}".format(
+									key,
+									new_key,
+									sub_expr,
+									new_expr
+								) )
+
+						# Remove old key
+						if key in self.data.keys():
+							del self.data[ key ]
+
+					# Otherwise drop HID expression
+					else:
+						if debug:
+							print("\t\033[1;34mDROP\033[0m" )
+						del self.data[ key ]
+
+				# 2) Complex triggers are processed to replace out any USB Codes with Scan Codes
+				elif sub_expr.elems()[0] > 1:
+					# Debug info
 					if debug:
-						print("\t\033[1;34mDROP\033[0m" )
-					del self.data[ key ]
+						print("\033[1;4mMulti\033[0m ", key, expr )
 
-			# 2) Complex triggers are processed to replace out any USB Codes with Scan Codes
-			elif expr[0].elems()[0] > 1:
-				# Debug info
-				if debug:
-					print("\033[1;4mMulti\033[0m ", key, expr )
+					# Lookup each trigger element and replace
+					# If any trigger element doesn't exist, drop expression
+					# Dive through sequence->combo->identifier (sequence of combos of ids)
+					replace = False
+					drop = False
+					for seq_in, sequence in enumerate( sub_expr.triggers ):
+						for com_in, combo in enumerate( sequence ):
+							for ident_in, identifier in enumerate( combo ):
+								ident_str = "({0})".format( identifier )
 
-				# Lookup each trigger element and replace
-				# If any trigger element doesn't exist, drop expression
-				# Dive through sequence->combo->identifier (sequence of combos of ids)
-				replace = False
-				drop = False
-				for seq_in, sequence in enumerate( expr[0].triggers ):
-					for com_in, combo in enumerate( sequence ):
-						for ident_in, identifier in enumerate( combo ):
-							ident_str = "({0})".format( identifier )
+								# Replace identifier
+								if ident_str in result_code_lookup.keys():
+									match_expr = result_code_lookup[ ident_str ]
+									sub_expr.triggers[seq_in][com_in][ident_in] = match_expr[0].triggers[0][0][0]
+									replace = True
 
-							# Replace identifier
-							if ident_str in result_code_lookup.keys():
-								match_expr = result_code_lookup[ ident_str ]
-								expr[0].triggers[seq_in][com_in][ident_in] = match_expr[0].triggers[0][0][0]
-								replace = True
+								# Ignore ScanCodes
+								elif identifier.type == 'ScanCode':
+									pass
 
-							# Ignore ScanCodes
-							elif identifier.type == 'ScanCode':
-								pass
+								# Drop everything else
+								else:
+									drop = True
 
-							# Drop everything else
-							else:
-								drop = True
+					# Trigger Identifier was replaced
+					if replace:
+						if debug:
+							print("\t\033[1;32mREPLACE\033[0m", expr )
 
-				# Trigger Identifier was replaced
-				if replace:
-					if debug:
-						print("\t\033[1;32mREPLACE\033[0m", expr )
-
-				# Trigger Identifier failed (may still occur if there was a replacement)
-				if drop:
-					if debug:
-						print("\t\033[1;34mDROP\033[0m" )
-					del self.data[ key ]
+					# Trigger Identifier failed (may still occur if there was a replacement)
+					if drop:
+						if debug:
+							print("\t\033[1;34mDROP\033[0m" )
+						del self.data[ key ]
 
 		# Show results of reduction
 		if debug:
