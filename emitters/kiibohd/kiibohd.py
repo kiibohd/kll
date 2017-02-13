@@ -156,7 +156,17 @@ class Kiibohd( Emitter, TextEmitter ):
 		Used to convert a large number into 8 bit chunks so it can fit inside a C byte array.
 		Little endian byte order is used.
 		'''
-		byte_form = number.to_bytes( total_bytes, byteorder='little' ) # XXX Yes, little endian from how the uC structs work
+		# If negative, used signed mode
+		# In general we output unsigned, but in some cases we need a negative
+		# For these cases each context can handle the signed integers
+		negative = number < 0 and True or False
+
+		# XXX Yes, little endian from how the uC structs work
+		byte_form = number.to_bytes(
+			total_bytes,
+			byteorder='little',
+			signed=negative,
+		)
 		# Convert into a list of strings
 		return [ "{0}".format( int( byte ) ) for byte in byte_form ]
 

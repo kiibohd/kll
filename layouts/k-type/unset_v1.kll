@@ -1,0 +1,110 @@
+# Unset Animations Example Configuration
+
+Name = Unset Animations Example;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2017";
+KLL = 0.5;
+
+# Modified Date
+Date = 2017-02-08;
+
+U"A" : U"A";
+U"B" : U"B";
+U"C" : U"C";
+U"D" : U"D";
+U"E" : U"E";
+U"F" : U"F";
+U"G" : U"G";
+U"H" : U"H";
+U"I" : U"I";
+U"J" : U"J";
+U"K" : U"K";
+U"L" : U"L";
+U"M" : U"M";
+U"N" : U"N";
+U"O" : U"O";
+U"P" : U"P";
+U"Q" : U"Q";
+U"R" : U"R";
+U"S" : U"S";
+U"T" : U"T";
+U"U" : U"U";
+U"V" : U"V";
+U"W" : U"W";
+U"X" : U"X";
+U"Y" : U"Y";
+U"Z" : U"Z";
+
+U"Backtick" : U"Backtick";
+U"1" : U"1";
+U"2" : U"2";
+U"3" : U"3";
+U"4" : U"4";
+U"5" : U"5";
+U"6" : U"6";
+U"7" : U"7";
+U"8" : U"8";
+U"9" : U"9";
+U"0" : U"0";
+U"Minus" : U"Minus";
+U"Equals" : U"Equals";
+U"Backspace" : U"Backspace";
+
+U"Insert" : U"Insert";
+U"Home" : U"Home";
+U"PageUp" : U"PageUp";
+U"Delete" : U"Delete";
+U"End" : U"End";
+U"PageDown" : U"PageDown";
+
+U"Tab" : U"Tab";
+U"LBrace" : U"LBrace";
+U"RBrace" : U"RBrace";
+U"Backslash" : U"Backslash";
+
+U"CapsLock" : U"CapsLock";
+U"Semicolon" : U"Semicolon";
+U"Quote" : U"Quote";
+U"Enter" : U"Enter";
+
+U"LShift" : U"LShift";
+U"Comma" : U"Comma";
+U"Period" : U"Period";
+U"Slash" : U"Slash";
+U"RShift" : U"RShift";
+
+U"LCtrl" : U"LCtrl";
+U"LGui" : U"LGui";
+U"LAlt" : U"LAlt";
+U"Space" : U"Space";
+U"RAlt" : U"RAlt";
+U"RGui" : U"RGui";
+# These are used as the layer locks, don't unset them
+#U"Menu" : U"Menu";
+#U"RCtrl" : U"RCtrl";
+
+U"Esc" : U"Esc";
+U"F1" : U"F1";
+U"F2" : U"F2";
+U"F3" : U"F3";
+U"F4" : U"F4";
+U"F5" : U"F5";
+U"F6" : U"F6";
+U"F7" : U"F7";
+U"F8" : U"F8";
+U"F9" : U"F9";
+U"F10" : U"F10";
+U"F11" : U"F11";
+U"F12" : U"F12";
+U"Print" : U"Print";
+U"ScrollLock" : U"ScrollLock";
+U"Pause" : U"Pause";
+
+U"Up" : U"Up";
+U"Down" : U"Down";
+U"Left" : U"Left";
+U"Right" : U"Right";
+
+
+
+

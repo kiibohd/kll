@@ -1,0 +1,23 @@
+# Rainbow Wipe Example Configuration
+
+Name = Rainbow Wipe Animation Example;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2017";
+KLL = 0.5;
+
+# Modified Date
+Date = 2017-02-08;
+
+#U[0x03-0x52,0xE0-0xE7] :+ animation(5, 1, 1, 0, 0, 1);
+U["A"-"Z"] :+ animation(5, 1, 1, 0, 0, 1);
+U["1"] :+ animation(14, 1, 0, 1, 1, 0);
+U["2"] :+ animation(14, 2, 0, 1, 1, 0);
+U["3"] :+ animation(14, 3, 0, 1, 1, 0);
+U["4"] :+ animation(14, 4, 0, 1, 1, 0);
+U["5"] :+ animation(14, 5, 0, 1, 1, 0);
+U["6"] :+ animation(14, 6, 0, 1, 1, 0);
+U["7"] :+ animation(14, 7, 0, 1, 1, 0);
+U["8"] :+ animation(14, 8, 0, 1, 1, 0);
+U["9"] :+ animation(14, 9, 0, 1, 1, 0);
+U["0"] :+ animation(14, 1, 0, 0, 0, 0);
+

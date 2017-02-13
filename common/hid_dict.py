@@ -870,7 +870,7 @@ kll_hid_lookup_dictionary['USBCode'] = dict([
 	( 'F10', ('USB', 0x43) ),
 	( 'F11', ('USB', 0x44) ),
 	( 'F12', ('USB', 0x45) ),
-	( 'PRINTSCREEN', ('USB', 0x46) ), ( 'PRINT SCREEN', ('USB', 0x46) ),
+	( 'PRINTSCREEN', ('USB', 0x46) ), ( 'PRINT SCREEN', ('USB', 0x46) ), ( 'PRINT', ('USB', 0x46) ),
 	( 'SCROLLLOCK', ('USB', 0x47) ), ( 'SCROLL LOCK', ('USB', 0x47) ),
 	( 'PAUSE', ('USB', 0x48) ),
 	( 'INSERT', ('USB', 0x49) ),
