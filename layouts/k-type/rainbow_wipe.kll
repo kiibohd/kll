@@ -8,7 +8,6 @@ KLL = 0.5;
 # Modified Date
 Date = 2017-02-08;
 
-#U[0x03-0x52,0xE0-0xE7] :+ animation(5, 1, 1, 0, 0, 1);
 U["A"-"Z"] :+ animation(5, 1, 1, 0, 0, 1);
 U["1"] :+ animation(14, 1, 0, 1, 1, 0);
 U["2"] :+ animation(14, 2, 0, 1, 1, 0);
@@ -20,4 +19,7 @@ U["7"] :+ animation(14, 7, 0, 1, 1, 0);
 U["8"] :+ animation(14, 8, 0, 1, 1, 0);
 U["9"] :+ animation(14, 9, 0, 1, 1, 0);
 U["0"] :+ animation(14, 1, 0, 0, 0, 0);
+
+U["Print"] :+ animation(5, 0, 1, 0, 0, 1);
+U["Pause"] :+ animation(5, 1, 1, 0, 0, 2);
 
