@@ -898,11 +898,11 @@ class OperationSpecificsStage( Stage ):
 
 			( 'Operator',         ( r':', ) ),
 			( 'Comma',            ( r',', ) ),
+			( 'Parenthesis',      ( r'\(|\)', ) ),
+			( 'Percent',          ( r'-?(0|([1-9][0-9]*))%', ) ),
+			( 'Number',           ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', ) ),
 			( 'Dash',             ( r'-', ) ),
 			( 'Plus',             ( r'\+', ) ),
-			( 'Parenthesis',      ( r'\(|\)', ) ),
-			( 'Percent',          ( r'(0|([1-9][0-9]*))%', ) ),
-			( 'Number',           ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', ) ),
 			( 'Name',             ( r'[A-Za-z_][A-Za-z_0-9]*', ) ),
 		]
 
