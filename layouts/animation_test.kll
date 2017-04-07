@@ -154,7 +154,7 @@ A[z4_fade_out, 1] <= P[c:0%](100,100,100), P[c:100%](100,100,100);
 #U"LCtrl" :+ animation(8, 2, 0, 1, 1, 1);
 U"Right" :+ animation(8, 2, 0, 1, 1, 1);
 U"ScrollLock" :+ animation(8, 2, 0, 1, 1, 1);
-U"Backspace" :+ animation(4, 1, 1, 0, 0, 1);
+U"Insert" :+ animation(4, 1, 1, 0, 0, 1);
 #U"F4" :+ animation(8, 2, 0, 1, 1, 0);
 #U"F6" :+ animation(8, 2, 0, 1, 1, 0);
 
@@ -570,4 +570,21 @@ A[zz3_rainbow_wave, 66] <= P[c:-2%] (0,255,0),   P[c:24%](255,255,0), P[c:49%](2
 # Start/stop wave
 U["Print"] :+ animation(15, 0, 1, 1, 2, 2);
 U["Pause"] :+ animation(15, 1, 1, 0, 0, 2);
+
+# Full-brightness white
+A[zz4_all_white] <= interp:on;
+A[zz4_all_white, 1] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+#U["F1"] :+ animation(16, 1, 1, 0, 0, 0);
+#U["F2"] :+ animation(17 , 1, 1, 1, 0, 0);
+#U["F3"] :+ animation(0 , 1, 1, 1, 0, 0);
+#U["Space"] :+ animation_control(0);
+#U["Right"] :+ animation_control(1);
+
+# Massdrop blue to pink (miami)
+A[zz5_blue_to_pink] <= interp:on;
+A[zz5_blue_to_pink, 1] <= P[c:0%](0,0xAE,0xDA), P[c:100%](0xFF,0x14,0x93); # FF1493
+
+# Color wheel
+A[zz6_color_wheel] <= interp:on;
+A[zz6_color_wheel, 1] <= P[c:0%](0,0xAE,0xDA), P[c:100%](0xFF,0xDA,0xE9);
 
