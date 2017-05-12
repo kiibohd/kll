@@ -1,0 +1,25 @@
+Name = "Rapoo E9070 Fn";
+Version = 0.1;
+Author = "nazar-pc (Nazar Mokrynskyi) 2017";
+KLL = 0.3d;
+
+# Modified Date
+Date = 2017-05-11;
+
+U"F1"  : CONS"Back";
+U"F2"  : CONS"Forward";
+U"F3"  : CONS"Home";
+U"F4"  : CONS"EmailReader";
+U"F5"  : CONS"ConsumerControlConfig";
+U"F6"  : CONS"PausePlay";
+U"F7"  : CONS"Stop";
+U"F8"  : CONS"ScanPreviousTrack";
+U"F9"  : CONS"ScanNextTrack";
+U"F10" : U"VolumeDown";
+U"F11" : U"VolumeUp";
+U"F12" : U"Mute";
+
+U"Left"  : U"Home";
+U"Up"    : U"PageUp";
+U"Down"  : U"PageDown";
+U"Right" : U"End";
