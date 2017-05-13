@@ -19,6 +19,8 @@ U"F10" : U"VolumeDown";
 U"F11" : U"VolumeUp";
 U"F12" : U"Mute";
 
+U"Insert" : U"ScrollLock";
+
 U"Left"  : U"Home";
 U"Up"    : U"PageUp";
 U"Down"  : U"PageDown";
