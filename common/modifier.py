@@ -32,18 +32,160 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 
 ### Classes ###
 
+class AnimationModifierArg:
+	'''
+	Animation modification arg container class
+	'''
+	def __init__( self, parent, value ):
+		self.parent = parent
+
+		self.arg = value
+		self.subarg = None
+
+		# In case we have a bad modifier, arg is set to None
+		if self.arg is None:
+			return
+
+		# Sub-arg case
+		if isinstance( value, tuple ):
+			self.arg = value[0]
+			self.subarg = value[1]
+
+		# Validate arg
+		validation = parent.valid_modifiers[ parent.name ]
+		if isinstance( validation, dict ):
+			# arg
+			if self.arg not in validation.keys():
+				print( "{0} '{1}' is not a valid modifier arg for '{2}'".format(
+					ERROR,
+					self.arg,
+					parent.name,
+				) )
+
+			# subarg
+			subvalidation = validation[ self.arg ]
+			if subvalidation is None and self.subarg is not None:
+				print( "{0} '{1}' is an incorrect subargument for '{2}:{3}', should be a '{4}'".format(
+					ERROR,
+					self.subarg,
+					parent.name,
+					self.arg,
+					subvalidation,
+				) )
+			elif subvalidation is not None and not isinstance( self.subarg, subvalidation[ self.arg ] ):
+				print( "{0} '{1}' is an incorrect subargument for '{2}:{3}', should be a '{4}'".format(
+					ERROR,
+					self.subarg,
+					parent.name,
+					self.arg,
+					subvalidation,
+				) )
+
+		else:
+			# arg
+			if not isinstance( self.arg, validation ):
+				print( "{0} '{1}' is an incorrect argument for '{2}', should be a '{3}'".format(
+					ERROR,
+					self.arg,
+					parent.name,
+					validation,
+				) )
+
+	def __repr__( self ):
+		if self.arg is None:
+			return ""
+		if self.subarg is not None:
+			int_list = [ "{0}".format( x ) for x in self.subarg ]
+			return "{0}({1})".format(
+				self.arg,
+				",".join( int_list ),
+			)
+		return "{0}".format( self.arg )
+
+	def like( self, other ):
+		'''
+		Returns true if the other AnimationModifierArg is the same
+		'''
+		if self.arg != other.arg:
+			return False
+		if self.subarg is None and other.subarg is None:
+			return True
+		elif self.subarg is None or other.subarg is None:
+			return False
+
+		if frozenset( self.subarg ) == frozenset( other.subarg ):
+			return True
+
+		return False
+
+	def kllify( self ):
+		'''
+		Returns KLL version of the Modifier
+
+		In most cases we can just the string representation of the object
+		'''
+		return "{0}".format( self )
+
+
 class AnimationModifier:
 	'''
 	Animation modification container class
 	'''
+	# Modifier validation tree
+	valid_modifiers = {
+		'loops'    : int,
+		'loop'     : None,
+		'divshift' : int,
+		'divmask'  : int,
+		'start'    : None,
+		'pause'    : None,
+		'stop'     : None,
+		'pos'      : int,
+		'pfunc'    : {
+			'off'       : None,
+			'interp'    : None,
+			'kllinterp' : None,
+		},
+		'ffunc'    : {
+			'off'       : None,
+			'interp'    : None,
+			'kllinterp' : None,
+		},
+		'replace'  : {
+			'stack' : None,
+			'basic' : None,
+			'all'   : None,
+		},
+	}
+
 	def __init__( self, name, value=None ):
+		# Check if name is valid
+		if name not in self.valid_modifiers.keys():
+			print( "{0} '{1}' is not a valid modifier {1}:{2}".format(
+				ERROR,
+				name,
+				value,
+			) )
+			self.name = '<UNKNOWN>'
+			self.value = AnimationModifierArg( self, None )
+			return
+
 		self.name = name
-		self.value = value
+		self.value = AnimationModifierArg( self, value )
 
 	def __repr__( self ):
-		if self.value is None:
+		if self.value.arg is None:
 			return "{0}".format( self.name )
 		return "{0}:{1}".format( self.name, self.value )
+
+	def like( self, other ):
+		'''
+		Returns true if AnimationModifier has the same name
+		'''
+		return other.name == self.name
+
+	def __eq__( self, other ):
+		return self.like( other ) and self.value.like( other.value )
 
 	def kllify( self ):
 		'''
@@ -70,12 +212,56 @@ class AnimationModifierList:
 		for modifier in modifier_list:
 			self.modifiers.append( AnimationModifier( modifier[0], modifier[1] ) )
 
+	def clean( self, new_modifier, new, old ):
+		'''
+		Remove conflicting modifier if necessary
+		'''
+		if new_modifier.name == new:
+			for index, modifier in enumerate( self.modifiers ):
+				if modifier.name == old:
+					return False
+		return True
+
+	def replace( self, new_modifier ):
+		'''
+		Replace modifier
+
+		If it doesn't exist already, just add it.
+		'''
+		# If new_modifier is loops and loop exists, remove loop
+		if not self.clean( new_modifier, 'loops', 'loop' ):
+			return
+		# If new_modifier is loop and loops exists, remove loops
+		if not self.clean( new_modifier, 'loop', 'loops' ):
+			return
+
+		# Check for modifier
+		for modifier in self.modifiers:
+			if modifier.name == new_modifier.name:
+				modifier.value = new_modifier.value
+				return
+
+		# Otherwise just add it
+		self.modifiers.append( new_modifier )
+
+	def getModifier( self, name ):
+		'''
+		Retrieves modifier
+
+		Returns False if doesn't exist
+		Returns argument if exists and has an argument, may be None
+		'''
+		for mod in self.modifiers:
+			if mod.name == name:
+				return mod.value
+		return False
+
 	def strModifiers( self ):
 		'''
 		__repr__ of Position when multiple inheritance is used
 		'''
 		output = ""
-		for index, modifier in enumerate( self.modifiers ):
+		for index, modifier in enumerate( sorted( self.modifiers, key=lambda x: x.name ) ):
 			if index > 0:
 				output += ","
 			output += "{0}".format( modifier )

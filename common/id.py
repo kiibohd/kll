@@ -211,11 +211,26 @@ class AnimationId( Id, AnimationModifierList ):
 		AnimationModifierList.__init__( self )
 		self.name = name
 		self.type = 'Animation'
+		self.second_type = 'A'
 
 	def __repr__( self ):
 		if len( self.modifiers ) > 0:
 			return "A[{0}]({1})".format( self.name, self.strModifiers() )
+		return self.base_repr()
+
+	def base_repr( self ):
+		'''
+		Returns string of just the identifier, exclude animation modifiers
+		'''
 		return "A[{0}]".format( self.name )
+
+	def width( self ):
+		'''
+		Returns the bit width of the AnimationId
+
+		This is currently 2 bytes.
+		'''
+		return 2
 
 
 class AnimationFrameId( Id, AnimationModifierList ):

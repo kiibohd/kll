@@ -10,7 +10,7 @@ REMEMBER: When editing parser BNF-like expressions, order matters. Specifically 
 # Parser doesn't play nice with linters, disable some checks
 # pylint: disable=no-self-argument, too-many-public-methods, no-self-use, bad-builtin
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -922,7 +922,8 @@ animation_flattened   = animation_expanded >> flatten >> flatten
 animation_elem        = animation
 
 # Animation Modifier
-animation_modifier = many( ( name | number ) + maybe( skip( operator(':') ) + number ) + skip( maybe( comma ) ) )
+animation_modifier_arg = number | ( name + skip( parenthesis('(') ) + many( number + skip( maybe( comma ) ) ) + skip( parenthesis(')') ) ) | name
+animation_modifier = many( ( name | number ) + maybe( skip( operator(':') ) + animation_modifier_arg ) + skip( maybe( comma ) ) )
 animation_modlist = animation_modifier >> Make.animationModlist
 
 # Animation Capability

@@ -43,7 +43,6 @@
 
 
 // Pixel Display Mapping
-// TODO This table should be generated based off the physical x,y,z positions of each of the pixels
 // TODO type should be determined by Pixel_TotalPixels
 <|PixelDisplayMapping|>
 
@@ -54,6 +53,11 @@
 // Index of animations
 //  uint8_t *Pixel_Animations[] = { <animation>_frames, ... }
 <|Animations|>
+// Animation Settings
+//  const AnimationStackElement AnimationSettings[] = {
+//    { <triggerguide>, <index>, <pos>, <loops>, <divmask>, <divshift>, <ffunc>, <pfunc>, <replace>, <state> }, ...
+//  }
+<|AnimationSettings|>
 
 
 // ScanCode to Pixel Mapping

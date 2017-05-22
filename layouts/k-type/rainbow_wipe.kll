@@ -8,18 +8,18 @@ KLL = 0.5;
 # Modified Date
 Date = 2017-02-08;
 
-U["A"-"Z"] :+ animation(5, 1, 1, 0, 0, 1);
-U["1"] :+ animation(14, 1, 0, 1, 1, 0);
-U["2"] :+ animation(14, 2, 0, 1, 1, 0);
-U["3"] :+ animation(14, 3, 0, 1, 1, 0);
-U["4"] :+ animation(14, 4, 0, 1, 1, 0);
-U["5"] :+ animation(14, 5, 0, 1, 1, 0);
-U["6"] :+ animation(14, 6, 0, 1, 1, 0);
-U["7"] :+ animation(14, 7, 0, 1, 1, 0);
-U["8"] :+ animation(14, 8, 0, 1, 1, 0);
-U["9"] :+ animation(14, 9, 0, 1, 1, 0);
-U["0"] :+ animation(14, 1, 0, 0, 0, 0);
+U["A"-"Z"] :+ A[rainbow_fill_interp](loops:1);
+U["1"] :+ A[under_streak](divmask:1, divshift:1, loops:1);
+U["2"] :+ A[under_streak](divmask:1, divshift:1, loops:2);
+U["3"] :+ A[under_streak](divmask:1, divshift:1, loops:3);
+U["4"] :+ A[under_streak](divmask:1, divshift:1, loops:4);
+U["5"] :+ A[under_streak](divmask:1, divshift:1, loops:5);
+U["6"] :+ A[under_streak](divmask:1, divshift:1, loops:6);
+U["7"] :+ A[under_streak](divmask:1, divshift:1, loops:7);
+U["8"] :+ A[under_streak](divmask:1, divshift:1, loops:8);
+U["9"] :+ A[under_streak](divmask:1, divshift:1, loops:9);
+U["0"] :+ A[under_streak](loops:1);
 
-U["Print"] :+ animation(5, 0, 1, 0, 0, 1);
-U["Pause"] :+ animation(5, 1, 1, 0, 0, 2);
+U["Print"] :+ A[rainbow_fill_interp]();
+U["Pause"] :+ A[rainbow_fill_interp](divmask:0, divshift:0, loops:1, replace:all);
 

@@ -33,7 +33,7 @@ U"[" : U"Up";
 U"A" : U"VolumeDown";
 U"S" : U"VolumeUp";
 U"D" : U"Mute";
-#U"F" : U"Eject"; # TODO Requires additional firmware support for media keys -HaaTa
+U"F" : CONS"Eject";
 U"H" : U"Keypad Asterix";
 U"J" : U"Keypad Slash";
 U"K" : U"Home";

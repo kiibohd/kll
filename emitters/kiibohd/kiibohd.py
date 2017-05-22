@@ -24,9 +24,9 @@ import sys
 
 from datetime import date
 
-from common.emitter import Emitter, TextEmitter
+from common.emitter import JsonEmitter, Emitter, TextEmitter
 from common.hid_dict import hid_lookup_dictionary
-from common.id import CapId, HIDId, NoneId, ScanCodeId
+from common.id import AnimationId, CapId, HIDId, NoneId, ScanCodeId
 
 
 
@@ -40,13 +40,14 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 
 ### Classes ###
 
-class Kiibohd( Emitter, TextEmitter ):
+class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 	'''
 	Kiibohd .h file emitter for KLL
 	'''
 
 	# List of required capabilities
 	required_capabilities = {
+		'A'    : 'animationIndex',
 		'CONS' : 'consCtrlOut',
 		'NONE' : 'noneOut',
 		'SYS'  : 'sysCtrlOut',
@@ -61,6 +62,7 @@ class Kiibohd( Emitter, TextEmitter ):
 		'''
 		Emitter.__init__( self, control )
 		TextEmitter.__init__( self )
+		JsonEmitter.__init__( self )
 
 		# Defaults
 		self.map_template   = "templates/kiibohdKeymap.h"
@@ -69,6 +71,7 @@ class Kiibohd( Emitter, TextEmitter ):
 		self.map_output     = "generatedKeymap.h"
 		self.pixel_output   = "generatedPixelmap.c"
 		self.def_output     = "kll_defs.h"
+		self.json_output    = "kll.json"
 
 		# Convenience
 		self.capabilities = None
@@ -148,6 +151,9 @@ class Kiibohd( Emitter, TextEmitter ):
 		# Remove file if it exists, and create an empty file
 		else:
 			open( self.pixel_output, 'w' ).close()
+
+		# Generate Json Output
+		self.generate_json( self.json_output )
 
 	def byte_split( self, number, total_bytes ):
 		'''
@@ -238,6 +244,29 @@ class Kiibohd( Emitter, TextEmitter ):
 				else:
 					cap = "{0}".format( cap_index )
 
+			# AnimationId
+			elif isinstance( identifier, AnimationId ):
+				# Lookup capability index
+				cap_index = self.capabilities_index[ self.required_capabilities[ identifier.second_type ] ]
+				cap_arg = ""
+
+				# Lookup animation setting index
+				settings_index = 0
+				lookup_id = "{0}".format( identifier )
+				animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
+				if lookup_id not in animation_settings_list:
+					print( "{0} Unknown animation '{1}'".format( ERROR, lookup_id ) )
+				else:
+					settings_index = animation_settings_list.index( lookup_id )
+
+				# Check for a split argument (e.g. Consumer codes)
+				if identifier.width() > 1:
+					cap_arg = ", ".join(
+						self.byte_split( settings_index, identifier.width() )
+					)
+
+				cap = "{0}, {1}".format( cap_index, cap_arg )
+
 			# None
 			elif isinstance( identifier, NoneId ):
 				# <single element>, <usbCodeSend capability>, <USB Code 0x00>
@@ -245,7 +274,11 @@ class Kiibohd( Emitter, TextEmitter ):
 
 			# Unknown/Invalid Id
 			else:
-				print( "{0} Unknown identifier -> {1}".format( ERROR, identifier ) )
+				print( "{0} Unknown identifier({1}) -> {2}".format(
+					ERROR,
+					identifier.__class__.__name__,
+					identifier,
+				) )
 
 			# Generate identifier string for element of the combo
 			output += ", {0}".format(
@@ -311,6 +344,109 @@ class Kiibohd( Emitter, TextEmitter ):
 			)
 		self.fill_dict['AnimationFrames'] += "\n\t0\n};\n\n\n"
 
+	def animation_modifier_set( self, animation, name ):
+		'''
+		Check if false or None and set to 0, otherwise as argument
+
+		name is the name of the animation modifier
+		'''
+		modifier = animation.getModifier( name )
+
+		# Simple modifier
+		simple_mods = ['pos', 'loops', 'divshift', 'divmask', 'frame']
+		if name in simple_mods:
+			if not modifier or modifier is None:
+				return 0
+			return modifier
+
+		if name == 'pfunc':
+			if not modifier or modifier is None:
+				return 0
+			if modifier.arg == 'interp':
+				return 1
+			print( "{0} '{1}:{2}' is unsupported".format( WARNING, name, modifier ) )
+			return 0
+
+		if name == 'ffunc':
+			if not modifier or modifier is None or modifier == 'off':
+				return 0
+			print( "{0} '{1}:{2}' is unsupported".format( WARNING, name, modifier ) )
+			return 0
+
+		if name == 'replace':
+			if not modifier or modifier is None or modifier.arg == 'stack':
+				return 0
+			if modifier.arg == 'basic':
+				return 1
+			if modifier.arg == 'all':
+				return 2
+			print( "{0} '{1}:{2}' is unsupported".format( WARNING, name, modifier ) )
+			return 0
+
+		print( "{0} '{1}:{2}' is unsupported".format( WARNING, name, modifier ) )
+		return 0
+
+	def animation_settings_entry( self, animation, animation_name, count, additional=False ):
+		'''
+		Build an animation settings string entry
+		'''
+		# For each animation index store the default settings
+		# <triggerguide> - Set to 1 if start in default settings
+		a_start = 1
+		a_pause = 1
+		a_stop = 1
+		if not animation.getModifier('start'):
+			a_start = 0
+		if not animation.getModifier('pause'):
+			a_pause = 0
+		if not animation.getModifier('stop'):
+			a_stop = 0
+		# <index>        - Animation id (Animation__<name>)
+		a_name = animation_name
+		# <pos>          - Frame position
+		a_pos = self.animation_modifier_set( animation, 'frame' )
+		# <loops>        - Number of loops, set to 0 for infinite
+		a_loops = self.animation_modifier_set( animation, 'loops' )
+		if animation.getModifier('loop'):
+			a_loops = 0
+		# <divmask>      - Divider mask
+		a_divmask = self.animation_modifier_set( animation, 'divmask' )
+		# <divshift>     - Divider shift
+		a_divshift = self.animation_modifier_set( animation, 'divshift' )
+		# <ffunc>        - Frame function index
+		a_ffunc = self.animation_modifier_set( animation, 'ffunc' )
+		# <pfunc>        - Pixel function index
+		a_pfunc = self.animation_modifier_set( animation, 'pfunc' )
+		# <replace>      - Replacement mode
+		a_replace = self.animation_modifier_set( animation, 'replace' )
+		# <state>        - Animation play state
+		if a_pause == 1:
+			a_state = "AnimationPlayState_Pause"
+		elif a_stop == 1:
+			a_state = "AnimationPlayState_Stop"
+		else:
+			a_state = "AnimationPlayState_Start"
+
+		# Do not set a_start if this is an additional (non-default) animation settings entry
+		if additional:
+			a_start = 0
+
+		return "\n\t{{ (TriggerMacro*){2}, {3}, /*{0} {1}*/\n\t\t{4}, {5}, {6}, {7}, {8}, {9}, {10}, {11} }},".format(
+			count,
+			animation,
+			# AnimationStackElement
+			a_start,
+			a_name,
+			a_pos,
+			a_loops,
+			a_divmask,
+			a_divshift,
+			a_ffunc,
+			a_pfunc,
+			a_replace,
+			a_state,
+		)
+
 	def process( self ):
 		'''
 		Emitter Processing
@@ -333,10 +469,14 @@ class Kiibohd( Emitter, TextEmitter ):
 		min_scan_code = self.control.stage('DataAnalysisStage').min_scan_code
 		max_scan_code = self.control.stage('DataAnalysisStage').max_scan_code
 		trigger_lists = self.control.stage('DataAnalysisStage').trigger_lists
-		interconnect_offsets = self.control.stage('DataAnalysisStage').interconnect_offsets
+		interconnect_scancode_offsets = self.control.stage('DataAnalysisStage').interconnect_scancode_offsets
+		interconnect_pixel_offsets = self.control.stage('DataAnalysisStage').interconnect_pixel_offsets
 
 		pixel_display_mapping = self.control.stage('DataAnalysisStage').pixel_display_mapping
 		pixel_display_params = self.control.stage('DataAnalysisStage').pixel_display_params
+
+		animation_settings = self.control.stage('DataAnalysisStage').animation_settings
+		animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
 
 
 		# Build string list of compiler arguments
@@ -564,7 +704,7 @@ class Kiibohd( Emitter, TextEmitter ):
 
 		## Interconnect ScanCode Offset List ##
 		self.fill_dict['ScanCodeInterconnectOffsetList'] = "const uint8_t InterconnectOffsetList[] = {\n"
-		for index, offset in enumerate( interconnect_offsets ):
+		for index, offset in enumerate( interconnect_scancode_offsets ):
 			self.fill_dict['ScanCodeInterconnectOffsetList'] += "\t0x{0:02X},\n".format(
 				offset
 			)
@@ -573,7 +713,7 @@ class Kiibohd( Emitter, TextEmitter ):
 
 		## Max Interconnect Nodes ##
 		self.fill_dict['InterconnectNodeMax'] = "#define InterconnectNodeMax 0x{0:X}\n".format(
-			len( interconnect_offsets )
+			len( interconnect_scancode_offsets )
 		)
 
 
@@ -694,6 +834,7 @@ class Kiibohd( Emitter, TextEmitter ):
 		## Pixel Buffer Setup ##
 		# Only add sections if Pixel Buffer is defined
 		self.use_pixel_map = 'Pixel_Buffer_Size' in defines.data.keys()
+		self.fill_dict['AnimationList'] = ""
 		if self.use_pixel_map:
 			self.fill_dict['PixelBufferSetup'] = "PixelBuf Pixel_Buffers[] = {\n"
 
@@ -806,17 +947,58 @@ class Kiibohd( Emitter, TextEmitter ):
 			## Animations ##
 			# TODO - Use reduced_contexts and generate per-layer (naming gets tricky)
 			#        Currently using full_context which is not as configurable
-			# TODO - Generate initial/default modifier table
 			self.fill_dict['Animations'] = "const uint8_t **Pixel_Animations[] = {"
+			self.fill_dict['AnimationSettings'] = "const AnimationStackElement Pixel_AnimationSettings[] = {"
+			self.fill_dict['AnimationList'] = ""
 			animations = full_context.query( 'DataAssociationExpression', 'Animation' )
+			animation_id_json = {}
 			count = 0
 			for key, animation in sorted( animations.data.items() ):
+				# Name each frame collection
 				self.fill_dict['Animations'] += "\n\t/*{0}*/ {1}_frames,".format(
 					count,
+					animation.association.name,
+				)
+
+				# Add animation name to list
+				animation_name = "Animation__{0}".format(
 					animation.association.name
 				)
+				self.fill_dict['AnimationList'] += "\n#define {0} {1}".format(
+					animation_name,
+					count,
+				)
+
+				# Map index to name (json)
+				animation_id_json[ animation.association.name ] = count
+
+				# Generate animation settings string entry
+				self.fill_dict['AnimationSettings'] += self.animation_settings_entry(
+					animation.value,
+					animation_name,
+					count,
+				)
 				count += 1
+			self.json_dict['AnimationIds'] = animation_id_json
 			self.fill_dict['Animations'] += "\n};"
+
+			# Additional Animation Settings
+			self.fill_dict['AnimationSettings'] += "\n\n\t/* Additional Settings */\n";
+			while count < len( animation_settings_list ):
+				animation = animation_settings[ animation_settings_list[ count ] ]
+				animation_name = "Animation__{0}".format(
+					animation.name
+				)
+
+				# Generate animation settings string entry
+				self.fill_dict['AnimationSettings'] += self.animation_settings_entry(
+					animation,
+					animation_name,
+					count,
+					additional=True,
+				)
+				count += 1
+			self.fill_dict['AnimationSettings'] += "\n};";
 
 
 			## Animation Frames ##

@@ -3,7 +3,7 @@
 KLL Expression Container
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,6 +61,9 @@ class Expression:
 
 		# BaseMap expression
 		self.base_map = False
+
+		# Default ConnectId
+		self.connect_id = 0
 
 		# Mutate class into the desired type
 		self.__class__ = {
@@ -540,6 +543,8 @@ class MapExpression( Expression ):
 		self.operator = operator
 		self.results = results
 
+		self.connect_id = 0
+
 	## Setters ##
 	def scanCode( self, triggers, operator, results ):
 		'''
@@ -872,7 +877,7 @@ class MapExpression( Expression ):
 					for index, identifier in enumerate( combo ):
 						if index > 0:
 							key += " + "
-						key += "{0}".format( identifier )
+						key += "{0} {1}".format( self.connect_id, identifier )
 
 				# Add key to list
 				keys.append( ( key, uniq_expr ) )

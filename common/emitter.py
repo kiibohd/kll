@@ -3,7 +3,7 @@
 KLL Emitter Base Classes
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@ KLL Emitter Base Classes
 
 ### Imports ###
 
-import re
+import json
 import os
+import re
 import sys
 
 
@@ -213,4 +214,24 @@ class TextEmitter:
 					# Otherwise, just append template to output file
 					else:
 						outputFile.write( line )
+
+
+class JsonEmitter:
+	'''
+	'''
+	def __init__( self ):
+		'''
+		JsonEmitter Initialization
+		'''
+		self.json_dict = {}
+
+	def generate_json( self, output_path ):
+		'''
+		Generates the output json file using an self.json_dict
+		'''
+		output = json.dumps( self.json_dict, indent=4, sort_keys=True )
+
+		# Write json file
+		with open( output_path, 'w' ) as outputFile:
+			outputFile.write( output )
 

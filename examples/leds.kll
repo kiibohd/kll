@@ -1,5 +1,5 @@
 Name = leds;
-Author = "HaaTa (Jacob Alexander) 2016";
+Author = "HaaTa (Jacob Alexander) 2016-2017";
 KLL = 0.5;
 mydefine = "stuffs here";
 mydefine2 = '"stuffs here"'; # For outputting c define strings
@@ -29,8 +29,8 @@ P[12](40:8, 50:8, 120:8) : S59;
 P12(12:8, 13:8, 14:8) : S[40];
 
 # Animation
-A[BLEEdsing] <= loop:3,frame:2;
-A[BLEEdsing2] <= loop,div:2;
+A[BLEEdsing] <= loops:3,pos:2,ffunc:interp;
+A[BLEEdsing2] <= start, divshift:1, loop, replace:basic,pfunc:interp;
 
 # Animation Frames
 A[BLEEdsing, 0] <= P[4](+32);
@@ -59,7 +59,7 @@ A[BLEEdsing2, 11] <= P[r:i](40,50,0x60);
 A[BLEEdsing2, 12] <= P[c:i](40,50,0x60);
 A[BLEEdsing2, 13] <= P[r:i,c:i](40,50,0x60);
 
-A[RainbowFillInterp] <= start, interp:on;
+A[RainbowFillInterp] <= start, pfunc:interp;
 A[RainbowFillInterp, 1] <= P[c:20%](255,255,0), P[c:40%](255,0,0), P[c:60%](127,0,255), P[c:80%](0,0,255);
 A[RainbowFillInterp, 2] <= P[c:0%](0,255,0), P[c:20%](255,255,0), P[c:40%](255,0,0), P[c:60%](127,0,255), P[c:80%](0,0,255);
 
@@ -74,8 +74,8 @@ A[BLEEdsing2] : myCapability( 0x8, 0x25 );
 S[0x37, 0x38] : A"BLEEdsing";
 S0x39 : A"BLEEdsing", A"BLEEdsing2";
 S0x40 : A[BLEEdsing];
-S0x41 : A[BLEEdsing](loop:2);
-S0x42 : A[BLEEdsing](loop:2,div:3);
+S0x41 : A[BLEEdsing](loops:3);
+S0x42 : A[BLEEdsing](loops:2,divshift:3);
 S0x43 : PL[0](0xFF,0xFF,244) + P[1-3](20,40,60);
 S0x44 : PL[0-2](0xFF,0xFF,244);
 S0x44 : PL1(0xFF,0xFF,244);

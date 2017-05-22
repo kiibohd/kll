@@ -1930,10 +1930,14 @@ class DataAnalysisStage( Stage ):
 		self.max_scan_code = []
 		self.min_scan_code = []
 
-		self.interconnect_offsets = []
+		self.interconnect_scancode_offsets = []
+		self.interconnect_pixel_offsets = []
 
 		self.pixel_display_mapping = []
-		self.pixel_display_params = {}
+		self.pixel_display_params = dict()
+
+		self.animation_settings = dict()
+		self.animation_settings_list = []
 
 		self.partial_contexts = None
 		self.layer_contexts = None
@@ -2084,10 +2088,42 @@ class DataAnalysisStage( Stage ):
 		'''
 		Generates list of offsets for each of the interconnect ids
 		'''
-		# TODO - Required for interconnect keyboards
+		maxscancode = {}
+		maxpixelid = {}
+		for index, layer in enumerate( self.reduced_contexts ):
+			# Find the max scancode of each the layers
+			# A max scancode for each of the interconnect ids found
+			for key, value in layer.organization.maxscancode().items():
+				if key not in maxscancode.keys() or maxscancode[ key ] < value:
+					maxscancode[ key ] = value
+
+			# Find the max pixel id for each of the interconnect ids found
+			for key, value in layer.organization.maxpixelid().items():
+				if key not in maxpixelid.keys() or maxpixelid[ key ] < value:
+					maxpixelid[ key ] = value
+
+		# Build scancode list of offsets
+		self.interconnect_scancode_offsets = []
+		cumulative = 0
+		if len( maxscancode.keys() ) > 0:
+			for index in range( max( maxscancode.keys() ) + 1 ):
+				# Set offset, then add max to cumulative
+				self.interconnect_scancode_offsets.append( cumulative )
+				cumulative += maxscancode[ index ]
+
+		# Build pixel id list of offsets
+		self.interconnect_pixel_offsets = []
+		cumulative = 0
+		if len( maxpixelid.keys() ) > 0:
+			for index in range( max( maxpixelid.keys() ) + 1 ):
+				# Set offset, then add max to cumulative
+				self.interconnect_pixel_offsets.append( cumulative )
+				cumulative += maxscancode[ index ]
+
 		if self.data_analysis_debug:
 			print( "\033[1m--- Map Offsets ---\033[0m" )
-			print( "TODO" )
+			print( "Scan Code Offsets: {0}".format( self.interconnect_scancode_offsets ) )
+			print( "Pixel Id Offsets:  {0}".format( self.interconnect_pixel_offsets ) )
 
 	def generate_trigger_lists( self ):
 		'''
@@ -2262,6 +2298,87 @@ class DataAnalysisStage( Stage ):
 			for row in self.pixel_display_mapping:
 				print( row )
 
+	def find_animation_result( self, result_expr ):
+		'''
+		Returns list of animation results
+
+		The string'ified version of the object is unique.
+		Only return a reduced list of objects.
+		'''
+		animation_dict = {}
+		#print( result_expr )
+		for seq in result_expr:
+			for combo in seq:
+				for elem in combo:
+					if isinstance( elem, id.AnimationId ):
+						animation_dict[ "{0}".format( elem ) ] = elem
+		# Just return the values
+		return animation_dict.values()
+
+	def generate_animation_settings( self ):
+		'''
+		Generate Animation Settings
+
+		This function reconciles default and used animation settings.
+		Default settings are used to simplify used animation results.
+		Meaning that you don't have to remember to define the correct interpolation algorith every time.
+		Each permutation of animation settings is stored (along with the defaults even if not used directly).
+
+		A reduction is done such that only the minimum number of settings entries are created.
+
+		animation_settings stores the key => settings lookup
+		animation_settings_list stores the order of the settings (using the keys)
+		'''
+		# Setup defaults
+		animations = self.full_context.query( 'DataAssociationExpression', 'Animation' )
+		default_animations = {}
+		for key, animation in sorted( animations.data.items() ):
+			str_name = "{0}({1})".format( key, animation.value )
+			self.animation_settings[ str_name ] = animation.value
+			self.animation_settings_list.append( str_name )
+			default_animations[ key ] = animation.value
+
+		val_list = []
+		for layer in self.layer_contexts:
+			map_expressions = layer.query('MapExpression')
+			for expr_type in map_expressions:
+				for key, expr in map_expressions[ expr_type ].data.items():
+					if isinstance( expr, list ):
+						for elem in expr:
+							val_list += self.find_animation_result( elem.results )
+
+		# Reduce settings using defaults and determine which are variants needing new settings entries
+		for val in sorted( frozenset( val_list ), key=lambda x: x.__repr__() ):
+			mod_default_list = []
+
+			# Lookup defaults
+			lookup_name = "A[{0}]".format( val.name )
+			str_name = "{0}".format( val )
+			found = False
+			for name in default_animations.keys():
+				if lookup_name == name:
+					mod_default_list = default_animations[ name ].modifiers
+					found = True
+			# Otherwise just add it, if there isn't a default
+			if not found:
+				self.animation_settings[ str_name ] = val
+				self.animation_settings_list.append( str_name )
+				continue
+
+			# Update settings with defaults
+			new_setting = copy.deepcopy( val )
+			for setting in mod_default_list:
+				found = False
+				for mod in new_setting.modifiers:
+					if mod.name == setting.name:
+						found = True
+				if not found:
+					new_setting.replace( setting )
+
+			# Add update setting
+			self.animation_settings[ str_name ] = new_setting
+			self.animation_settings_list.append( str_name )
+
 	def analyze( self ):
 		'''
 		Analyze the set of configured contexts
@@ -2283,6 +2400,9 @@ class DataAnalysisStage( Stage ):
 
 		# Generate 2D Pixel Display Mapping
 		self.generate_pixel_display_mapping()
+
+		# Generate Animation Settings List
+		self.generate_animation_settings()
 
 	def process( self ):
 		'''

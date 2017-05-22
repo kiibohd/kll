@@ -3,7 +3,7 @@
 KLL Data Organization
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ import copy
 import re
 
 import common.expression as expression
+
+from common.id import PixelAddressId
 
 
 
@@ -61,6 +63,7 @@ class Data:
 		'''
 		self.data = {}
 		self.parent = parent
+		self.connect_id = 0
 
 	def add_expression( self, expression, debug ):
 		'''
@@ -98,6 +101,9 @@ class Data:
 		'''
 		# The default case is just to add the expression in directly
 		for key, kll_expression in merge_in.data.items():
+			# Set ConnectId in expression
+			kll_expression.connect_id = merge_in.connect_id
+
 			# Display key:expression being merged in
 			if debug[0]:
 				output = merge_in.elem_str( key, True )
@@ -119,6 +125,13 @@ class Data:
 		Mainly used for dropping BaseMapContext expressions after generating a PartialMapContext.
 		'''
 		pass
+
+	def connectid( self, connect_id ):
+		'''
+		Sets the Data store with a given connect_id
+		By default, this is 0, but may be set prior to an organization merge
+		'''
+		self.connect_id = connect_id
 
 	def elem_str( self, key, single=False ):
 		'''
@@ -244,6 +257,50 @@ class MappingData( Data ):
 				for identifier in combo:
 					identifier.interconnect_id = interconnect_id
 
+	def connectid( self, connect_id ):
+		'''
+		Sets the Data store with a given connect_id
+		By default, this is 0, but may be set prior to an organization merge
+		'''
+		self.connect_id = connect_id
+
+		# Update dictionary keys using new connect_id
+		for key, value in self.data.items():
+			if value[0].type == 'ScanCode':
+				# Update connect_id, then regenerate dictionary item
+				value[0].connect_id = connect_id
+				new_key = "{0}{1}".format(
+					value[0].operator,
+					value[0].unique_keys()[0][0],
+				)
+
+				# Replace dictionary item
+				self.data[ new_key ] = self.data.pop( key )
+
+	def maxscancode( self ):
+		'''
+		Find max scancode per connect id
+
+		@return: Dictionary of max Scan Codes (keys are the connect id)
+		'''
+		max_dict = {}
+		for key, value in self.data.items():
+			connect_id = value[0].connect_id
+			max_uid = value[0].max_trigger_uid()
+
+			# Initial value
+			if connect_id not in max_dict.keys():
+				max_dict[ connect_id ] = 0
+
+			# Update if necessary
+			if max_dict[ connect_id ] < max_uid:
+				max_dict[ connect_id ] = max_uid
+
+			# TODO REMOVEME
+			#print( key,value[0], value[0].__class__, value[0].max_trigger_uid(), value[0].connect_id )
+
+		return max_dict
+
 	def merge( self, merge_in, map_type, debug ):
 		'''
 		Merge in the given datastructure to this datastructure
@@ -267,12 +324,10 @@ class MappingData( Data ):
 		@param map_type: Used fo map specific merges
 		@param debug:    Enable debug out
 		'''
-		# Check what the current interconnectId is
+		# Check what the current ConnectId is
 		# If not set, we set to 0 (default)
 		# We use this to calculate the scancode during the DataAnalysisStage
-		interconnect_id = 0
-		if 'interconnectId' in self.parent.variable_data.data.keys():
-			interconnect_id = self.parent.variable_data.data['interconnectId']
+		interconnect_id = merge_in.connect_id
 
 		# Sort different types of keys
 		cur_keys = merge_in.data.keys()
@@ -622,6 +677,33 @@ class PixelChannelData( Data ):
 
 	Pixel -> Channels
 	'''
+	def maxpixelid( self ):
+		'''
+		Find max pixel id per connect id
+
+		@return: dictionary of connect id to max pixel id
+		'''
+		max_pixel = {}
+		for key, value in self.data.items():
+			connect_id = value.connect_id
+
+			# Make sure this is a PixelAddressId
+			if isinstance( value.pixel.uid, PixelAddressId ):
+				max_uid = value.pixel.uid.index
+			else:
+				max_uid = value.pixel.uid
+
+			# Initial value
+			if connect_id not in max_pixel.keys():
+				max_pixel[ connect_id ] = 0
+
+			# Update if necessary
+			if max_pixel[ connect_id ] < max_uid:
+				max_pixel[ connect_id ] = max_uid
+
+			# TODO REMOVEME
+			#print( key,value, value.__class__, value.pixel.uid.index, value.connect_id )
+		return max_pixel
 
 
 class PixelPositionData( Data ):
@@ -861,12 +943,12 @@ class Organization:
 		@param map_type: Used fo map specific merges
 		@param debug:    Enable debug out
 		'''
-		# TODO
 		# Lookup interconnect id (if exists)
-		# Apply to all new scan code assignments from merge_in
+		# Apply to all new scan code related assignments from merge_in
+		# This also affects pixel assignments
 		if 'ConnectId' in self.variable_data.data.keys():
-			# TODO Pass ConnectId to each of the expressions to merge in (ScanCode triggers only)
-			print("TODO -> Handle ConnectId for interconnect")
+			for store in merge_in.stores():
+				store.connectid( int( self.variable_data.data['ConnectId'].value ) )
 
 		# Merge each of the sub-datastructures
 		for this, that in zip( self.stores(), merge_in.stores() ):
@@ -888,6 +970,22 @@ class Organization:
 		'''
 		for store in self.stores():
 			store.reduction( debug )
+
+	def maxscancode( self ):
+		'''
+		Find max scancode per connect id
+
+		@return: dictionary of connect id to max scancode
+		'''
+		return self.mapping_data.maxscancode()
+
+	def maxpixelid( self ):
+		'''
+		Find max pixel id per connect id
+
+		@return: dictionary of connect id to max pixel id
+		'''
+		return self.pixel_channel_data.maxpixelid()
 
 	def __repr__( self ):
 		return "{0}".format( self.stores() )

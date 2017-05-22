@@ -8,7 +8,7 @@ KLL Context Definitions
 * PartialMap
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ class Context:
 		self.data = data
 		self.parent = parent
 
-	def query( self, kll_expression, kll_type ):
+	def query( self, kll_expression, kll_type=None ):
 		'''
 		Query
 
@@ -98,9 +98,12 @@ class Context:
 
 		@param kll_expression: String name of expression type
 		@param kll_type: String name of the expression sub-type
+		                 If set to None, return all
 
 		@return: context_name: (dictionary)
 		'''
+		if kll_type is None:
+			return self.organization.data_mapping[ kll_expression ]
 		return self.organization.data_mapping[ kll_expression ][ kll_type ]
 
 

@@ -1,7 +1,7 @@
 # AnimationData
-A[BLEEdsing2] <= loop,div:2; # A[BLEEdsing2] <= loop,div:2; # A[BLEEdsing2]
-A[BLEEdsing] <= loop:3,frame:2; # A[BLEEdsing] <= loop:3,frame:2; # A[BLEEdsing]
-A[RainbowFillInterp] <= start,interp; # A[RainbowFillInterp] <= start, interp:on; # A[RainbowFillInterp]
+A[BLEEdsing2] <= divshift:1,loop,pfunc:interp,replace:basic,start; # A[BLEEdsing2] <= start, divshift:1, loop, replace:basic,pfunc:interp; # A[BLEEdsing2]
+A[BLEEdsing] <= ffunc:interp,loops:3,pos:2; # A[BLEEdsing] <= loops:3,pos:2,ffunc:interp; # A[BLEEdsing]
+A[RainbowFillInterp] <= pfunc:interp,start; # A[RainbowFillInterp] <= start, pfunc:interp; # A[RainbowFillInterp]
 
 # AnimationFrameData
 A[BLEEdsing, 0] <= P[4](+32); # A[BLEEdsing, 0] <= P[4](+32); # AF[BLEEdsing, 0]
@@ -43,24 +43,24 @@ myCapability <= myFunc(myArg1:1,myArg2:4); # myCapability  => myFunc( myArg1 : 1
 # DefineData
 
 # MappingData
-A[BLEEdsing, 3] : myCapability(8,37); # A[BLEEdsing, 3] : myCapability( 0x8, 0x25 ); # :AF[BLEEdsing, 3][0]
-A[BLEEdsing, 4] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :AF[BLEEdsing, 4][0]
-A[BLEEdsing, 5] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :AF[BLEEdsing, 5][0]
-A[BLEEdsing, 6] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :AF[BLEEdsing, 6][0]
-A[BLEEdsing, 7] : myCapability(8,37); # A[BLEEdsing, 7, 9] : myCapability( 0x8, 0x25 ); # :AF[BLEEdsing, 7][0]
-A[BLEEdsing, 9] : myCapability(8,37); # A[BLEEdsing, 7, 9] : myCapability( 0x8, 0x25 ); # :AF[BLEEdsing, 9][0]
-A[BLEEdsing2] : myCapability(8,37); # A[BLEEdsing2] : myCapability( 0x8, 0x25 ); # :A[BLEEdsing2][0]
-S0x037 : A[BLEEdsing]; # S[0x37, 0x38] : A"BLEEdsing"; # :S55[0]
-S0x038 : A[BLEEdsing]; # S[0x37, 0x38] : A"BLEEdsing"; # :S56[0]
-S0x039 : A[BLEEdsing], A[BLEEdsing2]; # S0x39 : A"BLEEdsing", A"BLEEdsing2"; # :S57[0]
-S0x040 : A[BLEEdsing]; # S0x40 : A[BLEEdsing]; # :S64[0]
-S0x041 : A[BLEEdsing](loop:2); # S0x41 : A[BLEEdsing](loop:2); # :S65[0]
-S0x042 : A[BLEEdsing](loop:2,div:3); # S0x42 : A[BLEEdsing](loop:2,div:3); # :S66[0]
-S0x043 : PL0(255,255,244) + P[1](20,40,60); # S0x43 : PL[0](0xFF,0xFF,244) + P[1-3](20,40,60); # :S67[0]
-S0x044 : PL1(255,255,244); # S0x44 : PL1(0xFF,0xFF,244); # :S68[0]
-S0x045 : PL2(31,47,63); # S0x45 : PL[2](0x1F,0x2F,0x3F); # :S69[0]
-S0x046 : P[0](11,23,45); # S0x46 : P[0](11,23,45); # :S70[0]
-S0x047 : P0x001(11,23,45); # S0x47 : P1(11,23,45); # :S71[0]
+A[BLEEdsing, 3] : myCapability(8,37); # A[BLEEdsing, 3] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 3][0]
+A[BLEEdsing, 4] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 4][0]
+A[BLEEdsing, 5] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 5][0]
+A[BLEEdsing, 6] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 6][0]
+A[BLEEdsing, 7] : myCapability(8,37); # A[BLEEdsing, 7, 9] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 7][0]
+A[BLEEdsing, 9] : myCapability(8,37); # A[BLEEdsing, 7, 9] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 9][0]
+A[BLEEdsing2] : myCapability(8,37); # A[BLEEdsing2] : myCapability( 0x8, 0x25 ); # :0 A[BLEEdsing2][0]
+S0x037 : A[BLEEdsing]; # S[0x37, 0x38] : A"BLEEdsing"; # :0 S55[0]
+S0x038 : A[BLEEdsing]; # S[0x37, 0x38] : A"BLEEdsing"; # :0 S56[0]
+S0x039 : A[BLEEdsing], A[BLEEdsing2]; # S0x39 : A"BLEEdsing", A"BLEEdsing2"; # :0 S57[0]
+S0x040 : A[BLEEdsing]; # S0x40 : A[BLEEdsing]; # :0 S64[0]
+S0x041 : A[BLEEdsing](loops:3); # S0x41 : A[BLEEdsing](loops:3); # :0 S65[0]
+S0x042 : A[BLEEdsing](divshift:3,loops:2); # S0x42 : A[BLEEdsing](loops:2,divshift:3); # :0 S66[0]
+S0x043 : PL0(255,255,244) + P[1](20,40,60); # S0x43 : PL[0](0xFF,0xFF,244) + P[1-3](20,40,60); # :0 S67[0]
+S0x044 : PL1(255,255,244); # S0x44 : PL1(0xFF,0xFF,244); # :0 S68[0]
+S0x045 : PL2(31,47,63); # S0x45 : PL[2](0x1F,0x2F,0x3F); # :0 S69[0]
+S0x046 : P[0](11,23,45); # S0x46 : P[0](11,23,45); # :0 S70[0]
+S0x047 : P0x001(11,23,45); # S0x47 : P1(11,23,45); # :0 S71[0]
 
 # PixelChannelData
 P0x00c(12:8,13:8,14:8) : S40; # P12(12:8, 13:8, 14:8) : S[40]; # P12(12:8,13:8,14:8)
@@ -86,7 +86,7 @@ S0x07c <= x:20,rx:15; # S[122-125] <= x:20, rx:15; # P124
 S0x07d <= x:20,rx:15; # S[122-125] <= x:20, rx:15; # P125
 
 # VariableData
-Author = HaaTa (Jacob Alexander) 2016; # Author = "HaaTa (Jacob Alexander) 2016"; # Author
+Author = HaaTa (Jacob Alexander) 2016-2017; # Author = "HaaTa (Jacob Alexander) 2016-2017"; # Author
 KLL = 0.5; # KLL = 0.5; # KLL
 Name = leds; # Name = leds; # Name
 myarray[] = "elem0" "elem1" "elem 2" "" "test"; # myarray[] = elem0 elem1 "elem 2"; # myarray
