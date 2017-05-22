@@ -214,7 +214,7 @@ A[spot_up, 1] <=
 	P[r:i-2,c:i  ](-:1,-:1,-:1),
 	P[r:i,  c:i+2](-:1,-:1,-:1),
 	P[r:i,  c:i-2](-:1,-:1,-:1);
-U[0x03-0x52,0xE0-0xE7] :+ A[spot_up];
+#U[0x03-0x52,0xE0-0xE7] :+ A[spot_up];
 
 # TODO Move to U"ScrollLock" when working
 A[scroll_lock] <= loop, replace:all;
@@ -235,7 +235,7 @@ A[scroll_lock, 12] <= S[0xF](-:20,-:20,-:20);
 
 
 # Lock Keys
-A[lock_event] <= loop, replace:all;
+A[lock_event] <= loops:1, replace:all, divmask:1, divshift:1, replace:basic;
 A[lock_event, 1] <= P[r:i,c:i](+:100,+:100,+:100);
 A[lock_event, 2] <= P[r:i,c:i](+:100,+:100,+:100);
 A[lock_event, 3] <= P[r:i,c:i](+:100,+:100,+:100);
