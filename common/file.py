@@ -37,58 +37,80 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 ### Classes ###
 
 class KLLFile:
-	'''
-	Container class for imported KLL files
-	'''
-	def __init__( self, path, file_context ):
-		'''
-		Initialize file container
+    '''
+    Container class for imported KLL files
+    '''
 
-		@param path:    Path to filename, if relative, relative to the execution environment
-		@param context: KLL Context object
-		'''
-		self.path = path
-		self.context = file_context
-		self.lines = []
-		self.data = ""
+    def __init__(self, path, file_context):
+        '''
+        Initialize file container
 
-	def __repr__( self ):
-		context_str = type( self.context ).__name__
+        @param path:    Path to filename, if relative, relative to the execution environment
+        @param context: KLL Context object
+        '''
+        self.path = path
+        self.context = file_context
+        self.lines = []
+        self.data = ""
 
-		# Show layer info if this is a PartialMap
-		if isinstance( self.context, context.PartialMapContext ):
-			context_str = "{0}({1})".format( context_str, self.context.layer )
+    def __repr__(self):
+        context_str = type(self.context).__name__
 
-		return "({0}, {1})".format( self.path, context_str )
+        # Show layer info if this is a PartialMap
+        if isinstance(self.context, context.PartialMapContext):
+            context_str = "{0}({1})".format(context_str, self.context.layer)
 
-	def check( self ):
-		'''
-		Make sure that the file exists at the initialized path
-		'''
-		exists = os.path.isfile( self.path )
+        return "({0}, {1})".format(self.path, context_str)
 
-		# Display error message, will exit later
-		if not exists:
-			print( "{0} {1} does not exist...".format( ERROR, self.path ) )
+    def check(self):
+        '''
+        Make sure that the file exists at the initialized path
+        '''
+        exists = os.path.isfile(self.path)
 
-		return exists
+        # Display error message, will exit later
+        if not exists:
+            print("{0} {1} does not exist...".format(ERROR, self.path))
 
-	def read( self ):
-		'''
-		Read the contents of the file path into memory
-		Reads both per line and complete copies
-		'''
-		try:
-			# Read file into memory, removing newlines
-			with open( self.path ) as f:
-				self.data  = f.read()
-				self.lines = self.data.splitlines()
+        return exists
 
-		except:
-			print( "{0} Failed to read '{1}' into memory...".format( ERROR, self.path ) )
-			return False
+    def filename(self):
+        filename = str(os.path.basename(self.path))
+        return filename
 
-		return True
+    def read(self):
+        '''
+        Read the contents of the file path into memory
+        Reads both per line and complete copies
+        '''
+        try:
+            # Read file into memory, removing newlines
+            with open(self.path) as f:
+                self.data = f.read()
+                self.lines = self.data.splitlines()
+
+        except:
+            print("{0} Failed to read '{1}' into memory...".format(ERROR, self.path))
+            return False
+
+        return True
+
+    def write(self, output_filename):
+        '''
+        Writes the contents to a file
+        This can be useful for dumping processed files to disk
+        '''
+        try:
+            # Read file into memory, removing newlines
+            print("Writing to {0}".format(output_filename))
+            with open(output_filename, 'w') as f:
+                f.write(self.data)
+
+        except:
+            print("{0} Failed to write to file '{1}'".format(ERROR, self.path))
+            return False
+
+        return True
 
 
 
