@@ -759,7 +759,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 
 			# Prepare each layer
 			self.fill_dict['PartialLayerScanMaps'] += "// Partial Layer {0}\n".format( lay_index )
-			self.fill_dict['PartialLayerScanMaps'] += "const nat_ptr_t *layer{0}_scanMap[] = {{\n".format( lay_index )
+			self.fill_dict['PartialLayerScanMaps'] += "const nat_ptr_t *layer{0}_scanMap[] = {{ \n".format( lay_index )
 			self.fill_dict['PartialLayerTriggerLists'] += "// Partial Layer {0}\n".format( lay_index )
 
 			# Iterate over triggerList and generate a C trigger array for the layer
