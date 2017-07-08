@@ -28,6 +28,7 @@ import multiprocessing
 import os
 import re
 import sys
+import tempfile
 
 import common.context as context
 import common.expression as expression
@@ -435,26 +436,13 @@ class PreprocessorStage( Stage ):
 		'''
 		super().__init__( control )
 
-		self.max_scan_code = []
-		self.min_scan_code = []
+		self.preprocessor_debug             = False
 
-		self.interconnect_scancode_offsets = []
+		self.max_scan_code                  = []
+		self.min_scan_code                  = []
+		self.interconnect_scancode_offsets  = []
 
-		# Basic Tokens Spec
-		spec = [
-			( 'Comment', ( r' *#.*', )),
-			# Ignored at this stage  # This is required to isolate the Operator tags
-			( 'ScanCode', ( r'S((0x[0-9a-fA-F]+)|([0-9]+))', ) ),
-			( 'ScanCodeStart', ( r'S\[', )),
-			( 'USBCode', ( r'U(("[^"]+")|(0x[0-9a-fA-F]+)|([0-9]+))', ) ),
-			( 'USBCodeStart', ( r'U\[', ) ),
-			( 'CodeBegin', ( r'\[', )),
-			( 'CodeEnd', ( r'\]', )),
-			( 'Name', ( r'[A-Za-z_][A-Za-z_0-9]*', ) ),
-			( 'Operator', ( r'=>|<=|i:\+|i:-|i::|i:|:\+|:-|::|:|=', ) ),
-			( 'Number', ( r'-?(0x[0-9a-fA-F]+)|(0|([1-9][0-9]*))', ) ),
-			( 'Misc', ( r'.', ) ),  # Everything else
-		]
+		self.processed_save_path            = "{temp}/kll".format(temp=tempfile.gettempdir())
 
 	def command_line_args(self, args):
 		'''
@@ -462,6 +450,7 @@ class PreprocessorStage( Stage ):
 
 		@param args: Name space of processed arguments
 		'''
+
 
 	def command_line_flags( self, parser ):
 		'''
@@ -471,6 +460,15 @@ class PreprocessorStage( Stage ):
 		'''
 		# Create new option group
 		group = parser.add_argument_group('\033[1mPreprocessor Configuration\033[0m')
+
+		# Optional Arguments
+		group.add_argument( '--preprocessor-save-path', type=str, nargs='+', default=self.processed_save_path,
+			help="Specify base configuration .kll files, earliest priority"
+		)
+		group.add_argument( '--preprocessor-debug', action='store_true', default=self.preprocessor_debug,
+			help="Enable debug output in the preprocessor.\n"
+		)
+
 
 	def seed_context( self, kll_file ):
 		'''
@@ -485,6 +483,7 @@ class PreprocessorStage( Stage ):
 		lines = kll_file.data.splitlines()
 
 		# Basic Tokens Spec
+		# TODO Storing these somewhere central might be a reasonable idea
 		spec = [
 			( 'ScanCode', ( r'S((0x[0-9a-fA-F]+)|([0-9]+))', ) ),
 			( 'Operator', ( r'=>|<=|i:\+|i:-|i::|i:|:\+|:-|::|:|=', ) ),
@@ -512,8 +511,6 @@ class PreprocessorStage( Stage ):
 				tokens = [x for x in tokenizer(line) if x.type not in useless]
 
 				for r_element, mid_element, l_element in zip(tokens[0::3], tokens[1::3], tokens[2::3]):
-					print("%s | %s | %s" % (r_element.value, mid_element.value, l_element.value))
-					print("%s | %s | %s\n" % (r_element.type, mid_element.type, l_element.type))
 
 					# Preprocessor tag for offsetting the scancodes by a fixed amount
 					# This makes it eay to apply offsets to older files
@@ -531,7 +528,9 @@ class PreprocessorStage( Stage ):
 
 						most_recent_connect_id = int(l_element.value)
 						assert (most_recent_connect_id >= 0)
-						print("Found connect ID! %s" % most_recent_connect_id)
+
+						if self.preprocessor_debug:
+							print("Found connect ID! %s" % most_recent_connect_id)
 
 						if not apply_offsets:
 							# Making sure that the offsets exist
@@ -560,8 +559,6 @@ class PreprocessorStage( Stage ):
 								self.max_scan_code[most_recent_connect_id] = scan_code_int
 
 						if apply_offsets:
-							print("Applying offset %s" % self.interconnect_scancode_offsets[most_recent_connect_id])
-
 							# Modifying the current line
 							# The result is determined by the scancode, the interconnect offset and the preprocess
 							# term for offset
@@ -574,16 +571,22 @@ class PreprocessorStage( Stage ):
 
 							# Sanity checking if we are doing something wrong
 							if original_scancode_converted_hex != r_element.value[1:]:
-								print("{0} We might be converting the scancodes wrong."
-									  " Original code: {1},"
-									  " the converted code {2}".format(ERROR,
-																	   r_element.value[1:],
-																	   original_scancode_converted_hex))
+								print("{type} We might be converting the scancodes wrong."
+										" Original code: {original1},"
+										" the converted code {converted}".format(type=ERROR,
+																				original=r_element.value[1:],
+																				converted=original_scancode_converted_hex))
 
-							print("Old line: %s\n Replacing %s with %s" % (line, r_element.value[1:], scan_code_with_offset_hex))
 							# Replacing the original scancode in the line
+							old_line = str(line)
 							line = line.replace(r_element.value[1:], scan_code_with_offset_hex)
-							print("new line: %s" % line)
+							if self.preprocessor_debug:
+								print("Applying offset %s" % self.interconnect_scancode_offsets[most_recent_connect_id])
+								print("Old line: {old_line}\n"
+									  "Replacing {old_element} with {new_element}".format(old_line=old_line,
+																					old_element=r_element.value[1:],
+																					new_element=scan_code_with_offset_hex))
+								print("New line: %s\n" % line)
 
 				processed_lines.append(line)
 
@@ -603,8 +606,6 @@ class PreprocessorStage( Stage ):
 			kll_file.data = new_data
 			kll_file.lines = processed_lines
 
-			print(new_data)
-
 	def determine_scancode_offsets(self):
 		# Sanity check the min/max codes
 		assert (len(self.min_scan_code) is len(self.max_scan_code))
@@ -616,7 +617,8 @@ class PreprocessorStage( Stage ):
 			self.interconnect_scancode_offsets.append(previous_max_offset)
 			previous_max_offset += scancode_offset_for_id
 
-		print("Scancode offsets: {0}".format(self.interconnect_scancode_offsets))
+		if self.preprocessor_debug:
+			print("Scancode offsets: {0}".format(self.interconnect_scancode_offsets))
 
 	def import_data_from_disk(self, kll_files):
 		for kll_file in kll_files:
@@ -638,9 +640,15 @@ class PreprocessorStage( Stage ):
 
 			base_filename = kll_file.filename()
 			[filename, extension] = base_filename.split(".")
-			processed_filename = "{0}@{1}_processed.{2}".format(file_prefix, filename, extension)
-			print("processedname: %s" % processed_filename)
-			output_filename = '/home/archScifi/workspace/controller/Keyboards/processed/{0}'.format(processed_filename)
+			processed_filename = "{prefix}@{filename}_processed.{extension}".format(prefix=file_prefix,
+																					filename=filename,
+																					extension=extension)
+
+			if self.preprocessor_debug:
+				print("Processed filename: %s" % processed_filename)
+
+			output_filename = '{processed_dir}/{filename}'.format(processed_dir=self.processed_save_path,
+																  filename=processed_filename)
 			kll_file.write(output_filename)
 			kll_file.path = output_filename
 
@@ -688,10 +696,10 @@ class PreprocessorStage( Stage ):
 		# Next, tokenize and parser the preprocessor KLL commands.
 		# NOTE: This may result in having to create more KLL Contexts and tokenize/parse again numerous times over
 		# TODO
-
-		print("Preprocessor determined Min ScanCodes: {0}".format(self.min_scan_code))
-		print("Preprocessor determined Max ScanCodes: {0}".format(self.max_scan_code))
-		print("Preprocessor determined ScanCode offsets: {0}".format(self.interconnect_scancode_offsets))
+		if self.preprocessor_debug:
+			print("Preprocessor determined Min ScanCodes: {0}".format(self.min_scan_code))
+			print("Preprocessor determined Max ScanCodes: {0}".format(self.max_scan_code))
+			print("Preprocessor determined ScanCode offsets: {0}".format(self.interconnect_scancode_offsets))
 		self._status = 'Completed'
 
 
@@ -2118,8 +2126,8 @@ class DataAnalysisStage( Stage ):
 		super().__init__( control )
 
 		# FIXME Remove debug
-		self.data_analysis_debug = True
-		self.data_analysis_display = True
+		self.data_analysis_debug = False
+		self.data_analysis_display = False
 
 		self.trigger_index = []
 		self.result_index = []

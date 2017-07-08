@@ -37,80 +37,85 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 ### Classes ###
 
 class KLLFile:
-    '''
-    Container class for imported KLL files
-    '''
+	'''
+	Container class for imported KLL files
+	'''
 
-    def __init__(self, path, file_context):
-        '''
-        Initialize file container
+	def __init__(self, path, file_context):
+		'''
+		Initialize file container
 
-        @param path:    Path to filename, if relative, relative to the execution environment
-        @param context: KLL Context object
-        '''
-        self.path = path
-        self.context = file_context
-        self.lines = []
-        self.data = ""
+		@param path:    Path to filename, if relative, relative to the execution environment
+		@param context: KLL Context object
+		'''
+		self.path = path
+		self.context = file_context
+		self.lines = []
+		self.data = ""
 
-    def __repr__(self):
-        context_str = type(self.context).__name__
+	def __repr__(self):
+		context_str = type(self.context).__name__
 
-        # Show layer info if this is a PartialMap
-        if isinstance(self.context, context.PartialMapContext):
-            context_str = "{0}({1})".format(context_str, self.context.layer)
+		# Show layer info if this is a PartialMap
+		if isinstance(self.context, context.PartialMapContext):
+			context_str = "{0}({1})".format(context_str, self.context.layer)
 
-        return "({0}, {1})".format(self.path, context_str)
+		return "({0}, {1})".format(self.path, context_str)
 
-    def check(self):
-        '''
-        Make sure that the file exists at the initialized path
-        '''
-        exists = os.path.isfile(self.path)
+	def check(self):
+		'''
+		Make sure that the file exists at the initialized path
+		'''
+		exists = os.path.isfile(self.path)
 
-        # Display error message, will exit later
-        if not exists:
-            print("{0} {1} does not exist...".format(ERROR, self.path))
+		# Display error message, will exit later
+		if not exists:
+			print("{0} {1} does not exist...".format(ERROR, self.path))
 
-        return exists
+		return exists
 
-    def filename(self):
-        filename = str(os.path.basename(self.path))
-        return filename
+	def filename(self):
+		filename = str(os.path.basename(self.path))
+		return filename
 
-    def read(self):
-        '''
-        Read the contents of the file path into memory
-        Reads both per line and complete copies
-        '''
-        try:
-            # Read file into memory, removing newlines
-            with open(self.path) as f:
-                self.data = f.read()
-                self.lines = self.data.splitlines()
+	def read(self):
+		'''
+		Read the contents of the file path into memory
+		Reads both per line and complete copies
+		'''
+		try:
+			# Read file into memory, removing newlines
+			with open(self.path) as f:
+				self.data = f.read()
+				self.lines = self.data.splitlines()
 
-        except:
-            print("{0} Failed to read '{1}' into memory...".format(ERROR, self.path))
-            return False
+		except:
+			print("{0} Failed to read '{1}' into memory...".format(ERROR, self.path))
+			return False
 
-        return True
+		return True
 
-    def write(self, output_filename):
-        '''
-        Writes the contents to a file
-        This can be useful for dumping processed files to disk
-        '''
-        try:
-            # Read file into memory, removing newlines
-            print("Writing to {0}".format(output_filename))
-            with open(output_filename, 'w') as f:
-                f.write(self.data)
+	def write(self, output_filename):
+		'''
+		Writes the contents to a file
+		This can be useful for dumping processed files to disk
+		'''
+		try:
+			# Write the file to the specified file/folder
+			print("Writing to {0}".format(output_filename))
 
-        except:
-            print("{0} Failed to write to file '{1}'".format(ERROR, self.path))
-            return False
+			directory = os.path.dirname(output_filename)
+			if not os.path.exists(directory):
+				os.makedirs(directory)
 
-        return True
+			with open(output_filename, 'w') as f:
+				f.write(self.data)
+
+		except:
+			print("{0} Failed to write to file '{1}'".format(ERROR, self.path))
+			return False
+
+		return True
 
 
 
