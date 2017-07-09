@@ -572,20 +572,22 @@ class PreprocessorStage( Stage ):
 							# Sanity checking if we are doing something wrong
 							if original_scancode_converted_hex != r_element.value[1:]:
 								print("{type} We might be converting the scancodes wrong."
-										" Original code: {original1},"
-										" the converted code {converted}".format(type=ERROR,
-																				original=r_element.value[1:],
-																				converted=original_scancode_converted_hex))
+										" Original code: {original1}, the converted code"
+										" {converted}".format(type=ERROR,
+															original=r_element.value[1:],
+															converted=original_scancode_converted_hex))
 
 							# Replacing the original scancode in the line
 							old_line = str(line)
 							line = line.replace(r_element.value[1:], scan_code_with_offset_hex)
 							if self.preprocessor_debug:
-								print("Applying offset %s" % self.interconnect_scancode_offsets[most_recent_connect_id])
+								print("Applying offset %s" %
+									self.interconnect_scancode_offsets[most_recent_connect_id])
 								print("Old line: {old_line}\n"
-									  "Replacing {old_element} with {new_element}".format(old_line=old_line,
-																					old_element=r_element.value[1:],
-																					new_element=scan_code_with_offset_hex))
+										"Replacing {old_element} with"
+										"{new_element}".format(old_line=old_line,
+																old_element=r_element.value[1:],
+																new_element=scan_code_with_offset_hex))
 								print("New line: %s\n" % line)
 
 				processed_lines.append(line)
@@ -2125,7 +2127,6 @@ class DataAnalysisStage( Stage ):
 		'''
 		super().__init__( control )
 
-		# FIXME Remove debug
 		self.data_analysis_debug = False
 		self.data_analysis_display = False
 

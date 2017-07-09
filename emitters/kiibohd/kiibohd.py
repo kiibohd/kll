@@ -455,7 +455,6 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 		The fill_dict is used populate the template files.
 		'''
 		# Acquire Datastructures
-		print(self)
 		early_contexts = self.control.stage('DataOrganizationStage').contexts
 		full_context = self.control.stage('DataFinalizationStage').full_context
 
