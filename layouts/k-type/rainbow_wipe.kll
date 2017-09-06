@@ -9,17 +9,17 @@ KLL = 0.5;
 Date = 2017-02-08;
 
 U["A"-"Z"] :+ A[rainbow_fill_interp](loops:1);
-U["1"] :+ A[under_streak](divmask:1, divshift:1, loops:1);
-U["2"] :+ A[under_streak](divmask:1, divshift:1, loops:2);
-U["3"] :+ A[under_streak](divmask:1, divshift:1, loops:3);
-U["4"] :+ A[under_streak](divmask:1, divshift:1, loops:4);
-U["5"] :+ A[under_streak](divmask:1, divshift:1, loops:5);
-U["6"] :+ A[under_streak](divmask:1, divshift:1, loops:6);
-U["7"] :+ A[under_streak](divmask:1, divshift:1, loops:7);
-U["8"] :+ A[under_streak](divmask:1, divshift:1, loops:8);
-U["9"] :+ A[under_streak](divmask:1, divshift:1, loops:9);
+U["1"] :+ A[under_streak](framedelay:1, loops:1);
+U["2"] :+ A[under_streak](framedelay:1, loops:2);
+U["3"] :+ A[under_streak](framedelay:1, loops:3);
+U["4"] :+ A[under_streak](framedelay:1, loops:4);
+U["5"] :+ A[under_streak](framedelay:1, loops:5);
+U["6"] :+ A[under_streak](framedelay:1, loops:6);
+U["7"] :+ A[under_streak](framedelay:1, loops:7);
+U["8"] :+ A[under_streak](framedelay:1, loops:8);
+U["9"] :+ A[under_streak](framedelay:1, loops:9);
 U["0"] :+ A[under_streak](loops:1);
 
 U["Print"] :+ A[rainbow_fill_interp]();
-U["Pause"] :+ A[rainbow_fill_interp](divmask:0, divshift:0, loops:1, replace:all);
+U["Pause"] :+ A[rainbow_fill_interp](framedelay:0, loops:1, replace:all);
 

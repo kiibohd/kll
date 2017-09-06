@@ -353,7 +353,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 		modifier = animation.getModifier( name )
 
 		# Simple modifier
-		simple_mods = ['pos', 'loops', 'divshift', 'divmask', 'frame']
+		simple_mods = ['pos', 'loops', 'framedelay', 'divmask', 'frame']
 		if name in simple_mods:
 			if not modifier or modifier is None:
 				return 0
@@ -405,14 +405,19 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 		a_name = animation_name
 		# <pos>          - Frame position
 		a_pos = self.animation_modifier_set( animation, 'frame' )
+		# <subpos>       - Sub frame position
+		a_subpos = 0
 		# <loops>        - Number of loops, set to 0 for infinite
 		a_loops = self.animation_modifier_set( animation, 'loops' )
 		if animation.getModifier('loop'):
 			a_loops = 0
-		# <divmask>      - Divider mask
-		a_divmask = self.animation_modifier_set( animation, 'divmask' )
-		# <divshift>     - Divider shift
-		a_divshift = self.animation_modifier_set( animation, 'divshift' )
+		# <framedelay>   - Frame delay
+		a_framedelay = self.animation_modifier_set( animation, 'framedelay' )
+		# <frameoption>  - Frame option
+		a_frameoption = []
+		# <framestretch> - frameoption Frame stretch
+		if animation.getModifier('framestretch'):
+			a_frameoption.append("PixelFrameOption_FrameStretch")
 		# <ffunc>        - Frame function index
 		a_ffunc = self.animation_modifier_set( animation, 'ffunc' )
 		# <pfunc>        - Pixel function index
@@ -427,20 +432,29 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 		else:
 			a_state = "AnimationPlayState_Start"
 
+		# Determine what to set a_frameoption
+		a_frameoption_str = "PixelFrameOption_None"
+		for option in a_frameoption:
+			if a_frameoption_str == "PixelFrameOption_None":
+				a_frameoption_str = option
+			else:
+				a_frameoption_str += " | {}".format( option )
+
 		# Do not set a_start if this is an additional (non-default) animation settings entry
 		if additional:
 			a_start = 0
 
-		return "\n\t{{ (TriggerMacro*){2}, {3}, /*{0} {1}*/\n\t\t{4}, {5}, {6}, {7}, {8}, {9}, {10}, {11} }},".format(
+		return "\n\t{{ (TriggerMacro*){2}, {3}, /*{0} {1}*/\n\t\t{4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}}},".format(
 			count,
 			animation,
 			# AnimationStackElement
 			a_start,
 			a_name,
 			a_pos,
+			a_subpos,
 			a_loops,
-			a_divmask,
-			a_divshift,
+			a_framedelay,
+			a_frameoption_str,
 			a_ffunc,
 			a_pfunc,
 			a_replace,

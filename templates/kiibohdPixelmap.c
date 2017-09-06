@@ -55,7 +55,7 @@
 <|Animations|>
 // Animation Settings
 //  const AnimationStackElement AnimationSettings[] = {
-//    { <triggerguide>, <index>, <pos>, <loops>, <divmask>, <divshift>, <ffunc>, <pfunc>, <replace>, <state> }, ...
+//    { <triggerguide>, <index>, <pos>, <subpos>, <loops>, <framedelay>, <frameoption>, <ffunc>, <pfunc>, <replace>, <state> }, ...
 //  }
 <|AnimationSettings|>
 

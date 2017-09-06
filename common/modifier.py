@@ -133,25 +133,25 @@ class AnimationModifier:
 	'''
 	# Modifier validation tree
 	valid_modifiers = {
-		'loops'    : int,
-		'loop'     : None,
-		'divshift' : int,
-		'divmask'  : int,
-		'start'    : None,
-		'pause'    : None,
-		'stop'     : None,
-		'pos'      : int,
-		'pfunc'    : {
+		'loops'        : int,
+		'loop'         : None,
+		'framedelay'   : int,
+		'framestretch' : None,
+		'start'        : None,
+		'pause'        : None,
+		'stop'         : None,
+		'pos'          : int,
+		'pfunc'        : {
 			'off'       : None,
 			'interp'    : None,
 			'kllinterp' : None,
 		},
-		'ffunc'    : {
+		'ffunc'        : {
 			'off'       : None,
 			'interp'    : None,
 			'kllinterp' : None,
 		},
-		'replace'  : {
+		'replace'      : {
 			'stack' : None,
 			'basic' : None,
 			'all'   : None,
