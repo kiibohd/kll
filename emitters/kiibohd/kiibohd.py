@@ -1191,4 +1191,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 			self.fill_dict['KLLDefines'] += "#define Pixel_DisplayMapping_Rows_KLL {0}\n".format(
 				pixel_display_params['Rows']
 			)
+			self.fill_dict['KLLDefines'] += "#define Pixel_AnimationSettingsNum_KLL {0}\n".format(
+				len( animation_settings_list )
+			)
 
