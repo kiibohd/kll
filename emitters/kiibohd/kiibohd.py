@@ -424,13 +424,15 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 		a_pfunc = self.animation_modifier_set( animation, 'pfunc' )
 		# <replace>      - Replacement mode
 		a_replace = self.animation_modifier_set( animation, 'replace' )
-		# <state>        - Animation play state
+		# <state>        - Animation play state (defaults to Paused if not set)
 		if a_pause == 1:
 			a_state = "AnimationPlayState_Pause"
 		elif a_stop == 1:
 			a_state = "AnimationPlayState_Stop"
-		else:
+		elif a_start == 1:
 			a_state = "AnimationPlayState_Start"
+		else:
+			a_state = "AnimationPlayState_Pause"
 
 		# Determine what to set a_frameoption
 		a_frameoption_str = "PixelFrameOption_None"
@@ -440,15 +442,16 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 			else:
 				a_frameoption_str += " | {}".format( option )
 
-		# Do not set a_start if this is an additional (non-default) animation settings entry
+		# Do not set a_initial if this is an additional (non-default) animation settings entry
+		a_initial = 1
 		if additional:
-			a_start = 0
+			a_initial = 0
 
 		return "\n\t{{ (TriggerMacro*){2}, {3}, /*{0} {1}*/\n\t\t{4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}}},".format(
 			count,
 			animation,
 			# AnimationStackElement
-			a_start,
+			a_initial,
 			a_name,
 			a_pos,
 			a_subpos,
@@ -991,6 +994,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 					animation.value,
 					animation_name,
 					count,
+					additional=False,
 				)
 				count += 1
 			self.json_dict['AnimationIds'] = animation_id_json
