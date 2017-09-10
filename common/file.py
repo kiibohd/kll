@@ -40,7 +40,8 @@ class KLLFile:
 	'''
 	Container class for imported KLL files
 	'''
-	def __init__( self, path, file_context ):
+
+	def __init__(self, path, file_context):
 		'''
 		Initialize file container
 
@@ -52,40 +53,66 @@ class KLLFile:
 		self.lines = []
 		self.data = ""
 
-	def __repr__( self ):
-		context_str = type( self.context ).__name__
+	def __repr__(self):
+		context_str = type(self.context).__name__
 
 		# Show layer info if this is a PartialMap
-		if isinstance( self.context, context.PartialMapContext ):
-			context_str = "{0}({1})".format( context_str, self.context.layer )
+		if isinstance(self.context, context.PartialMapContext):
+			context_str = "{0}({1})".format(context_str, self.context.layer)
 
-		return "({0}, {1})".format( self.path, context_str )
+		return "({0}, {1})".format(self.path, context_str)
 
-	def check( self ):
+	def check(self):
 		'''
 		Make sure that the file exists at the initialized path
 		'''
-		exists = os.path.isfile( self.path )
+		exists = os.path.isfile(self.path)
 
 		# Display error message, will exit later
 		if not exists:
-			print( "{0} {1} does not exist...".format( ERROR, self.path ) )
+			print("{0} {1} does not exist...".format(ERROR, self.path))
 
 		return exists
 
-	def read( self ):
+	def filename(self):
+		filename = str(os.path.basename(self.path))
+		return filename
+
+	def read(self):
 		'''
 		Read the contents of the file path into memory
 		Reads both per line and complete copies
 		'''
 		try:
 			# Read file into memory, removing newlines
-			with open( self.path ) as f:
-				self.data  = f.read()
+			with open(self.path) as f:
+				self.data = f.read()
 				self.lines = self.data.splitlines()
 
 		except:
-			print( "{0} Failed to read '{1}' into memory...".format( ERROR, self.path ) )
+			print("{0} Failed to read '{1}' into memory...".format(ERROR, self.path))
+			return False
+
+		return True
+
+	def write(self, output_filename):
+		'''
+		Writes the contents to a file
+		This can be useful for dumping processed files to disk
+		'''
+		try:
+			# Write the file to the specified file/folder
+			print("Writing to {0}".format(output_filename))
+
+			directory = os.path.dirname(output_filename)
+			if not os.path.exists(directory):
+				os.makedirs(directory)
+
+			with open(output_filename, 'w') as f:
+				f.write(self.data)
+
+		except:
+			print("{0} Failed to write to file '{1}'".format(ERROR, self.path))
 			return False
 
 		return True

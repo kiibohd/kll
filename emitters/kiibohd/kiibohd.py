@@ -736,7 +736,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 
 		## Default Layer and Default Layer Scan Map ##
 		self.fill_dict['DefaultLayerTriggerList'] = ""
-		self.fill_dict['DefaultLayerScanMap'] = "const nat_ptr_t *default_scanMap[] = {\n"
+		self.fill_dict['DefaultLayerScanMap'] = "const nat_ptr_t *default_scanMap[] = { \n"
 
 		# Iterate over triggerList and generate a C trigger array for the default map and default map array
 		for index, trigger_list in enumerate( trigger_lists[0][ min_scan_code[0]: ] ):
