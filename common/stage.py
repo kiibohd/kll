@@ -652,7 +652,12 @@ class PreprocessorStage( Stage ):
 			file_prefix = file_prefix.replace("/", "_")
 
 			base_filename = kll_file.filename()
-			[filename, extension] = base_filename.rsplit(".", maxsplit=1)
+
+			# Handle multiple dots across multiple versions of Python 3
+			splits = base_filename.split(".")
+			extension = splits[-1]
+			filename = splits[0:-1]
+
 			processed_filename = "{prefix}@{filename}_processed.{extension}".format(prefix=file_prefix,
 																					filename=filename,
 																					extension=extension)
