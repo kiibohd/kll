@@ -522,6 +522,19 @@ class CapId( Id ):
 		for index, arg in enumerate( self.arg_list ):
 			# Lookup actual width if necessary (wasn't set explicitly)
 			if capabilities_dict is not None and arg.width is None:
+				# Check if there are enough arguments
+				expected = len( capabilities_dict[ self.name ].association.arg_list )
+				got = len( self.arg_list )
+				if got != expected:
+					print ( "{0} incorrect number of arguments for {1}. Expected {2} Got {3}".format(
+						ERROR,
+						self,
+						expected,
+						got,
+					) )
+					print( "\t{0}".format( capabilities_dict[ self.name ].kllify() ) )
+					raise AssertionError("Invalid arguments")
+
 				total_bytes += capabilities_dict[ self.name ].association.arg_list[ index ].width
 
 			# Otherwise use the set width
