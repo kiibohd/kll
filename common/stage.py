@@ -652,7 +652,7 @@ class PreprocessorStage( Stage ):
 			file_prefix = file_prefix.replace("/", "_")
 
 			base_filename = kll_file.filename()
-			[filename, extension] = base_filename.split(".")
+			[filename, extension] = base_filename.rsplit(".", maxsplit=1)
 			processed_filename = "{prefix}@{filename}_processed.{extension}".format(prefix=file_prefix,
 																					filename=filename,
 																					extension=extension)
