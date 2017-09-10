@@ -438,9 +438,9 @@ class PreprocessorStage( Stage ):
 
 		self.preprocessor_debug             = False
 
-		self.max_scan_code                  = []
-		self.min_scan_code                  = []
-		self.interconnect_scancode_offsets  = []
+		self.max_scan_code                  = [0]
+		self.min_scan_code                  = [0]
+		self.interconnect_scancode_offsets  = [0]
 
 		self.processed_save_path            = "{temp}/kll".format(temp=tempfile.gettempdir())
 
@@ -562,33 +562,44 @@ class PreprocessorStage( Stage ):
 							# Modifying the current line
 							# The result is determined by the scancode, the interconnect offset and the preprocess
 							# term for offset
-							scan_code_with_offset = scan_code_int + \
-													self.interconnect_scancode_offsets[most_recent_connect_id] + \
-													most_recent_offset
+							scan_code_with_offset = (
+								scan_code_int +
+								self.interconnect_scancode_offsets[most_recent_connect_id] +
+								most_recent_offset
+							)
 
-							scan_code_with_offset_hex = "0x{:02X}".format(scan_code_with_offset)
-							original_scancode_converted_hex = "0x{:02X}".format(scan_code_int)
+							scan_code_with_offset_hex = "0x{:X}".format(scan_code_with_offset)
+							original_scancode_converted_hex = "0x{:X}".format(scan_code_int)
 
 							# Sanity checking if we are doing something wrong
-							if original_scancode_converted_hex != r_element.value[1:]:
-								print("{type} We might be converting the scancodes wrong."
-										" Original code: {original1}, the converted code"
-										" {converted}".format(type=ERROR,
-															original=r_element.value[1:],
-															converted=original_scancode_converted_hex))
+							if int( original_scancode_converted_hex, 16 ) != int( r_element.value[1:], 0 ):
+								print(
+									"{type} We might be converting the scancodes wrong."
+									" Original code: {original}, the converted code"
+									" {converted}".format(
+										type=ERROR,
+										original=r_element.value[1:],
+										converted=original_scancode_converted_hex
+									)
+								)
 
 							# Replacing the original scancode in the line
 							old_line = str(line)
 							line = line.replace(r_element.value[1:], scan_code_with_offset_hex)
 							if self.preprocessor_debug:
-								print("Applying offset %s" %
-									self.interconnect_scancode_offsets[most_recent_connect_id])
-								print("Old line: {old_line}\n"
-										"Replacing {old_element} with"
-										"{new_element}".format(old_line=old_line,
-																old_element=r_element.value[1:],
-																new_element=scan_code_with_offset_hex))
-								print("New line: %s\n" % line)
+								print("Applying offset {}".format(
+									self.interconnect_scancode_offsets[most_recent_connect_id]
+								))
+								print(
+									"Old line: {old_line}\n"
+									"Replacing {old_element} with"
+									"{new_element}".format(
+										old_line=old_line,
+										old_element=r_element.value[1:],
+										new_element=scan_code_with_offset_hex
+									)
+								)
+								print("New line: {}\n".format(line))
 
 				processed_lines.append(line)
 
@@ -651,7 +662,7 @@ class PreprocessorStage( Stage ):
 
 			output_filename = '{processed_dir}/{filename}'.format(processed_dir=self.processed_save_path,
 																  filename=processed_filename)
-			kll_file.write(output_filename)
+			kll_file.write(output_filename, self.preprocessor_debug)
 			kll_file.path = output_filename
 
 	def gather_scancode_offsets(self, kll_files):

@@ -118,7 +118,7 @@ def command_line_args( control ):
 	control.git_rev, control.git_changes, control.git_date = git_revision(
 		os.path.dirname( os.path.realpath( __file__ ) )
 	)
-	control.version = "ALPHA 0.5c.{0} - {1}".format( control.git_rev, control.git_date )
+	control.version = "BETA 0.5c.{0} - {1}".format( control.git_rev, control.git_date )
 
 	# Optional Arguments
 	parser.add_argument(

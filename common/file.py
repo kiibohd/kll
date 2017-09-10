@@ -3,7 +3,7 @@
 KLL File Container
 '''
 
-# Copyright (C) 2016 by Jacob Alexander
+# Copyright (C) 2016-2017 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,14 +95,15 @@ class KLLFile:
 
 		return True
 
-	def write(self, output_filename):
+	def write(self, output_filename, debug=False):
 		'''
 		Writes the contents to a file
 		This can be useful for dumping processed files to disk
 		'''
 		try:
 			# Write the file to the specified file/folder
-			print("Writing to {0}".format(output_filename))
+			if debug:
+				print("Writing to {0}".format(output_filename))
 
 			directory = os.path.dirname(output_filename)
 			if not os.path.exists(directory):
