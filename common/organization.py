@@ -512,7 +512,7 @@ class MappingData( Data ):
 
 		# Using this dictionary, replace all the trigger USB codes
 		# Iterate over a copy so we can modify the dictionary in place
-		for key, expr in self.data.copy().items():
+		for key, expr in sorted( self.data.copy().items() ):
 			for sub_expr in expr:
 				# 1) Single USB Codes trigger results will replace the original ScanCode result
 				if sub_expr.elems()[0] == 1 and sub_expr.triggers[0][0][0].type != 'ScanCode':

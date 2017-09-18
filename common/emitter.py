@@ -52,6 +52,10 @@ class Emitter:
 		self.control = control
 		self.color = False
 
+		# Signal erroring due to an issue
+		# We may not want to exit immediately as we could find other potential issues that need fixing
+		self.error_exit = False
+
 	def command_line_args( self, args ):
 		'''
 		Group parser for command line arguments
@@ -105,6 +109,12 @@ class Emitter:
 				type( self ).__name__
 			)
 		)
+
+	def check( self ):
+		'''
+		Determines whether or not we've successfully emitted.
+		'''
+		return not self.error_exit
 
 
 class FileEmitter:

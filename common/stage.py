@@ -2715,7 +2715,11 @@ class CodeGenerationStage( Stage ):
 		# Generate Outputs using Emitter
 		self.emitter.output()
 
-		self._status = 'Completed'
+		# Check Emitter status
+		if self.emitter.check():
+			self._status = 'Completed'
+		else:
+			self._status = 'Incomplete'
 
 
 class ReportGenerationStage( Stage ):

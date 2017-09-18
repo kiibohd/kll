@@ -79,6 +79,10 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 
 		self.use_pixel_map = False # Default to disabling PixelMap (auto-enables if needed)
 
+		# Signal erroring due to an issue
+		# We may not want to exit immediately as we could find other potential issues that need fixing
+		self.error_exit = False
+
 		# Fill dictionary
 		self.fill_dict = {}
 
@@ -216,6 +220,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 						identifier
 					) )
 					cap_arg = "/* XXX INVALID {0} */".format( identifier )
+					self.error_exit = True
 
 				# Otherwise use the C define instead of the number (increases readability)
 				else:
@@ -223,7 +228,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 						cap_arg = hid_lookup_dictionary[ ( identifier.second_type, identifier.uid ) ]
 					except KeyError as err:
 						print( "{0} {1} HID lookup kll bug...please report.".format( ERROR, err ) )
-						raise
+						self.error_exit = True
 
 				cap = "{0}, {1}".format( cap_index, cap_arg )
 
@@ -256,6 +261,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 				animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
 				if lookup_id not in animation_settings_list:
 					print( "{0} Unknown animation '{1}'".format( ERROR, lookup_id ) )
+					self.error_exit = True
 				else:
 					settings_index = animation_settings_list.index( lookup_id )
 
@@ -279,6 +285,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 					identifier.__class__.__name__,
 					identifier,
 				) )
+				self.error_exit = True
 
 			# Generate identifier string for element of the combo
 			output += ", {0}".format(
@@ -313,6 +320,7 @@ class Kiibohd( Emitter, TextEmitter, JsonEmitter ):
 			# Unknown/Invalid Id
 			else:
 				print( "{0} Unknown identifier -> {1}".format( ERROR, identifier ) )
+				self.error_exit = True
 
 			# Generate identifier string for element of the combo
 			output += ", {0}".format(
