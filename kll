@@ -32,20 +32,22 @@ import common.stage as stage
 
 ### Decorators ###
 
-## Print Decorator Variables
+# Print Decorator Variables
 ERROR = '\033[5;1;31mERROR\033[0m:'
 WARNING = '\033[5;1;33mWARNING\033[0m:'
 
 
-## Python Text Formatting Fixer...
-##  Because the creators of Python are averse to proper capitalization.
+# Python Text Formatting Fixer...
+# Because the creators of Python are averse to proper capitalization.
 textFormatter_lookup = {
-	"usage: "            : "\033[1mUsage\033[0m: ",
-	"optional arguments" : "\033[1mOptional Arguments\033[0m",
+    "usage: ": "\033[1mUsage\033[0m: ",
+    "optional arguments": "\033[1mOptional Arguments\033[0m",
 }
 
-def textFormatter_gettext( s ):
-	return textFormatter_lookup.get( s, s )
+
+def textFormatter_gettext(s):
+    return textFormatter_lookup.get(s, s)
+
 
 argparse._ = textFormatter_gettext
 
@@ -53,109 +55,108 @@ argparse._ = textFormatter_gettext
 
 ### Misc Utility Functions ###
 
-def git_revision( kllPath ):
-	'''
-	Retrieve git information using given path
+def git_revision(kllPath):
+    '''
+    Retrieve git information using given path
 
-	@return: (revision, changed, revision_date)
-	'''
-	import subprocess
+    @return: (revision, changed, revision_date)
+    '''
+    import subprocess
 
-	# Change the path to where kll.py is
-	origPath = os.getcwd()
-	os.chdir( kllPath )
+    # Change the path to where kll.py is
+    origPath = os.getcwd()
+    os.chdir(kllPath)
 
-	# Just in case git can't be found
-	try:
-		# Get hash of the latest git commit
-		revision = subprocess.check_output( ['git', 'rev-parse', 'HEAD'] ).decode()[:-1]
+    # Just in case git can't be found
+    try:
+        # Get hash of the latest git commit
+        revision = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()[:-1]
 
-		# Get list of files that have changed since the commit
-		changed = subprocess.check_output( ['git', 'diff-index', '--name-only', 'HEAD', '--'] ).decode().splitlines()
+        # Get list of files that have changed since the commit
+        changed = subprocess.check_output(['git', 'diff-index', '--name-only', 'HEAD', '--']).decode().splitlines()
 
-		# Get commit date
-		date = subprocess.check_output( ['git', 'show', '-s', '--format=%ci'] ).decode()[:-1]
-	except:
-		revision = "<no git>"
-		changed = []
-		date = "<no date>"
+        # Get commit date
+        date = subprocess.check_output(['git', 'show', '-s', '--format=%ci']).decode()[:-1]
+    except BaseException:
+        revision = "<no git>"
+        changed = []
+        date = "<no date>"
 
-	# Change back to the old working directory
-	os.chdir( origPath )
+    # Change back to the old working directory
+    os.chdir(origPath)
 
-	return revision, changed, date
-
+    return revision, changed, date
 
 
 ### Argument Parsing ###
 
-def checkFileExists( filename ):
-	'''
-	Validate that file exists
+def checkFileExists(filename):
+    '''
+    Validate that file exists
 
-	@param filename: Path to file
-	'''
-	if not os.path.isfile( filename ):
-		print ( "{0} {1} does not exist...".format( ERROR, filename ) )
-		sys.exit( 1 )
+    @param filename: Path to file
+    '''
+    if not os.path.isfile(filename):
+        print("{0} {1} does not exist...".format(ERROR, filename))
+        sys.exit(1)
 
-def command_line_args( control ):
-	'''
-	Initialize argparse and process all command line arguments
 
-	@param control: ControlStage object which has access to all the group argument parsers
-	'''
-	# Setup argument processor
-	parser = argparse.ArgumentParser(
-		usage="%(prog)s [options..] [<generic>..]",
-		description="KLL Compiler - Generates specified output from KLL .kll files.",
-		epilog="Example: {0} scan_map.kll".format( os.path.basename( sys.argv[0] ) ),
-		formatter_class=argparse.RawTextHelpFormatter,
-		add_help=False,
-	)
+def command_line_args(control):
+    '''
+    Initialize argparse and process all command line arguments
 
-	# Get git information
-	control.git_rev, control.git_changes, control.git_date = git_revision(
-		os.path.dirname( os.path.realpath( __file__ ) )
-	)
-	control.version = "BETA 0.5c.{0} - {1}".format( control.git_rev, control.git_date )
+    @param control: ControlStage object which has access to all the group argument parsers
+    '''
+    # Setup argument processor
+    parser = argparse.ArgumentParser(
+        usage="%(prog)s [options..] [<generic>..]",
+        description="KLL Compiler - Generates specified output from KLL .kll files.",
+        epilog="Example: {0} scan_map.kll".format(os.path.basename(sys.argv[0])),
+        formatter_class=argparse.RawTextHelpFormatter,
+        add_help=False,
+    )
 
-	# Optional Arguments
-	parser.add_argument(
-		'-h', '--help',
-		action="help",
-		help="This message."
-	)
-	parser.add_argument(
-		'-v', '--version',
-		action="version",
-		version="%(prog)s {0}".format( control.version ),
-		help="Show program's version number and exit"
-	)
+    # Get git information
+    control.git_rev, control.git_changes, control.git_date = git_revision(
+            os.path.dirname(os.path.realpath(__file__))
+    )
+    control.version = "BETA 0.5c.{0} - {1}".format(control.git_rev, control.git_date)
 
-	# Add stage arguments
-	control.command_line_flags( parser )
+    # Optional Arguments
+    parser.add_argument(
+        '-h', '--help',
+        action="help",
+        help="This message."
+    )
+    parser.add_argument(
+        '-v', '--version',
+        action="version",
+        version="%(prog)s {0}".format(control.version),
+        help="Show program's version number and exit"
+    )
 
-	# Process Arguments
-	args = parser.parse_args()
+    # Add stage arguments
+    control.command_line_flags(parser)
 
-	# Utilize parsed arguments in each of the stages
-	control.command_line_args( args )
+    # Process Arguments
+    args = parser.parse_args()
 
+    # Utilize parsed arguments in each of the stages
+    control.command_line_args(args)
 
 
 ### Main Entry Point ###
 
+
 if __name__ == '__main__':
-	# Initialize Control Stages
-	control = stage.ControlStage()
+    # Initialize Control Stages
+    control = stage.ControlStage()
 
-	# Process Command-Line Args
-	command_line_args( control )
+    # Process Command-Line Args
+    command_line_args(control)
 
-	# Process Control Stages
-	control.process()
+    # Process Control Stages
+    control.process()
 
-	# Successful Execution
-	sys.exit( 0 )
-
+    # Successful Execution
+    sys.exit(0)

@@ -34,7 +34,7 @@ import common.organization as organization
 
 ### Decorators ###
 
-## Print Decorator Variables
+# Print Decorator Variables
 ERROR = '\033[5;1;31mERROR\033[0m:'
 WARNING = '\033[5;1;33mWARNING\033[0m:'
 
@@ -43,226 +43,236 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 ### Classes ###
 
 class Context:
-	'''
-	Base KLL Context Class
-	'''
-	def __init__( self ):
-		'''
-		Context initialization
-		'''
-		# Each context may have one or more included kll files
-		# And each of these files will have at least 1 Context
-		self.kll_files = []
+    '''
+    Base KLL Context Class
+    '''
 
-		# File data assigned to each context
-		# This info is populated during the PreprocessorStage
-		self.lines = []
-		self.data = ""
-		self.parent = None
+    def __init__(self):
+        '''
+        Context initialization
+        '''
+        # Each context may have one or more included kll files
+        # And each of these files will have at least 1 Context
+        self.kll_files = []
 
-		# Tokenized data sets
-		self.classification_token_data = []
-		self.expressions = []
+        # File data assigned to each context
+        # This info is populated during the PreprocessorStage
+        self.lines = []
+        self.data = ""
+        self.parent = None
 
-		# Organized Expression Datastructure
-		self.organization = organization.Organization()
+        # Tokenized data sets
+        self.classification_token_data = []
+        self.expressions = []
 
-	def __repr__( self ):
-		# Build list of all the info
-		return "(kll_files={0}, lines={1}, data='''{2}''')".format(
-			self.kll_files,
-			self.lines,
-			self.data,
-		)
+        # Organized Expression Datastructure
+        self.organization = organization.Organization()
 
-	def initial_context( self, lines, data, parent ):
-		'''
-		Used in the PreprocessorStage to update the initial line and kll file data
+    def __repr__(self):
+        # Build list of all the info
+        return "(kll_files={0}, lines={1}, data='''{2}''')".format(
+            self.kll_files,
+            self.lines,
+            self.data,
+        )
 
-		@param lines:  Data split per line
-		@param data:   Entire context in a single string
-		@param parent: Parent node, always a KLLFile
-		'''
-		self.lines = lines
-		self.data = data
-		self.parent = parent
+    def initial_context(self, lines, data, parent):
+        '''
+        Used in the PreprocessorStage to update the initial line and kll file data
 
-	def query( self, kll_expression, kll_type=None ):
-		'''
-		Query
+        @param lines:  Data split per line
+        @param data:   Entire context in a single string
+        @param parent: Parent node, always a KLLFile
+        '''
+        self.lines = lines
+        self.data = data
+        self.parent = parent
 
-		Returns a dictionary of the specified property.
-		Most queries should use this.
+    def query(self, kll_expression, kll_type=None):
+        '''
+        Query
 
-		See organization.py:Organization for property_type details.
+        Returns a dictionary of the specified property.
+        Most queries should use this.
 
-		@param kll_expression: String name of expression type
-		@param kll_type: String name of the expression sub-type
-		                 If set to None, return all
+        See organization.py:Organization for property_type details.
 
-		@return: context_name: (dictionary)
-		'''
-		if kll_type is None:
-			return self.organization.data_mapping[ kll_expression ]
-		return self.organization.data_mapping[ kll_expression ][ kll_type ]
+        @param kll_expression: String name of expression type
+        @param kll_type: String name of the expression sub-type
+                         If set to None, return all
 
-
-class GenericContext( Context ):
-	'''
-	Generic KLL Context Class
-	'''
+        @return: context_name: (dictionary)
+        '''
+        if kll_type is None:
+            return self.organization.data_mapping[kll_expression]
+        return self.organization.data_mapping[kll_expression][kll_type]
 
 
-class ConfigurationContext( Context ):
-	'''
-	Configuration KLL Context Class
-	'''
+class GenericContext(Context):
+    '''
+    Generic KLL Context Class
+    '''
 
 
-class BaseMapContext( Context ):
-	'''
-	Base Map KLL Context Class
-	'''
+class ConfigurationContext(Context):
+    '''
+    Configuration KLL Context Class
+    '''
 
 
-class DefaultMapContext( Context ):
-	'''
-	Default Map KLL Context Class
-	'''
+class BaseMapContext(Context):
+    '''
+    Base Map KLL Context Class
+    '''
 
 
-class PartialMapContext( Context ):
-	'''
-	Partial Map KLL Context Class
-	'''
-	def __init__( self, layer ):
-		'''
-		Partial Map Layer Context Initialization
-
-		@param: Layer associated with Partial Map
-		'''
-		super().__init__()
-
-		self.layer = layer
+class DefaultMapContext(Context):
+    '''
+    Default Map KLL Context Class
+    '''
 
 
-class MergeContext( Context ):
-	'''
-	Container class for a merged Context
+class PartialMapContext(Context):
+    '''
+    Partial Map KLL Context Class
+    '''
 
-	Has references to the original contexts merged in
-	'''
-	def __init__( self, base_context ):
-		'''
-		Initialize the MergeContext with the base context
-		Another MergeContext can be used as the base_context
+    def __init__(self, layer):
+        '''
+        Partial Map Layer Context Initialization
 
-		@param base_context: Context used to seed the MergeContext
-		'''
-		super().__init__()
+        @param: Layer associated with Partial Map
+        '''
+        super().__init__()
 
-		# List of context, in the order of merging, starting from the base
-		self.contexts = [ base_context ]
+        self.layer = layer
 
-		# Copy the base context Organization into the MergeContext
-		self.organization = copy.copy( base_context.organization )
 
-		# Set the layer if the base is a PartialMapContext
-		if base_context.__class__.__name__ == 'PartialMapContext':
-			self.layer = base_context.layer
+class MergeContext(Context):
+    '''
+    Container class for a merged Context
 
-	def merge( self, merge_in, map_type, debug ):
-		'''
-		Merge in context
+    Has references to the original contexts merged in
+    '''
 
-		Another MergeContext can be merged into a MergeContext
+    def __init__(self, base_context):
+        '''
+        Initialize the MergeContext with the base context
+        Another MergeContext can be used as the base_context
 
-		@param merge_in: Context to merge in to this one
-		@param map_type: Used for map specific merges (e.g. BaseMap reductions)
-		@param debug:    Enable debug out
-		'''
-		# Append to context list
-		self.contexts.append( merge_in )
+        @param base_context: Context used to seed the MergeContext
+        '''
+        super().__init__()
 
-		# Merge context
-		self.organization.merge(
-			merge_in.organization,
-			map_type,
-			debug
-		)
+        # List of context, in the order of merging, starting from the base
+        self.contexts = [base_context]
 
-		# Set the layer if the base is a PartialMapContext
-		if merge_in.__class__.__name__ == 'PartialMapContext':
-			self.layer = merge_in.layer
+        # Copy the base context Organization into the MergeContext
+        self.organization = copy.copy(base_context.organization)
 
-	def cleanup( self, debug=False ):
-		'''
-		Post-processing step for merges that may need to remove some data in the organization.
-		Mainly used for dropping BaseMapContext expressions after generating a PartialMapContext.
-		'''
-		self.organization.cleanup( debug )
+        # Set the layer if the base is a PartialMapContext
+        if base_context.__class__.__name__ == 'PartialMapContext':
+            self.layer = base_context.layer
 
-	def reduction( self, debug=False ):
-		'''
-		Simplifies datastructure
+    def merge(self, merge_in, map_type, debug):
+        '''
+        Merge in context
 
-		NOTE: This will remove data, therefore, context is lost
-		'''
-		self.organization.reduction( debug )
+        Another MergeContext can be merged into a MergeContext
 
-	def paths( self ):
-		'''
-		Returns list of file paths used to generate this context
-		'''
-		file_paths = []
+        @param merge_in: Context to merge in to this one
+        @param map_type: Used for map specific merges (e.g. BaseMap reductions)
+        @param debug:    Enable debug out
+        '''
+        # Append to context list
+        self.contexts.append(merge_in)
 
-		for kll_context in self.contexts:
-			# If context is a MergeContext then we have to recursively search
-			if kll_context.__class__.__name__ is 'MergeContext':
-				file_paths.extend( kll_context.paths() )
-			else:
-				file_paths.append( kll_context.parent.path )
+        # Merge context
+        self.organization.merge(
+            merge_in.organization,
+            map_type,
+            debug
+        )
 
-		return file_paths
+        # Set the layer if the base is a PartialMapContext
+        if merge_in.__class__.__name__ == 'PartialMapContext':
+            self.layer = merge_in.layer
 
-	def files( self ):
-		'''
-		Short form list of file paths used to generate this context
-		'''
-		file_paths = []
-		for file_path in self.paths():
-			file_paths.append( os.path.basename( file_path ) )
+    def cleanup(self, debug=False):
+        '''
+        Post-processing step for merges that may need to remove some data in the organization.
+        Mainly used for dropping BaseMapContext expressions after generating a PartialMapContext.
+        '''
+        self.organization.cleanup(debug)
 
-		return file_paths
+    def reduction(self, debug=False):
+        '''
+        Simplifies datastructure
 
-	def __repr__( self ):
-		return "(kll_files={0}, organization={1})".format(
-			self.files(),
-			self.organization,
-		)
+        NOTE: This will remove data, therefore, context is lost
+        '''
+        self.organization.reduction(debug)
 
-	def query_contexts( self, kll_expression, kll_type ):
-		'''
-		Context Query
+    def paths(self):
+        '''
+        Returns list of file paths used to generate this context
+        '''
+        file_paths = []
 
-		Returns a list of tuples (dictionary, kll_context) doing a deep search to the context leaf nodes.
-		This results in pre-merge data and is useful for querying information about files used during compilation.
+        for kll_context in self.contexts:
+            # If context is a MergeContext then we have to recursively search
+            if kll_context.__class__.__name__ is 'MergeContext':
+                file_paths.extend(kll_context.paths())
+            else:
+                file_paths.append(kll_context.parent.path)
 
-		See organization.py:Organization for property_type details.
+        return file_paths
 
-		@param kll_expression: String name of expression type
-		@param kll_type: String name of the expression sub-type
+    def files(self):
+        '''
+        Short form list of file paths used to generate this context
+        '''
+        file_paths = []
+        for file_path in self.paths():
+            file_paths.append(os.path.basename(file_path))
 
-		@return: context_name: (dictionary, kll_context)
-		'''
-		# Build list of leaf contexts
-		leaf_contexts = []
-		for kll_context in self.contexts:
-			# Recursively search if necessary
-			if kll_context.__class__.__name__ == 'MergeContext':
-				leaf_contexts.extend( kll_context.query_contexts( kll_expression, kll_type ) )
-			else:
-				leaf_contexts.append( ( kll_context.query( kll_expression, kll_type ), kll_context ) )
+        return file_paths
 
-		return leaf_contexts
+    def __repr__(self):
+        return "(kll_files={0}, organization={1})".format(
+            self.files(),
+            self.organization,
+        )
 
+    def query_contexts(self, kll_expression, kll_type):
+        '''
+        Context Query
+
+        Returns a list of tuples (dictionary, kll_context) doing a deep search to the context leaf nodes.
+        This results in pre-merge data and is useful for querying information about files used during compilation.
+
+        See organization.py:Organization for property_type details.
+
+        @param kll_expression: String name of expression type
+        @param kll_type: String name of the expression sub-type
+
+        @return: context_name: (dictionary, kll_context)
+        '''
+        # Build list of leaf contexts
+        leaf_contexts = []
+        for kll_context in self.contexts:
+            # Recursively search if necessary
+            if kll_context.__class__.__name__ == 'MergeContext':
+                leaf_contexts.extend(
+                    kll_context.query_contexts(
+                        kll_expression, kll_type))
+            else:
+                leaf_contexts.append((
+                    kll_context.query(
+                        kll_expression,
+                        kll_type
+                    ),
+                    kll_context
+                ))
+
+        return leaf_contexts
