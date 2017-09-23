@@ -71,4 +71,5 @@ generatedKeymap.h
 generatedPixelmap.c
 kll_defs.h
 tests/generated*
+tests/test_controller
 

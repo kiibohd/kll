@@ -29,13 +29,15 @@ ln -sf -T ${SCRIPT_DIR}/.. kll
 cd Keyboards
 
 # Run kll_regen targets
-# TODO On failures, run debug targets
 export CMakeExtraBuildArgs='-- kll_regen'
-cmd ./ergodox.bash
-cmd ./infinity.bash
-cmd ./infinity_led.bash
-cmd ./k-type.bash
-cmd ./whitefox.bash
+export CMakeExtraArgs='-DCompilerOverride=host'
+export ExtraBuildPath='.host_override'
+
+cmd_cmake ./ergodox.bash      "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity.bash     "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity_led.bash "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./k-type.bash       "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./whitefox.bash     "" "-- kll_token kll_parser kll_debug kll_display"
 
 
 ## Tests complete
