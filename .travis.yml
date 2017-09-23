@@ -36,6 +36,7 @@ env:
   - DIR=tests SCRIPT=sanity.bash
   - DIR=tests SCRIPT=syntax.bash
   - DIR=tests SCRIPT=regen.bash
+  - DIR=tests SCRIPT=controller.bash
 
 # Exclusions
 matrix:
