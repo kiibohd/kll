@@ -1,0 +1,10 @@
+Name = tab_function;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2017";
+KLL = 0.5c;
+
+# Modified Date
+Date = 2017-09-24;
+
+U"Tab" : U"Function1";
+

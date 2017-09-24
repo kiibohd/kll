@@ -1,6 +1,6 @@
 #!/bin/bash
 # Common functions for running kll unit tests
-# Jacob Alexander 2016
+# Jacob Alexander 2016-2017
 
 PASSED=0
 FAILED=0
@@ -14,6 +14,25 @@ result() {
 	else
 		return 1
 	fi
+}
+
+# controller git setup
+git_setup() {
+	export CONTROLLER=test_controller
+
+	# Check for latest controller, clone/update if necessary
+	if [ -e "${SCRIPT_DIR}/${CONTROLLER}/main.c" ]; then
+		cd ${SCRIPT_DIR}/${CONTROLLER}
+		git pull --rebase origin master
+	else
+		cd ${SCRIPT_DIR}
+		git clone https://github.com/kiibohd/controller.git ${CONTROLLER}
+		cd ${SCRIPT_DIR}/${CONTROLLER}
+	fi
+
+	# Symlink this kll to it
+	ln -sf -T ${SCRIPT_DIR}/.. kll
+	cd ${SCRIPT_DIR}
 }
 
 # Runs a command, increments test passed/failed

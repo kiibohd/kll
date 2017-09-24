@@ -5,8 +5,6 @@ sudo:
 
 os:
   - linux
-  # Python osx builds are not yet supported by Travis
-  #- osx
 
 language:
   - python
@@ -25,11 +23,6 @@ addons:
     packages:
       - tree
 
-# Package Setup
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install tree; fi
-
 # Test Scripts
 env:
   # Basic KLL Tests
@@ -37,6 +30,7 @@ env:
   - DIR=tests SCRIPT=syntax.bash
   - DIR=tests SCRIPT=regen.bash
   - DIR=tests SCRIPT=controller.bash
+  - DIR=tests SCRIPT=kiibohd.bash
 
 # Exclusions
 matrix:

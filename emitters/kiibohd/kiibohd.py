@@ -98,6 +98,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.def_output = args.def_output
         self.map_output = args.map_output
         self.pixel_output = args.pixel_output
+        self.json_output = args.json_output
 
     def command_line_flags(self, parser):
         '''
@@ -131,6 +132,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         group.add_argument('--pixel-output', type=str, default=self.pixel_output,
             help="Specify KLL map .h file output.\n"
             "\033[1mDefault\033[0m: {0}\n".format(self.pixel_output)
+        )
+        group.add_argument('--json-output', type=str, default=self.json_output,
+            help="Specify json output file for settings dictionary.\n"
+            "\033[1mDefault\033[0m: {0}\n".format(self.json_output)
         )
 
     def output(self):
