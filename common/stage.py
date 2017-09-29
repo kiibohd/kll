@@ -444,6 +444,8 @@ class PreprocessorStage(Stage):
         self.min_scan_code = [0]
         self.interconnect_scancode_offsets = [0]
 
+        self.kll_files = []
+
         self.processed_save_path = "{temp}/kll".format(temp=tempfile.gettempdir())
 
     def command_line_args(self, args):
@@ -475,9 +477,30 @@ class PreprocessorStage(Stage):
         Build list of context
 
         TODO Update later for proper preprocessor
-        Adds data from KLFile into the Context
+        Adds data from KLLFile into the Context
         '''
         kll_file.context.initial_context(kll_file.lines, kll_file.data, kll_file)
+
+    def apply_connect_ids(self):
+        '''
+        Uses computed connect_ids to apply to BaseMaps
+        Incoming order of the KLLFiles matters
+
+        Ignores other contexts
+        '''
+        current_id = 0
+        for kll_file in self.kll_files:
+            # Only applicable for BaseMapContext
+            if kll_file.context.__class__.__name__ == "BaseMapContext":
+                # Only update the current_id if it was set (not every file will have it set)
+                if kll_file.connect_id is not None:
+                    current_id = kll_file.connect_id
+
+                kll_file.context.connect_id = current_id
+
+            # Otherwise, set as 0
+            else:
+                kll_file.context.connect_id = 0
 
     def process_connect_ids(self, kll_file, apply_offsets):
         lines = kll_file.data.splitlines()
@@ -485,6 +508,7 @@ class PreprocessorStage(Stage):
         # Basic Tokens Spec
         # TODO Storing these somewhere central might be a reasonable idea
         spec = [
+            ('Comment', (r' *#.*', )),
             ('ScanCode', (r'S((0x[0-9a-fA-F]+)|([0-9]+))', )),
             ('Operator', (r'=>|<=|i:\+|i:-|i::|i:|:\+|:-|::|:|=', )),
             ('USBCode', (r'U(("[^"]+")|(0x[0-9a-fA-F]+)|([0-9]+))', )),
@@ -495,7 +519,6 @@ class PreprocessorStage(Stage):
         ]
 
         # Tokens to filter out of the token stream
-        # useless = [ 'Space', 'Comment' ]
         useless = ['Misc']
 
         # Build tokenizer that appends unknown characters to Misc Token groups
@@ -533,7 +556,6 @@ class PreprocessorStage(Stage):
                             and
                         l_element.type == "NumberBase10"
                     ):
-
                         most_recent_connect_id = int(l_element.value)
                         assert (most_recent_connect_id >= 0)
 
@@ -541,6 +563,9 @@ class PreprocessorStage(Stage):
                             print("Found connect ID! %s" % most_recent_connect_id)
 
                         if not apply_offsets:
+                            # Set connect_id
+                            kll_file.connect_id = most_recent_connect_id
+
                             # Making sure that the offsets exist
                             while (len(self.min_scan_code) <= most_recent_connect_id):
                                 self.min_scan_code.append(sys.maxsize)
@@ -553,9 +578,13 @@ class PreprocessorStage(Stage):
                             assert (len(self.max_scan_code) > most_recent_connect_id)
                             assert (len(self.interconnect_scancode_offsets) > most_recent_connect_id)
 
-                    if (r_element.type == "ScanCode" and
-                                            mid_element.value == ":" and
-                                            l_element.type == "USBCode"):
+                    if (
+                        r_element.type == "ScanCode"
+                            and
+                        mid_element.value == ":"
+                            and
+                        l_element.type == "USBCode"
+                    ):
                         scan_code_int = int(r_element.value[1:], 0)
 
                         if not apply_offsets:
@@ -711,17 +740,20 @@ class PreprocessorStage(Stage):
         # This step will change once preprocessor commands have been added
 
         # Simply, this just takes the imported file data (KLLFile) and puts it in the context container
-        kll_files = self.control.stage('FileImportStage').kll_files
+        self.kll_files = self.control.stage('FileImportStage').kll_files
 
-        self.import_data_from_disk(kll_files)
-        self.gather_scancode_offsets(kll_files)
+        self.import_data_from_disk(self.kll_files)
+        self.gather_scancode_offsets(self.kll_files)
         self.determine_scancode_offsets()
-        self.apply_scancode_offsets(kll_files)
-        self.export_data_to_disk(kll_files)
+        self.apply_scancode_offsets(self.kll_files)
+        self.export_data_to_disk(self.kll_files)
 
-        if False in pool.map(self.seed_context, kll_files):
+        if False in pool.map(self.seed_context, self.kll_files):
             self._status = 'Incomplete'
             return
+
+        # Apply connect ids
+        self.apply_connect_ids()
 
         # Next, tokenize and parser the preprocessor KLL commands.
         # NOTE: This may result in having to create more KLL Contexts and tokenize/parse again numerous times over
@@ -1735,6 +1767,9 @@ class OperationOrganizationStage(Stage):
                     )
                     print(self.color and output or ansi_escape.sub('', output))
 
+                # Set connect_id for expression
+                kll_expression.connect_id = kll_context.connect_id
+
                 # Add expression
                 kll_context.organization.add_expression(
                     kll_expression,
@@ -1865,6 +1900,14 @@ class DataOrganizationStage(Stage):
             else:
                 lists[name].append(kll_context)
 
+        if self.data_organization_debug:
+            output = "\033[1mContext Organization\033[0m"
+            for key, val in sorted(lists.items()):
+                output += "\n{}".format(key)
+                for elem in val:
+                    output += "\n\t{} - {}".format(elem.layer_info(), elem.kll_files)
+            print(self.color and output or ansi_escape.sub('', output))
+
         return lists
 
     def organize(self, kll_context):
@@ -1896,6 +1939,10 @@ class DataOrganizationStage(Stage):
         # Merge in each of the contexts symbolically
         for next_context in kll_context[1:]:
             try:
+                if self.data_organization_debug:
+                    output = "\033[1m=== Merging ===\033[0m {1} into {0}".format(self.contexts[context_name].kll_files, next_context.kll_files)
+                    print(self.color and output or ansi_escape.sub('', output))
+
                 self.contexts[context_name].merge(
                     next_context,
                     context_name,
@@ -2257,7 +2304,7 @@ class DataAnalysisStage(Stage):
 
         The triggers and results are first sorted alphabetically
         '''
-        if self.data_analysis_debug:
+        if self.data_analysis_debug or self.data_analysis_display:
             print("\033[1m--- Mapping Indices ---\033[0m")
 
         # Build uniq dictionary of map expressions
@@ -2314,7 +2361,7 @@ class DataAnalysisStage(Stage):
                 result_sorted[res_key].append(elem)
 
         # Debug info
-        if self.data_analysis_debug:
+        if self.data_analysis_debug or self.data_analysis_display:
             print("\033[1mMin ScanCode\033[0m: {0}".format(self.min_scan_code))
             print("\033[1mMax ScanCode\033[0m: {0}".format(self.max_scan_code))
 
@@ -2377,7 +2424,7 @@ class DataAnalysisStage(Stage):
         '''
         Generate Trigger Lists per layer using the index lists
         '''
-        if self.data_analysis_debug:
+        if self.data_analysis_debug or self.data_analysis_display:
             print("\033[1m--- Trigger Lists ---\033[0m")
 
         # Iterate through each of the layers (starting from 0/Default)
@@ -2407,7 +2454,7 @@ class DataAnalysisStage(Stage):
                                 self.trigger_lists[index][identifier.uid].append(trigger_index)
 
             # Debug output
-            if self.data_analysis_debug:
+            if self.data_analysis_debug or self.data_analysis_display:
                 print("\033[1mTrigger List\033[0m: {0} {1}".format(index, self.trigger_lists[index]))
 
     def generate_pixel_display_mapping(self):
@@ -2634,6 +2681,25 @@ class DataAnalysisStage(Stage):
         # Reduce Contexts
         # Convert all trigger USBCodes to ScanCodes
         self.reduction()
+
+        # Show result of filling datastructure
+        if self.data_analysis_display:
+            for key, kll_context in enumerate(self.reduced_contexts):
+                # Uncolorize if requested
+                output = "*\033[1;33mLayer{0}\033[0m:\033[1m{1}\033[0m".format(
+                    key,
+                    kll_context.paths(),
+                )
+                print(self.color and output or ansi_escape.sub('', output))
+
+                # Display Table
+                for store in kll_context.organization.stores():
+                    # Uncolorize if requested
+                    output = "\t\033[1;4;32m{0}\033[0m".format(
+                        store.__class__.__name__
+                    )
+                    print(self.color and output or ansi_escape.sub('', output))
+                    print(self.color and store or ansi_escape.sub('', store), end="")
 
         # Generate Indices
         # Assigns a sequential index (starting from 0) for each map expresssion

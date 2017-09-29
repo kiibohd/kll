@@ -70,7 +70,6 @@ cmd_cmake() {
 		shift
 		local CMakeExtraBuildArgs=${1}
 
-		set -x
 		echo "CMD FAILED - RUNNING DEBUG ARGS - CMakeBuildArgs=${CMakeBuildArgs} CMakeExtraBuildArgs=${CMakeExtraBuildArgs}"
 		${BASE}
 	fi

@@ -52,6 +52,10 @@ class KLLFile:
         self.context = file_context
         self.lines = []
         self.data = ""
+        self.connect_id = None
+
+        # Add filename to context for debugging
+        self.context.kll_files.append(self.filename())
 
     def __repr__(self):
         context_str = type(self.context).__name__

@@ -66,7 +66,13 @@ class Context:
         self.expressions = []
 
         # Organized Expression Datastructure
-        self.organization = organization.Organization()
+        self.organization = organization.Organization(self)
+
+        # Layer Information (unset, unless a PartialMapContext)
+        self.layer = None
+
+        # Connect Id information (unset, but usually initialized)
+        self.connect_id = None
 
     def __repr__(self):
         # Build list of all the info
@@ -75,6 +81,15 @@ class Context:
             self.lines,
             self.data,
         )
+
+    def layer_info(self):
+        '''
+        Returns a text string indicating which layer this is
+        '''
+        if self.layer is None:
+            return "0"
+
+        return "{}".format(self.layer + 1)
 
     def initial_context(self, lines, data, parent):
         '''
@@ -87,6 +102,7 @@ class Context:
         self.lines = lines
         self.data = data
         self.parent = parent
+        self.connect_id = parent.connect_id
 
     def query(self, kll_expression, kll_type=None):
         '''
@@ -164,11 +180,18 @@ class MergeContext(Context):
         '''
         super().__init__()
 
+        # Setup list of kll_files
+        self.kll_files = base_context.kll_files
+
+        # Transfer layer, whenever merging in, we'll use the new layer identifier
+        self.layer = base_context.layer
+
         # List of context, in the order of merging, starting from the base
         self.contexts = [base_context]
 
         # Copy the base context Organization into the MergeContext
         self.organization = copy.copy(base_context.organization)
+        self.organization.parent = self
 
         # Set the layer if the base is a PartialMapContext
         if base_context.__class__.__name__ == 'PartialMapContext':
@@ -184,6 +207,12 @@ class MergeContext(Context):
         @param map_type: Used for map specific merges (e.g. BaseMap reductions)
         @param debug:    Enable debug out
         '''
+        # Extend list of kll_files
+        self.kll_files.extend(merge_in.kll_files)
+
+        # Use merge_in layer identifier as the master (most likely to be correct)
+        self.layer = merge_in.layer
+
         # Append to context list
         self.contexts.append(merge_in)
 
