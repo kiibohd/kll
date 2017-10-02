@@ -214,12 +214,12 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 # Check for a split argument (e.g. Consumer codes)
                 if identifier.width() > 1:
                     cap_arg = ", ".join(
-                            self.byte_split(identifier.uid, identifier.width())
+                            self.byte_split(identifier.get_uid(), identifier.width())
                     )
 
                 # Do not lookup hid define if USB Keycode and >= 0xF0
                 # These are unofficial HID codes, report error
-                elif identifier.second_type == 'USB' and identifier.uid >= 0xF0:
+                elif identifier.second_type == 'USB' and identifier.get_uid() >= 0xF0:
                     print("{0} '{1}' Invalid USB HID code, missing FuncMap layout (e.g. stdFuncMap, lcdFuncMap)".format(
                             ERROR,
                             identifier
@@ -230,7 +230,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 # Otherwise use the C define instead of the number (increases readability)
                 else:
                     try:
-                        cap_arg = hid_lookup_dictionary[(identifier.second_type, identifier.uid)]
+                        cap_arg = hid_lookup_dictionary[(identifier.second_type, identifier.get_uid())]
                     except KeyError as err:
                         print("{0} {1} HID lookup kll bug...please report.".format(ERROR, err))
                         self.error_exit = True
@@ -320,7 +320,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 # TODO Add support for Analog keys
                 # TODO Add support for LED states
                 # - TODO - Offset for interconnect?
-                trigger = "0x00, 0x01, 0x{0:02X}".format(identifier.uid)
+                trigger = "0x00, 0x01, 0x{0:02X}".format(identifier.get_uid())
 
             # Unknown/Invalid Id
             else:
@@ -1133,7 +1133,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         ## ScanCode Physical Positions ##
         scancode_physical = full_context.query('DataAssociationExpression', 'ScanCodePosition')
         self.fill_dict['KeyPositions'] = "const Position Key_Positions[] = {\n"
-        for key, item in sorted(scancode_physical.data.items(), key=lambda x: x[1].association[0].uid):
+        for key, item in sorted(scancode_physical.data.items(), key=lambda x: x[1].association[0].get_uid()):
             entry = dict()
             # Acquire each dimension
             entry['x'] = item.association[0].x

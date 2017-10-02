@@ -714,8 +714,8 @@ class MapExpression(Expression):
 
         # Iterate over list of identifiers in trigger
         for identifier in self.trigger_id_list():
-            if identifier.type == 'ScanCode' and identifier.uid < min_uid:
-                min_uid = identifier.uid
+            if identifier.type == 'ScanCode' and identifier.get_uid() < min_uid:
+                min_uid = identifier.get_uid()
 
         return min_uid
 
@@ -728,10 +728,21 @@ class MapExpression(Expression):
 
         # Iterate over list of identifiers in trigger
         for identifier in self.trigger_id_list():
-            if identifier.type == 'ScanCode' and identifier.uid > max_uid:
-                max_uid = identifier.uid
+            if identifier.type == 'ScanCode' and identifier.get_uid() > max_uid:
+                max_uid = identifier.get_uid()
 
         return max_uid
+
+    def add_trigger_uid_offset(self, offset):
+        '''
+        Adds a uid/scancode offset to all triggers
+
+        This is used when applying the connect_id interconnect offset during mapping indices generation
+        '''
+        # Iterate over list of identifiers in trigger
+        for identifier in self.trigger_id_list():
+            if identifier.type == 'ScanCode':
+                identifier.updated_uid = identifier.uid + offset
 
     def elems(self):
         '''

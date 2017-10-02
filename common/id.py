@@ -50,6 +50,13 @@ class Id:
         self.type = None
         self.uid = None
 
+    def get_uid(self):
+        '''
+        Some Id types have alternate uid mappings
+        self.uid stores the original uid whereas it may be updated due to multi-node configurations
+        '''
+        return self.uid
+
     def kllify(self):
         '''
         Returns KLL version of the Id
@@ -150,9 +157,9 @@ class ScanCodeId(Id, Schedule, Position):
         self.type = 'ScanCode'
         self.uid = uid
 
-        # By default, interconnect_id of 0
-        # Will be set during the merge process if it needs to change
-        self.interconnect_id = 0
+        # This uid is used for any post-processing of the uid
+        # The original uid is maintained in case it is needed
+        self.updated_uid = None
 
     def inferred_type(self):
         '''
@@ -160,11 +167,22 @@ class ScanCodeId(Id, Schedule, Position):
         '''
         return 'PixelAddressId_ScanCode'
 
+    def get_uid(self):
+        '''
+        Determine uid
+        May have been updated due to connect_id setting for interconnect offsets
+        '''
+        uid = self.uid
+        if self.updated_uid is not None:
+            uid = self.updated_uid
+
+        return uid
+
     def uid_set(self):
         '''
         Returns a tuple of uids, always a single element for ScanCodeId
         '''
-        return tuple([self.uid])
+        return tuple([self.get_uid()])
 
     def unique_key(self):
         '''
@@ -172,7 +190,7 @@ class ScanCodeId(Id, Schedule, Position):
         '''
         # Positions are a special case
         if self.positionSet():
-            return "P{0}".format(self.uid)
+            return "P{0}".format(self.get_uid())
 
     def __repr__(self):
         # Positions are a special case
@@ -181,9 +199,9 @@ class ScanCodeId(Id, Schedule, Position):
 
         schedule = self.strSchedule()
         if len(schedule) > 0:
-            return "S{0}({1})".format(self.uid, schedule)
+            return "S{0}({1})".format(self.get_uid(), schedule)
         else:
-            return "S{0}".format(self.uid)
+            return "S{0}".format(self.get_uid())
 
     def kllify(self):
         '''
@@ -193,7 +211,7 @@ class ScanCodeId(Id, Schedule, Position):
         if len(schedule) > 0:
             schedule = "({0})".format(schedule)
 
-        output = "S{0:#05x}{1}".format(self.uid, schedule)
+        output = "S{0:#05x}{1}".format(self.get_uid(), schedule)
 
         # Position enabled
         if self.isPositionSet():

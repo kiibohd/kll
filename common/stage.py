@@ -2319,17 +2319,20 @@ class DataAnalysisStage(Stage):
             # Add each expression in layer to overall dictionary lookup for command reduction
             for key, elem in layer.organization.mapping_data.data.items():
                 # Add each of the expressions (usually just one)
+                # Before adding the expression, adjust the scancode using the connect_id offset
                 for sub_expr in elem:
+                    scancode_offset = self.interconnect_scancode_offsets[sub_expr.connect_id]
+                    sub_expr.add_trigger_uid_offset(scancode_offset)
                     expressions[sub_expr.kllify()] = sub_expr
 
                 # We only need to use the first expression, as the triggers are all the same
                 # Determine min ScanCode of each trigger expression
-                min_uid = elem[0].min_trigger_uid()
+                min_uid = elem[0].min_trigger_uid() + scancode_offset
                 if min_uid < self.min_scan_code[index]:
                     self.min_scan_code[index] = min_uid
 
                 # Determine max ScanCode of each trigger expression
-                max_uid = elem[0].max_trigger_uid()
+                max_uid = elem[0].max_trigger_uid() + scancode_offset
                 if max_uid > self.max_scan_code[index]:
                     self.max_scan_code[index] = max_uid
 
@@ -2380,9 +2383,15 @@ class DataAnalysisStage(Stage):
         '''
         Generates list of offsets for each of the interconnect ids
         '''
-        print("{0} This functionality is handled by the preprocessor".format(ERROR))
+        if self.data_analysis_debug or self.data_analysis_display:
+            print("\033[1m--- Map Offsets ---\033[0m")
+            print("Scan Code Offsets: {0}".format(self.interconnect_scancode_offsets))
+            print("Pixel Id Offsets:  {0}".format(self.interconnect_pixel_offsets))
+
         # FIXME Should this me removed entirely?
         return
+        print("{0} This functionality is handled by the preprocessor".format(ERROR))
+
         maxscancode = {}
         maxpixelid = {}
         for index, layer in enumerate(self.reduced_contexts):
@@ -2446,12 +2455,12 @@ class DataAnalysisStage(Stage):
                             trigger_index = self.trigger_index_lookup[sub_expr.kllify()]
 
                             # Initialize trigger list if None
-                            if self.trigger_lists[index][identifier.uid] is None:
-                                self.trigger_lists[index][identifier.uid] = [trigger_index]
+                            if self.trigger_lists[index][identifier.get_uid()] is None:
+                                self.trigger_lists[index][identifier.get_uid()] = [trigger_index]
 
                             # Append to trigger list, only if trigger not already added
-                            elif trigger_index not in self.trigger_lists[index][identifier.uid]:
-                                self.trigger_lists[index][identifier.uid].append(trigger_index)
+                            elif trigger_index not in self.trigger_lists[index][identifier.get_uid()]:
+                                self.trigger_lists[index][identifier.get_uid()].append(trigger_index)
 
             # Debug output
             if self.data_analysis_debug or self.data_analysis_display:
@@ -2701,14 +2710,13 @@ class DataAnalysisStage(Stage):
                     print(self.color and output or ansi_escape.sub('', output))
                     print(self.color and store or ansi_escape.sub('', store), end="")
 
+        # Generate Offset Table
+        # This is needed for interconnect devices
+        self.generate_map_offset_table()
+
         # Generate Indices
         # Assigns a sequential index (starting from 0) for each map expresssion
         self.generate_mapping_indices()
-
-        # Generate Offset Table
-        # This is needed for interconnect devices
-        # FIXME Removed as this is handled by the preprocessor
-        # self.generate_map_offset_table()
 
         # Generate Trigger Lists
         self.generate_trigger_lists()
