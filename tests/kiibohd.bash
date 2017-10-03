@@ -111,12 +111,12 @@ interconnect_test() {
 		test_controller/Scan/Infinity_Ergodox/slave1.kll \
 		test_controller/Scan/Infinity_Ergodox/rightHand.kll \
 		--default \
-		test_controller/kll/layouts/mdergo1Overlay.kll \
-		test_controller/kll/layouts/lcdFuncMap.kll \
+		test_controller/kll/layouts/infinity_ergodox/mdergo1Overlay.kll \
+		test_controller/kll/layouts/infinity_ergodox/lcdFuncMap.kll \
 		--partial \
-		test_controller/kll/layouts/iced_func.kll \
+		test_controller/kll/layouts/infinity_ergodox/iced_func.kll \
 		--partial \
-		test_controller/kll/layouts/iced_numpad.kll \
+		test_controller/kll/layouts/infinity_ergodox/iced_numpad.kll \
 		--emitter kiibohd \
 		--def-template test_controller/kll/templates/kiibohdDefs.h \
 		--map-template test_controller/kll/templates/kiibohdKeymap.h \
