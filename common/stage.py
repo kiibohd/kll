@@ -527,7 +527,6 @@ class PreprocessorStage(Stage):
         tokenizer = make_tokenizer(spec)
 
         try:
-            most_recent_connect_id = 0
             most_recent_offset = 0
             processed_lines = []
             for line in lines:
@@ -556,27 +555,27 @@ class PreprocessorStage(Stage):
                             and
                         l_element.type == "NumberBase10"
                     ):
-                        most_recent_connect_id = int(l_element.value)
-                        assert (most_recent_connect_id >= 0)
+                        self.most_recent_connect_id = int(l_element.value)
+                        assert (self.most_recent_connect_id >= 0)
 
                         if self.preprocessor_debug:
-                            print("Found connect ID! %s" % most_recent_connect_id)
+                            print("Found connect ID! %s" % self.most_recent_connect_id)
 
                         if not apply_offsets:
                             # Set connect_id
-                            kll_file.connect_id = most_recent_connect_id
+                            kll_file.connect_id = self.most_recent_connect_id
 
                             # Making sure that the offsets exist
-                            while (len(self.min_scan_code) <= most_recent_connect_id):
+                            while (len(self.min_scan_code) <= self.most_recent_connect_id):
                                 self.min_scan_code.append(sys.maxsize)
 
-                            while (len(self.max_scan_code) <= most_recent_connect_id):
+                            while (len(self.max_scan_code) <= self.most_recent_connect_id):
                                 self.max_scan_code.append(0)
 
                         if apply_offsets:
-                            assert (len(self.min_scan_code) > most_recent_connect_id)
-                            assert (len(self.max_scan_code) > most_recent_connect_id)
-                            assert (len(self.interconnect_scancode_offsets) > most_recent_connect_id)
+                            assert (len(self.min_scan_code) > self.most_recent_connect_id)
+                            assert (len(self.max_scan_code) > self.most_recent_connect_id)
+                            assert (len(self.interconnect_scancode_offsets) > self.most_recent_connect_id)
 
                     if (
                         r_element.type == "ScanCode"
@@ -590,10 +589,11 @@ class PreprocessorStage(Stage):
                         if not apply_offsets:
                             # Checking if the min/max values need to be updated. The values are guaranteed to exist
                             # in the previous step
-                            if scan_code_int < self.min_scan_code[most_recent_connect_id]:
-                                self.min_scan_code[most_recent_connect_id] = scan_code_int
-                            if scan_code_int > self.max_scan_code[most_recent_connect_id]:
-                                self.max_scan_code[most_recent_connect_id] = scan_code_int
+                            if scan_code_int < self.min_scan_code[self.most_recent_connect_id]:
+                                self.min_scan_code[self.most_recent_connect_id] = scan_code_int
+                            if scan_code_int > self.max_scan_code[self.most_recent_connect_id]:
+                                self.max_scan_code[self.most_recent_connect_id] = scan_code_int
+
 
                         if apply_offsets:
                             # Modifying the current line
@@ -601,7 +601,7 @@ class PreprocessorStage(Stage):
                             # term for offset
                             scan_code_with_offset = (
                                 scan_code_int +
-                                self.interconnect_scancode_offsets[most_recent_connect_id] +
+                                self.interconnect_scancode_offsets[self.most_recent_connect_id] +
                                 most_recent_offset
                             )
 
@@ -625,7 +625,7 @@ class PreprocessorStage(Stage):
                             line = line.replace(r_element.value[1:], scan_code_with_offset_hex)
                             if self.preprocessor_debug:
                                 print("Applying offset {}".format(
-                                    self.interconnect_scancode_offsets[most_recent_connect_id]
+                                    self.interconnect_scancode_offsets[self.most_recent_connect_id]
                                 ))
                                 print(
                                     "Old line: {old_line}\n"
@@ -666,6 +666,7 @@ class PreprocessorStage(Stage):
         for scancode_offset_for_id in self.max_scan_code:
             self.interconnect_scancode_offsets.append(previous_max_offset)
             previous_max_offset += scancode_offset_for_id
+        self.interconnect_scancode_offsets.append(previous_max_offset)
 
         if self.preprocessor_debug:
             print("Scancode offsets: {0}".format(self.interconnect_scancode_offsets))
@@ -712,10 +713,12 @@ class PreprocessorStage(Stage):
             kll_file.path = output_filename
 
     def gather_scancode_offsets(self, kll_files):
+        self.most_recent_connect_id = 0
         for kll_file in kll_files:
             self.process_connect_ids(kll_file, apply_offsets=False)
 
     def apply_scancode_offsets(self, kll_files):
+        self.most_recent_connect_id = 0
         for kll_file in kll_files:
             self.process_connect_ids(kll_file, apply_offsets=True)
 
@@ -745,7 +748,7 @@ class PreprocessorStage(Stage):
         self.import_data_from_disk(self.kll_files)
         self.gather_scancode_offsets(self.kll_files)
         self.determine_scancode_offsets()
-        self.apply_scancode_offsets(self.kll_files)
+        #self.apply_scancode_offsets(self.kll_files) # XXX (HaaTa) not necessary anymore
         self.export_data_to_disk(self.kll_files)
 
         if False in pool.map(self.seed_context, self.kll_files):
@@ -2327,12 +2330,12 @@ class DataAnalysisStage(Stage):
 
                 # We only need to use the first expression, as the triggers are all the same
                 # Determine min ScanCode of each trigger expression
-                min_uid = elem[0].min_trigger_uid() + scancode_offset
+                min_uid = elem[0].min_trigger_uid()
                 if min_uid < self.min_scan_code[index]:
                     self.min_scan_code[index] = min_uid
 
                 # Determine max ScanCode of each trigger expression
-                max_uid = elem[0].max_trigger_uid() + scancode_offset
+                max_uid = elem[0].max_trigger_uid()
                 if max_uid > self.max_scan_code[index]:
                     self.max_scan_code[index] = max_uid
 
