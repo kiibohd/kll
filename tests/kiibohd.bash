@@ -28,25 +28,25 @@ func1_test() {
 	echo "${FUNCNAME[0]}"
 	cmd ../kll \
 		--config \
-		test_controller/Scan/Devices/ISSILed/capabilities.kll \
-		test_controller/Scan/Devices/MatrixARM/capabilities.kll \
-		test_controller/Macro/PartialMap/capabilities.kll \
-		test_controller/Macro/PixelMap/capabilities.kll \
-		test_controller/Output/HID-IO/capabilities.kll \
-		test_controller/Output/pjrcUSB/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/ISSILed/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/MatrixARM/capabilities.kll \
+		${CONTROLLER}/Macro/PartialMap/capabilities.kll \
+		${CONTROLLER}/Macro/PixelMap/capabilities.kll \
+		${CONTROLLER}/Output/HID-IO/capabilities.kll \
+		${CONTROLLER}/Output/pjrcUSB/capabilities.kll \
 		--base \
-		test_controller/Scan/WhiteFox/scancode_map.kll \
-		test_controller/Scan/WhiteFox/scancode_map.truefox.kll \
+		${CONTROLLER}/Scan/WhiteFox/scancode_map.kll \
+		${CONTROLLER}/Scan/WhiteFox/scancode_map.truefox.kll \
 		--default \
-		test_controller/kll/layouts/tab_function.kll \
-		test_controller/kll/layouts/stdFuncMap.kll \
+		${CONTROLLER}/kll/layouts/tab_function.kll \
+		${CONTROLLER}/kll/layouts/stdFuncMap.kll \
 		--partial \
-		test_controller/kll/layouts/whitefox/whitefox.kll \
-		test_controller/kll/layouts/stdFuncMap.kll \
+		${CONTROLLER}/kll/layouts/whitefox/whitefox.kll \
+		${CONTROLLER}/kll/layouts/stdFuncMap.kll \
 		--emitter kiibohd \
-		--def-template test_controller/kll/templates/kiibohdDefs.h \
-		--map-template test_controller/kll/templates/kiibohdKeymap.h \
-		--pixel-template test_controller/kll/templates/kiibohdPixelmap.c \
+		--def-template ${CONTROLLER}/kll/templates/kiibohdDefs.h \
+		--map-template ${CONTROLLER}/kll/templates/kiibohdKeymap.h \
+		--pixel-template ${CONTROLLER}/kll/templates/kiibohdPixelmap.c \
 		--def-output ${TEST_PATH}/kll_defs.h \
 		--map-output ${TEST_PATH}/generatedKeymap.h \
 		--pixel-output ${TEST_PATH}/generatedPixelmap.c \
@@ -60,29 +60,29 @@ add_test() {
 	echo "${FUNCNAME[0]}"
 	cmd ../kll \
 		--config \
-		test_controller/Scan/Devices/ISSILed/capabilities.kll \
-		test_controller/Scan/Devices/MatrixARM/capabilities.kll \
-		test_controller/Scan/Devices/PortSwap/capabilities.kll \
-		test_controller/Scan/Devices/UARTConnect/capabilities.kll \
-		test_controller/Macro/PartialMap/capabilities.kll \
-		test_controller/Macro/PixelMap/capabilities.kll \
-		test_controller/Output/HID-IO/capabilities.kll \
-		test_controller/Output/pjrcUSB/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/ISSILed/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/MatrixARM/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/PortSwap/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/UARTConnect/capabilities.kll \
+		${CONTROLLER}/Macro/PartialMap/capabilities.kll \
+		${CONTROLLER}/Macro/PixelMap/capabilities.kll \
+		${CONTROLLER}/Output/HID-IO/capabilities.kll \
+		${CONTROLLER}/Output/pjrcUSB/capabilities.kll \
 		--base \
-		test_controller/Scan/K-Type/scancode_map.kll \
+		${CONTROLLER}/Scan/K-Type/scancode_map.kll \
 		--default \
-		test_controller/kll/layouts/animation_test.kll \
-		test_controller/kll/layouts/stdFuncMap.kll \
+		${CONTROLLER}/kll/layouts/animation_test.kll \
+		${CONTROLLER}/kll/layouts/stdFuncMap.kll \
 		--partial \
-		test_controller/kll/layouts/k-type/unset_v1.kll \
-		test_controller/kll/layouts/k-type/rainbow_wipe.kll \
+		${CONTROLLER}/kll/layouts/k-type/unset_v1.kll \
+		${CONTROLLER}/kll/layouts/k-type/rainbow_wipe.kll \
 		--partial \
-		test_controller/kll/layouts/k-type/unset_v1.kll \
-		test_controller/kll/layouts/k-type/color_painter.kll \
+		${CONTROLLER}/kll/layouts/k-type/unset_v1.kll \
+		${CONTROLLER}/kll/layouts/k-type/color_painter.kll \
 		--emitter kiibohd \
-		--def-template test_controller/kll/templates/kiibohdDefs.h \
-		--map-template test_controller/kll/templates/kiibohdKeymap.h \
-		--pixel-template test_controller/kll/templates/kiibohdPixelmap.c \
+		--def-template ${CONTROLLER}/kll/templates/kiibohdDefs.h \
+		--map-template ${CONTROLLER}/kll/templates/kiibohdKeymap.h \
+		--pixel-template ${CONTROLLER}/kll/templates/kiibohdPixelmap.c \
 		--def-output ${TEST_PATH}/kll_defs.h \
 		--map-output ${TEST_PATH}/generatedKeymap.h \
 		--pixel-output ${TEST_PATH}/generatedPixelmap.c \
@@ -97,30 +97,30 @@ interconnect_test() {
 
 	cmd ../kll \
 		--config \
-		test_controller/Scan/Devices/ISSILed/capabilities.kll \
-		test_controller/Scan/Devices/MatrixARM/capabilities.kll \
-		test_controller/Scan/Devices/STLcd/capabilities.kll \
-		test_controller/Scan/Devices/UARTConnect/capabilities.kll \
-		test_controller/Macro/PartialMap/capabilities.kll \
-		test_controller/Macro/PixelMap/capabilities.kll \
-		test_controller/Output/HID-IO/capabilities.kll \
-		test_controller/Output/pjrcUSB/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/ISSILed/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/MatrixARM/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/STLcd/capabilities.kll \
+		${CONTROLLER}/Scan/Devices/UARTConnect/capabilities.kll \
+		${CONTROLLER}/Macro/PartialMap/capabilities.kll \
+		${CONTROLLER}/Macro/PixelMap/capabilities.kll \
+		${CONTROLLER}/Output/HID-IO/capabilities.kll \
+		${CONTROLLER}/Output/pjrcUSB/capabilities.kll \
 		--base \
-		test_controller/Scan/Infinity_Ergodox/scancode_map.kll \
-		test_controller/Scan/Infinity_Ergodox/leftHand.kll \
-		test_controller/Scan/Infinity_Ergodox/slave1.kll \
-		test_controller/Scan/Infinity_Ergodox/rightHand.kll \
+		${CONTROLLER}/Scan/Infinity_Ergodox/scancode_map.kll \
+		${CONTROLLER}/Scan/Infinity_Ergodox/leftHand.kll \
+		${CONTROLLER}/Scan/Infinity_Ergodox/slave1.kll \
+		${CONTROLLER}/Scan/Infinity_Ergodox/rightHand.kll \
 		--default \
-		test_controller/kll/layouts/infinity_ergodox/mdergo1Overlay.kll \
-		test_controller/kll/layouts/infinity_ergodox/lcdFuncMap.kll \
+		${CONTROLLER}/kll/layouts/infinity_ergodox/mdergo1Overlay.kll \
+		${CONTROLLER}/kll/layouts/infinity_ergodox/lcdFuncMap.kll \
 		--partial \
-		test_controller/kll/layouts/infinity_ergodox/iced_func.kll \
+		${CONTROLLER}/kll/layouts/infinity_ergodox/iced_func.kll \
 		--partial \
-		test_controller/kll/layouts/infinity_ergodox/iced_numpad.kll \
+		${CONTROLLER}/kll/layouts/infinity_ergodox/iced_numpad.kll \
 		--emitter kiibohd \
-		--def-template test_controller/kll/templates/kiibohdDefs.h \
-		--map-template test_controller/kll/templates/kiibohdKeymap.h \
-		--pixel-template test_controller/kll/templates/kiibohdPixelmap.c \
+		--def-template ${CONTROLLER}/kll/templates/kiibohdDefs.h \
+		--map-template ${CONTROLLER}/kll/templates/kiibohdKeymap.h \
+		--pixel-template ${CONTROLLER}/kll/templates/kiibohdPixelmap.c \
 		--def-output ${TEST_PATH}/kll_defs.h \
 		--map-output ${TEST_PATH}/generatedKeymap.h \
 		--pixel-output ${TEST_PATH}/generatedPixelmap.c \

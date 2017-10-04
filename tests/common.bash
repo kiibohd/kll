@@ -18,20 +18,21 @@ result() {
 
 # controller git setup
 git_setup() {
-	export CONTROLLER=test_controller
+	export CONTROLLER=/tmp/test_controller
+	cd ${SCRIPT_DIR}/..
+	export KLL=$(pwd)
 
 	# Check for latest controller, clone/update if necessary
-	if [ -e "${SCRIPT_DIR}/${CONTROLLER}/main.c" ]; then
-		cd ${SCRIPT_DIR}/${CONTROLLER}
+	if [ -e "${CONTROLLER}/main.c" ]; then
+		cd ${CONTROLLER}
 		git pull --rebase origin master
 	else
-		cd ${SCRIPT_DIR}
 		git clone https://github.com/kiibohd/controller.git ${CONTROLLER}
-		cd ${SCRIPT_DIR}/${CONTROLLER}
+		cd ${CONTROLLER}
 	fi
 
 	# Symlink this kll to it
-	ln -sf -T ${SCRIPT_DIR}/.. kll
+	ln -snf ${KLL} kll
 	cd ${SCRIPT_DIR}
 }
 
