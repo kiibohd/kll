@@ -776,7 +776,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             self.fill_dict['PartialLayerTriggerLists'] += "// Partial Layer {0}\n".format(lay_index)
 
             # Iterate over triggerList and generate a C trigger array for the layer
-            for trig_index, trigger_list in enumerate(layer[min_scan_code[lay_index]:max_scan_code[lay_index]]):
+            for trig_index, trigger_list in enumerate(layer[min_scan_code[lay_index]:max_scan_code[lay_index] + 1]):
                 # Generate ScanCode index and layer
                 self.fill_dict['PartialLayerTriggerLists'] += \
                     "Define_TL( layer{0}, 0x{1:02X} ) = {{".format(
