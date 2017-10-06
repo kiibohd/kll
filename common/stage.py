@@ -2228,6 +2228,8 @@ class DataAnalysisStage(Stage):
         self.interconnect_scancode_offsets = []
         self.interconnect_pixel_offsets = []
 
+        self.scancode_positions = dict()
+        self.pixel_positions = dict()
         self.pixel_display_mapping = []
         self.pixel_display_params = dict()
 
@@ -2488,19 +2490,20 @@ class DataAnalysisStage(Stage):
         pixel_indices = self.full_context.query('MapExpression', 'PixelChannel')
 
         pixel_indices_filtered = list(filter(lambda x: not isinstance(x.position, list), pixel_indices.data.values()))
-        #print( list( pixel_indices_filtered ) )
-        # for item in list( pixel_indices_filtered ):
-        #	print( item )
         physical = scancode_physical.data.copy()
         physical.update(pixel_physical.data)
 
         positions = dict()
+        scancode_positions = dict()
         for key, item in physical.items():
             entry = dict()
             # Acquire each dimension
             entry['x'] = item.association[0].x
             entry['y'] = item.association[0].y
             entry['z'] = item.association[0].z
+
+            # Not every pixel has a scancode mapping
+            scancode_uid = None
 
             # Check each dimension, set to 0 if None
             for k in entry.keys():
@@ -2518,16 +2521,29 @@ class DataAnalysisStage(Stage):
             else:
                 # Filter list, looking for ScanCode uid
                 lookup = list(filter(lambda x: x.position.uid == uid, pixel_indices_filtered))
+                scancode_uid = uid
+
+                # TODO (HaaTa) Make sure this is a valid ScanCode
+
+                # Also add a scancode_position entry (if this is a scancode)
+                scancode_positions[scancode_uid] = copy.copy(entry)
 
                 # Then lookup the pixel uid
                 if len(lookup) > 0:
                     uid = lookup[0].pixel.uid.index
 
-                # Unused scancode position
-                else:
-                    uid = 0
+                    # Also add a PixelId if one is found to the scancode_position entry
+                    scancode_positions[scancode_uid]['PixelId'] = uid
 
-            positions[uid] = entry
+            positions[uid] = copy.copy(entry)
+
+            # Only add ScanCode if one was found
+            if scancode_uid is not None:
+                positions[uid]['ScanCode'] = scancode_uid
+
+        # Having a full list of Physical Positions is useful during code generation
+        self.pixel_positions = positions
+        self.scancode_positions = scancode_positions
 
         # Lookup Pixel Display Mapping parameters
         variables = self.full_context.query('AssignmentExpression', 'Variable')

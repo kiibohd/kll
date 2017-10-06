@@ -502,11 +502,18 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         interconnect_scancode_offsets = self.control.stage('DataAnalysisStage').interconnect_scancode_offsets
         interconnect_pixel_offsets = self.control.stage('DataAnalysisStage').interconnect_pixel_offsets
 
+        scancode_positions = self.control.stage('DataAnalysisStage').scancode_positions
+        pixel_positions = self.control.stage('DataAnalysisStage').pixel_positions
         pixel_display_mapping = self.control.stage('DataAnalysisStage').pixel_display_mapping
         pixel_display_params = self.control.stage('DataAnalysisStage').pixel_display_params
 
         animation_settings = self.control.stage('DataAnalysisStage').animation_settings
         animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
+
+        # Setup json datastructures
+        animation_id_json = dict()
+        pixel_id_json = dict()
+        scancode_json = dict()
 
         # Build string list of compiler arguments
         compilerArgs = ""
@@ -841,6 +848,16 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         ## Layer State ##
         self.fill_dict['LayerState'] = "uint8_t LayerState[ LayerNum ];"
 
+        ## PixelId Physical Positions ##
+        for key, entry in sorted(pixel_positions.items()):
+            # Add physical pixel positions and ScanCode (if available) to json
+            pixel_id_json.setdefault(key, dict()).update(entry)
+
+        ## ScanCode Physical Positions ##
+        for key, entry in sorted(scancode_positions.items()):
+            # Add physical scancode positions and PixelId (if available) to json
+            scancode_json.setdefault(key, dict()).update(entry)
+
         ## Pixel Buffer Setup ##
         # Only add sections if Pixel Buffer is defined
         self.use_pixel_map = 'Pixel_Buffer_Size' in defines.data.keys()
@@ -872,6 +889,17 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             self.fill_dict['PixelMapping'] = "const PixelElement Pixel_Mapping[] = {\n"
             self.fill_dict['ScanCodeToPixelMapping'] = "const uint16_t Pixel_ScanCodeToPixel[] = {\n"
             self.fill_dict['ScanCodeToDisplayMapping'] = "const uint16_t Pixel_ScanCodeToDisplay[] = {\n"
+
+            # Add row, column of Pixel to json (mirror lookup to Scan Code Positions as well)
+            for y, elem in enumerate(pixel_display_mapping):
+                for x, pixelid in enumerate(elem):
+                    entry = {'Row': y, 'Col': x}
+                    pixel_uid = pixelid + 1
+                    pixel_id_json.setdefault(pixel_uid, dict()).update(entry)
+
+                    if 'ScanCode' in pixel_id_json[pixel_uid].keys():
+                        scancode_uid = pixel_id_json[pixel_uid]['ScanCode']
+                        scancode_json[scancode_uid].update(entry)
 
             last_uid = 0
             last_scancode = 0
@@ -919,7 +947,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 offset_col = 0
                 offset = 0
                 for y_list in pixel_display_mapping:
-                    #print( y_list )
                     for x_item in y_list:
                         if x_item == item.pixel.uid.index:
                             offset = offset_row * pixel_display_params['Columns'] + offset_col
@@ -958,7 +985,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             self.fill_dict['AnimationSettings'] = "const AnimationStackElement Pixel_AnimationSettings[] = {"
             self.fill_dict['AnimationList'] = ""
             animations = full_context.query('DataAssociationExpression', 'Animation')
-            animation_id_json = {}
             count = 0
             for key, animation in sorted(animations.data.items()):
                 # Name each frame collection
@@ -987,7 +1013,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     additional=False,
                 )
                 count += 1
-            self.json_dict['AnimationIds'] = animation_id_json
             self.fill_dict['Animations'] += "\n};"
 
             # Additional Animation Settings
@@ -1184,3 +1209,8 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             self.fill_dict['KLLDefines'] += "#define Pixel_AnimationSettingsNum_KLL {0}\n".format(
                 len(animation_settings_list)
             )
+
+        ## Finish up JSON datastructures
+        self.json_dict['AnimationIds'] = animation_id_json
+        self.json_dict['PixelIds'] = pixel_id_json
+        self.json_dict['ScanCodes'] = scancode_json

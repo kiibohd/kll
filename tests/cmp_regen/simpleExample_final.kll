@@ -8,8 +8,8 @@ usbKeyOut <= Output_usbCodeSend_capability(usbCode:1); # usbKeyOut => Output_usb
 # DefineData
 
 # MappingData
-S0x040 : U0x02a; # S0x40 : U"Backspace"; # :0 S64[0]
-S0x042 : U0x029; # S0x42 : U"Esc"; # :0 S66[0]
+S0x040 : U0x02a; # S0x40 : U"Backspace"; # :0 S064[0]
+S0x042 : U0x029; # S0x42 : U"Esc"; # :0 S066[0]
 
 # PixelChannelData
 

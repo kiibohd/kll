@@ -190,7 +190,7 @@ class ScanCodeId(Id, Schedule, Position):
         '''
         # Positions are a special case
         if self.positionSet():
-            return "P{0}".format(self.get_uid())
+            return "S{0:03d}".format(self.get_uid())
 
     def __repr__(self):
         # Positions are a special case
@@ -199,9 +199,9 @@ class ScanCodeId(Id, Schedule, Position):
 
         schedule = self.strSchedule()
         if len(schedule) > 0:
-            return "S{0}({1})".format(self.get_uid(), schedule)
+            return "S{0:03d}({1})".format(self.get_uid(), schedule)
         else:
-            return "S{0}".format(self.get_uid())
+            return "S{0:03d}".format(self.get_uid())
 
     def kllify(self):
         '''
@@ -446,7 +446,7 @@ class PixelAddressId(Id):
         if isinstance(value, float):
             output += "{0}%".format(value * 100)
         else:
-            output += "{0}".format(value)
+            output += "{0:03d}".format(value)
 
         return output
 
