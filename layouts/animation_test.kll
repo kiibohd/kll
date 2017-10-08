@@ -8,8 +8,6 @@ KLL = 0.5;
 # Modified Date
 Date = 2017-01-22;
 
-animation_test_layout => animation_test_layout_define;
-animation_test_layout = 1;
 
 ### Animations ###
 

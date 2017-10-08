@@ -115,6 +115,8 @@ interconnect_test() {
 		${CONTROLLER}/kll/layouts/infinity_ergodox/lcdFuncMap.kll \
 		--partial \
 		${CONTROLLER}/kll/layouts/infinity_ergodox/iced_func.kll \
+		${CONTROLLER}/kll/layouts/infinity_ergodox/mdergo1Overlay.kll \
+		${CONTROLLER}/kll/layouts/infinity_ergodox/lcdFuncMap.kll \
 		--partial \
 		${CONTROLLER}/kll/layouts/infinity_ergodox/iced_numpad.kll \
 		--emitter kiibohd \

@@ -633,6 +633,8 @@ class MappingData(Data):
                 continue
 
             # Lookup currently merged expression
+            if key not in self.data.keys():
+                continue
             expr = self.data[key]
 
             for sub_expr in expr:
