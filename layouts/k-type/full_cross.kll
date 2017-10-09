@@ -1,0 +1,58 @@
+# Full Cross Animation
+
+Name = "Full Cross Animation";
+Version = 0.3;
+Author = "HaaTa (Jacob Alexander) 2017";
+KLL = 0.5;
+
+# Modified Date
+Date = 2017-10-08;
+
+
+### Animations ###
+
+## Usage Examples ##
+
+# A[full_cross_white] <= replace:basic, loops:2, framedelay:1;
+# U["P"] :+ A[full_cross_white](start);
+#
+# A[full_dark_cross] <= replace:basic;
+# U["O"] :+ A[full_dark_cross](start);
+
+
+# Full Cross White
+A[full_cross_white, 1] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 2] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 3] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 4] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 5] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 6] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 7] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 8] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 9] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 10] <= P[r:i](+:10,+:10,+:10), P[c:i](+:10,+:10,+:10);
+A[full_cross_white, 11] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 12] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 13] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 14] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 15] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 16] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 17] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 18] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 19] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+A[full_cross_white, 20] <= P[r:i](-:10,-:10,-:10), P[c:i](-:10,-:10,-:10);
+
+
+# Full Dark Cross
+# Works best with another animation already playing underneath
+A[full_dark_cross, 1] <= P[r:i](-:255,-:255,-:255), P[c:i](-:255,-:255,-:255);
+A[full_dark_cross, 2] <= P[r:i](-:225,-:225,-:225), P[c:i](-:225,-:225,-:225);
+A[full_dark_cross, 3] <= P[r:i](-:200,-:200,-:200), P[c:i](-:200,-:200,-:200);
+A[full_dark_cross, 4] <= P[r:i](-:175,-:175,-:175), P[c:i](-:175,-:175,-:175);
+A[full_dark_cross, 5] <= P[r:i](-:150,-:150,-:150), P[c:i](-:150,-:150,-:150);
+A[full_dark_cross, 6] <= P[r:i](-:125,-:125,-:125), P[c:i](-:125,-:125,-:125);
+A[full_dark_cross, 7] <= P[r:i](-:100,-:100,-:100), P[c:i](-:100,-:100,-:100);
+A[full_dark_cross, 8] <= P[r:i](-:75,-:75,-:75), P[c:i](-:75,-:75,-:75);
+A[full_dark_cross, 9] <= P[r:i](-:50,-:50,-:50), P[c:i](-:50,-:50,-:50);
+A[full_dark_cross, 10] <= P[r:i](-:25,-:25,-:25), P[c:i](-:25,-:25,-:25);
+
