@@ -405,6 +405,7 @@ class MappingData(Data):
                                     orig_expr.operator,
                                     expr.results
                             )]
+                            self.data[new_key][0].connect_id = orig_expr.connect_id
 
                             # Unset basemap on expression
                             self.data[new_key][0].base_map = False
