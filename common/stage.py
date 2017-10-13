@@ -454,6 +454,8 @@ class PreprocessorStage(Stage):
 
         @param args: Name space of processed arguments
         '''
+        self.preprocessor_debug = args.preprocessor_debug
+        self.processed_save_path = args.preprocessor_tmp_path
 
     def command_line_flags(self, parser):
         '''
@@ -465,11 +467,12 @@ class PreprocessorStage(Stage):
         group = parser.add_argument_group('\033[1mPreprocessor Configuration\033[0m')
 
         # Optional Arguments
-        group.add_argument('--preprocessor-save-path', type=str, nargs='+', default=self.processed_save_path,
-            help="Specify base configuration .kll files, earliest priority"
+        group.add_argument('--preprocessor-tmp-path', type=str, default=self.processed_save_path,
+            help="Work directory for preprocessor.\n"
+            "\033[1mDefault\033[0m: {0}\n".format(self.processed_save_path)
         )
         group.add_argument('--preprocessor-debug', action='store_true', default=self.preprocessor_debug,
-            help="Enable debug output in the preprocessor.\n"
+            help="Enable debug output in the preprocessor."
         )
 
     def seed_context(self, kll_file):
