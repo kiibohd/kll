@@ -631,6 +631,16 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.fill_dict['CapabilitiesList'] += "};"
         self.fill_dict['CapabilitiesIndices'] += "} CapabilityIndex;"
 
+        # Validate that we have the required capabilities
+        for key, elem in self.required_capabilities.items():
+            if elem not in self.capabilities_index.keys():
+                self.error_exit = True
+                print("{0} Required capability '{1}' for '{2}' is missing!".format(
+                    ERROR,
+                    elem,
+                    key,
+                ))
+
         ## Results Macros ##
         self.fill_dict['ResultMacros'] = ""
 
@@ -930,7 +940,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
                 # Add ScanCodeToPixelMapping entry
                 # Add ScanCodeToDisplayMapping entry
-                while item.position.uid != last_scancode:
+                while item.position.uid != last_scancode and item.position.uid >= last_scancode:
                     # Fill in unused scancodes
                     self.fill_dict['ScanCodeToPixelMapping'] += "\t/*{0}*/ 0,\n".format(last_scancode)
                     self.fill_dict['ScanCodeToDisplayMapping'] += "\t/*__,__ {0}*/ 0,\n".format(last_scancode)
