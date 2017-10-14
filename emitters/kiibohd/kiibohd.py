@@ -54,6 +54,12 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         'USB': 'usbKeyOut',
     }
 
+    # Optional required capabilities
+    # Used mostly for animationIndex
+    optional_required_capabilities = [
+        'A',
+    ]
+
     def __init__(self, control):
         '''
         Emitter initialization
@@ -634,12 +640,13 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         # Validate that we have the required capabilities
         for key, elem in self.required_capabilities.items():
             if elem not in self.capabilities_index.keys():
-                self.error_exit = True
-                print("{0} Required capability '{1}' for '{2}' is missing!".format(
-                    ERROR,
-                    elem,
-                    key,
-                ))
+                if key not in self.optional_required_capabilities:
+                    self.error_exit = True
+                    print("{0} Required capability '{1}' for '{2}' is missing!".format(
+                        ERROR,
+                        elem,
+                        key,
+                    ))
 
         ## Results Macros ##
         self.fill_dict['ResultMacros'] = ""

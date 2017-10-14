@@ -24,6 +24,7 @@ export ExtraBuildPath='.host_override'
 cmd_cmake ./ergodox.bash      "" "-- kll_token kll_parser kll_debug kll_display"
 cmd_cmake ./infinity.bash     "" "-- kll_token kll_parser kll_debug kll_display"
 cmd_cmake ./infinity_led.bash "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./kira.bash         "" "-- kll_token kll_parser kll_debug kll_display"
 cmd_cmake ./k-type.bash       "" "-- kll_token kll_parser kll_debug kll_display"
 cmd_cmake ./whitefox.bash     "" "-- kll_token kll_parser kll_debug kll_display"
 
