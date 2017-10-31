@@ -1,0 +1,8 @@
+# None Syntax Test
+
+Name = None;
+Author = "HaaTa (Jacob Alexander) 2016-2017";
+KLL = 0.5;
+
+U"A" : None;
+

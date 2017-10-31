@@ -21,6 +21,31 @@ cd ${SCRIPT_DIR}
 
 ## Tests
 
+# Simple test
+simple_test() {
+	local TEST_PATH=${OUT_PATH}/simple
+	mkdir -p ${TEST_PATH}
+	echo "${FUNCNAME[0]}"
+	cmd ../kll \
+		--config \
+		${CONTROLLER}/Scan/Devices/MatrixARM/capabilities.kll \
+		${CONTROLLER}/Macro/PartialMap/capabilities.kll \
+		${CONTROLLER}/Output/pjrcUSB/capabilities.kll \
+		--base \
+		${CONTROLLER}/Scan/Infinity_60/scancode_map.kll \
+		${CONTROLLER}/kll/examples/nonetest.kll \
+		--default \
+		${CONTROLLER}/kll/layouts/stdFuncMap.kll \
+		--emitter kiibohd \
+		--def-template ${CONTROLLER}/kll/templates/kiibohdDefs.h \
+		--map-template ${CONTROLLER}/kll/templates/kiibohdKeymap.h \
+		--pixel-template ${CONTROLLER}/kll/templates/kiibohdPixelmap.c \
+		--def-output ${TEST_PATH}/kll_defs.h \
+		--map-output ${TEST_PATH}/generatedKeymap.h \
+		--pixel-output ${TEST_PATH}/generatedPixelmap.c \
+		--json-output ${TEST_PATH}/kll.json ${@}
+}
+
 # Multiple Function1 test (WhiteFox)
 func1_test() {
 	local TEST_PATH=${OUT_PATH}/function1
@@ -110,6 +135,7 @@ interconnect_test() {
 		${CONTROLLER}/Scan/Infinity_Ergodox/leftHand.kll \
 		${CONTROLLER}/Scan/Infinity_Ergodox/slave1.kll \
 		${CONTROLLER}/Scan/Infinity_Ergodox/rightHand.kll \
+		${CONTROLLER}/kll/examples/nonetest.kll \
 		--default \
 		${CONTROLLER}/kll/layouts/infinity_ergodox/mdergo1Overlay.kll \
 		${CONTROLLER}/kll/layouts/infinity_ergodox/lcdFuncMap.kll \
@@ -130,6 +156,7 @@ interconnect_test() {
 }
 
 
+simple_test ${@}
 func1_test ${@}
 add_test ${@}
 interconnect_test ${@}
