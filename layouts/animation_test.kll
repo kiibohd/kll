@@ -264,7 +264,7 @@ A[lock_event, 28] <= P[r:i,c:i](-:10,-:10,-:10);
 A[lock_event, 29] <= P[r:i,c:i](-:10,-:10,-:10);
 
 U"RCtrl" :+ layerLock(1);
-U"Menu" :+ layerLock(2);
+U"App" :+ layerLock(2);
 
 # Underlighting streak
 A[under_streak] <= loops:1, replace:stack;

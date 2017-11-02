@@ -80,7 +80,7 @@ U"Space" : U"Space";
 U"RAlt" : U"RAlt";
 U"RGui" : U"RGui";
 # These are used as the layer locks, don't unset them
-#U"Menu" : U"Menu";
+#U"App" : U"App";
 #U"RCtrl" : U"RCtrl";
 
 U"Esc" : U"Esc";
