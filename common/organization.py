@@ -72,7 +72,11 @@ class Data:
         '''
         new_log = []
         found = []
-        for index, elem in enumerate(reversed(self.merge_in_log)):
+        # We have to manually reverse, then modify the referenced items
+        # i.e. we're still modifying self.merge_in_log
+        # This is done so we still have a proper index, and do the invalidation in the correct order
+        reversed_log = self.merge_in_log[::-1]
+        for index, elem in enumerate(reversed_log):
             key, expr, enabled = elem
             # Add to found list
             if key not in found:
@@ -80,7 +84,11 @@ class Data:
                 new_log.insert(0, elem)
             # Otherwise mark as disabled
             else:
-                self.merge_in_log[index][2] = False
+                reversed_log[index] = [
+                    key,
+                    expr,
+                    False,
+                ]
 
         return new_log
 
