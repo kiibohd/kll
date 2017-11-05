@@ -21,12 +21,17 @@ export CMakeExtraBuildArgs='-- kll_regen'
 export CMakeExtraArgs='-DCompilerOverride=host'
 export ExtraBuildPath='.host_override'
 
-cmd_cmake ./ergodox.bash      "" "-- kll_token kll_parser kll_debug kll_display"
-cmd_cmake ./infinity.bash     "" "-- kll_token kll_parser kll_debug kll_display"
-cmd_cmake ./infinity_led.bash "" "-- kll_token kll_parser kll_debug kll_display"
-cmd_cmake ./kira.bash         "" "-- kll_token kll_parser kll_debug kll_display"
-cmd_cmake ./k-type.bash       "" "-- kll_token kll_parser kll_debug kll_display"
-cmd_cmake ./whitefox.bash     "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./ergodox.bash                  "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity.bash                 "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity_led.bash             "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./kira.bash                     "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./k-type.bash                   "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./whitefox.aria.bash            "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./whitefox.iso.bash             "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./whitefox.jackofalltrades.bash "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./whitefox.truefox.bash         "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./whitefox.vanilla.bash         "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./whitefox.winkeyless.bash      "" "-- kll_token kll_parser kll_debug kll_display"
 
 
 ## Tests complete

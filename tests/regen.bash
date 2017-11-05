@@ -35,6 +35,7 @@ FILES=(
 	examples/simple2.kll
 	examples/simpleExample.kll
 	examples/state_scheduling.kll
+	layouts/mouseTest.kll
 )
 
 

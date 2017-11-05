@@ -1,7 +1,7 @@
 #!/bin/bash
 # Use example .kll files to check syntax compatibility
 # Does not generate code, so resulting datastructures do not necessarily need to functino
-# Jacob Alexander 2016
+# Jacob Alexander 2016-2017
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Common functions
@@ -30,6 +30,7 @@ FILES=(
 	examples/simple2.kll
 	examples/simpleExample.kll
 	examples/state_scheduling.kll
+	layouts/mouseTest.kll
 )
 
 
