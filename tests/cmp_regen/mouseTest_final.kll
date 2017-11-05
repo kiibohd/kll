@@ -1,0 +1,47 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+
+# DefineData
+
+# MappingData
+U0x004 : mouseOut(0,-5,0); # U"A" : mouseOut( 0, -5, 0 ); # :0 HID(USBCode)"KEY_A"[0]
+U0x005 : mouseOut(13,0,0); # U"B" : mouseOut( 13, 0, 0 ); # :0 HID(USBCode)"KEY_B"[0]
+U0x006 : mouseOut(11,0,0); # U"C" : mouseOut( 11, 0, 0 ); # :0 HID(USBCode)"KEY_C"[0]
+U0x007 : mouseOut(0,5,0); # U"D" : mouseOut( 0, 5, 0 ); # :0 HID(USBCode)"KEY_D"[0]
+U0x010 : mouseOut(15,0,0); # U"M" : mouseOut( 15, 0, 0 ); # :0 HID(USBCode)"KEY_M"[0]
+U0x011 : mouseOut(14,0,0); # U"N" : mouseOut( 14, 0, 0 ); # :0 HID(USBCode)"KEY_N"[0]
+U0x016 : mouseOut(0,0,-5); # U"S" : mouseOut( 0, 0, -5 ); # :0 HID(USBCode)"KEY_S"[0]
+U0x019 : mouseOut(12,0,0); # U"V" : mouseOut( 12, 0, 0 ); # :0 HID(USBCode)"KEY_V"[0]
+U0x01a : mouseOut(0,0,5); # U"W" : mouseOut( 0, 0, 5 ); # :0 HID(USBCode)"KEY_W"[0]
+U0x01b : mouseOut(10,0,0); # U"X" : mouseOut( 10, 0, 0 ); # :0 HID(USBCode)"KEY_X"[0]
+U0x01d : mouseOut(9,0,0); # U"Z" : mouseOut( 9, 0, 0 ); # :0 HID(USBCode)"KEY_Z"[0]
+U0x01e : mouseOut(1,0,0); # U"1" : mouseOut( 1, 0, 0 ); # :0 HID(USBCode)"KEY_1"[0]
+U0x01f : mouseOut(2,0,0); # U"2" : mouseOut( 2, 0, 0 ); # :0 HID(USBCode)"KEY_2"[0]
+U0x020 : mouseOut(3,0,0); # U"3" : mouseOut( 3, 0, 0 ); # :0 HID(USBCode)"KEY_3"[0]
+U0x021 : mouseOut(4,0,0); # U"4" : mouseOut( 4, 0, 0 ); # :0 HID(USBCode)"KEY_4"[0]
+U0x022 : mouseOut(5,0,0); # U"5" : mouseOut( 5, 0, 0 ); # :0 HID(USBCode)"KEY_5"[0]
+U0x023 : mouseOut(6,0,0); # U"6" : mouseOut( 6, 0, 0 ); # :0 HID(USBCode)"KEY_6"[0]
+U0x024 : mouseOut(7,0,0); # U"7" : mouseOut( 7, 0, 0 ); # :0 HID(USBCode)"KEY_7"[0]
+U0x025 : mouseOut(8,0,0); # U"8" : mouseOut( 8, 0, 0 ); # :0 HID(USBCode)"KEY_8"[0]
+U0x036 : mouseOut(16,0,0); # U"Comma" : mouseOut( 16, 0, 0 ); # :0 HID(USBCode)"KEY_COMMA"[0]
+U0x04f : mouseOut(0,1,0); # U"Right" : mouseOut( 0, 1, 0 ); # :0 HID(USBCode)"KEY_RIGHT"[0]
+U0x050 : mouseOut(0,-1,0); # U"Left" : mouseOut( 0, -1, 0 ); # :0 HID(USBCode)"KEY_LEFT"[0]
+U0x051 : mouseOut(0,0,-1); # U"Down" : mouseOut( 0, 0, -1 ); # :0 HID(USBCode)"KEY_DOWN"[0]
+U0x052 : mouseOut(0,0,1); # U"Up" : mouseOut( 0, 0, 1 ); # :0 HID(USBCode)"KEY_UP"[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2016; # Author = "HaaTa (Jacob Alexander) 2016"; # Author
+Date = 2016-03-21; # Date = 2016-03-21; # Date
+KLL = 0.3d; # KLL = 0.3d; # KLL
+Name = mouseTest; # Name = mouseTest; # Name
+Version = 0.2; # Version = 0.2; # Version
+
