@@ -1,0 +1,19 @@
+# Turn all Infinity 60% LEDs on by default
+Name = all-leds;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2017";
+KLL = 0.5;
+
+# Modified Date
+Date = 2017-10-31;
+
+
+### Animations ###
+
+## Usage ##
+A[all_on] <= start, pfunc:interp;
+
+
+# All LEDs on
+A[all_on, 1] <= P[c:0%](255), P[c:100%](255);
+
