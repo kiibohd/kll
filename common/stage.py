@@ -2344,6 +2344,10 @@ class DataAnalysisStage(Stage):
                 if max_uid > self.max_scan_code[index]:
                     self.max_scan_code[index] = max_uid
 
+            # Unset min_scan_code if not set
+            if self.min_scan_code[index] == 0xFFFF and self.max_scan_code[index] == 0:
+                self.min_scan_code[index] = 0
+
         # Sort expressions by trigger and result, there may be *duplicate* triggers however don't reduce yet
         # we need the trigger->result and result->trigger mappings still
         trigger_sorted = dict()
