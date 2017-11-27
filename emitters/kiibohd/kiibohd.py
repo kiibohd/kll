@@ -337,12 +337,27 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             # Construct trigger combo
             trigger = "/* XXX INVALID XXX */"
 
+            # TODO Add support for Analog keys
+            # TODO Add support for LED states
+            # TODO Add support for non-press states
             # ScanCodeId
             if isinstance(identifier, ScanCodeId):
-                # TODO Add support for Analog keys
-                # TODO Add support for LED states
-                # - TODO - Offset for interconnect?
-                trigger = "0x00, 0x01, 0x{0:02X}".format(identifier.get_uid())
+                uid = identifier.get_uid()
+                trigger_type = "/* XXX INVALID TYPE XXX */"
+                state = "ScheduleType_P"
+
+                # Determine the type
+                if uid < 256:
+                    trigger_type = "TriggerType_Switch1"
+                elif uid < 512:
+                    trigger_type = "TriggerType_Switch2"
+                elif uid < 768:
+                    trigger_type = "TriggerType_Switch3"
+                elif uid < 1024:
+                    trigger_type = "TriggerType_Switch4"
+
+                # <type>, <state>, <scanCode>
+                trigger = "{0}, {1}, 0x{2:02X}".format(trigger_type, state, uid)
 
             # Unknown/Invalid Id
             else:
@@ -891,7 +906,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.fill_dict['LayerIndexList'] += "};"
 
         ## Layer State ##
-        self.fill_dict['LayerState'] = "uint8_t LayerState[ LayerNum ];"
+        self.fill_dict['LayerState'] = "LayerStateType LayerState[ LayerNum ];"
 
         ## PixelId Physical Positions ##
         for key, entry in sorted(pixel_positions.items()):
