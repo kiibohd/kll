@@ -323,7 +323,7 @@ A[under_streak, 36] <=
 	P[106](0,0,0);
 
 # Rainbow wave
-A[rainbow_wave] <= start, framedelay:0x3, pfunc:interp;
+A[rainbow_wave] <= start, framedelay:3, framestretch, loop, replace:all, pfunc:interp;
 A[rainbow_wave, 1]  <=                       P[c:0%] (0,255,0),   P[c:25%](255,255,0), P[c:50%](255,255,255),   P[c:75%](127,0,255), P[c:100%](0,0,255);
 A[rainbow_wave, 2]  <= P[c:-24%](0,0,255),   P[c:2%] (0,255,0),   P[c:27%](255,255,0), P[c:52%](255,255,255),   P[c:77%](127,0,255), P[c:102%](0,0,255);
 A[rainbow_wave, 3]  <= P[c:-22%](0,0,255),   P[c:4%] (0,255,0),   P[c:29%](255,255,0), P[c:54%](255,255,255),   P[c:79%](127,0,255), P[c:104%](0,0,255);

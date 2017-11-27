@@ -78,6 +78,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.pixel_output = "generatedPixelmap.c"
         self.def_output = "kll_defs.h"
         self.json_output = "kll.json"
+        self.kiibohd_debug = False
 
         # Convenience
         self.capabilities = None
@@ -105,6 +106,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.map_output = args.map_output
         self.pixel_output = args.pixel_output
         self.json_output = args.json_output
+        self.kiibohd_debug = args.kiibohd_debug
 
     def command_line_flags(self, parser):
         '''
@@ -143,6 +145,12 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             help="Specify json output file for settings dictionary.\n"
             "\033[1mDefault\033[0m: {0}\n".format(self.json_output)
         )
+        group.add_argument(
+            '--kiibohd-debug',
+            action='store_true',
+            default=self.kiibohd_debug,
+            help="Show debug info from kiibohd emitter.",
+        )
 
     def output(self):
         '''
@@ -150,6 +158,14 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
         Generate desired outputs from templates
         '''
+        if self.kiibohd_debug:
+            print("-- Generating --")
+            print(self.def_output)
+            print(self.map_output)
+            if self.use_pixel_map:
+                print(self.pixel_output)
+            print(self.json_output)
+
         # Load define template and generate
         self.load_template(self.def_template)
         self.generate(self.def_output)

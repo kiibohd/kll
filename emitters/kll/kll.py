@@ -53,6 +53,7 @@ class KLL(Emitter, FileEmitter):
         # Defaults
         self.target_dir = "generated"
         self.output_debug = False
+        self.kll_debug = False
 
     def command_line_args(self, args):
         '''
@@ -62,6 +63,7 @@ class KLL(Emitter, FileEmitter):
         '''
         self.target_dir = args.target_dir
         self.output_debug = args.output_debug
+        self.kll_debug = args.kll_debug
 
     def command_line_flags(self, parser):
         '''
@@ -79,6 +81,12 @@ class KLL(Emitter, FileEmitter):
         group.add_argument('--output-debug', action='store_true', default=self.output_debug,
             help="Enable kll reconstitution in-file debug output.\n",
         )
+        group.add_argument(
+            '--kll-debug',
+            action='store_true',
+            default=self.kll_debug,
+            help="Show debug info from kll emitter.",
+        )
 
     def output(self):
         '''
@@ -86,6 +94,10 @@ class KLL(Emitter, FileEmitter):
 
         Generate KLL files
         '''
+        if self.kll_debug:
+            print("-- Generating --")
+            print(self.target_dir)
+
         # Make sure output directory exists
         os.makedirs(self.target_dir, exist_ok=True)
 
