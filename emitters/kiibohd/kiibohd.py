@@ -664,11 +664,36 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.capabilities = full_context.query('NameAssociationExpression', 'Capability')
         self.capabilities_index = dict()
         count = 0
+        safe_capabilities = [
+            # PartialMap
+            "layerState",
+            "layerLatch",
+            "layerLock",
+            "layerShift",
+            "layerRotate",
+            # pjrcUSB
+            "consCtrlOut",
+            "noneOut",
+            "sysCtrlOut",
+            "usbKeyOut",
+            "mouseOut",
+            "kbdProtocolBoot",
+            "kbdProtocolNKRO",
+            "toggleKbdProtocol",
+            "flashMode",
+        ]
         for dkey, dvalue in sorted(self.capabilities.data.items(), key=lambda x: x[1].association.name):
             funcName = dvalue.association.name
             argByteWidth = dvalue.association.total_arg_bytes()
+            features = "CapabilityFeature_Safe" if dkey in safe_capabilities else "CapabilityFeature_None"
 
-            self.fill_dict['CapabilitiesList'] += "\t/* {2} */ {{ {0}, {1} }},\n".format(funcName, argByteWidth, count)
+            self.fill_dict['CapabilitiesList'] += "\t/* {3} {4} */\n\t{{ {0}, {1}, {2} }},\n".format(
+                funcName,
+                argByteWidth,
+                features,
+                count,
+                dkey,
+            )
             self.fill_dict['CapabilitiesFuncDecl'] += \
                 "void {0}( TriggerMacro *trigger, uint8_t state, uint8_t stateType, uint8_t *args );\n".format(funcName)
             self.fill_dict['CapabilitiesIndices'] += "\t{0}_index,\n".format(funcName)
@@ -1271,6 +1296,50 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             )
 
         ## Finish up JSON datastructures
+        # TODO Testing
+        # - Validate Triggers through 3 paths (don't run, just validate they all match)
+        #   1) Per layer
+        #   2) Per trigger
+        #   3) Per result
+        # - Run trigger
+        #   1) Validate result (will need infra per capability)
+        #   2) Hook into animation testing?
+        # - Trigger Types
+        #   1) Switch
+        #   2) HID LED
+        #   3) Layer
+        #   4) Animation
+        #   5) Analog
+        # - Merge output_com.c more so code can be shared better
+        #   * Test out USB output formats (6kro vs nkro)
+        #   * Test out HID IDLE (i.e. sending usb output when there were no changes)
+        # TODO
+        # 1) Layers
+        #    - Triggers by index
+        #    - Results from Triggers
+        # Layers: {
+        #   0 : {  -- Layer Number
+        #     0 : {} -- Trigger Number
+        #   }
+        #   1 : {}
+        # }
+        # Triggers: {
+        #   0 : { -- trigger
+        #     -- layer info
+        #     -- trigger info
+        #     -- result info per layer
+        #   }
+        # }
+        # Results: {
+        #   0 : { -- Result
+        #      trigger : { -- trigger per layer
+        #        -- layer info
+        #        -- trigger info
+        #      -- result info
+        #      }
+        #   }
+        # }
         self.json_dict['AnimationIds'] = animation_id_json
         self.json_dict['PixelIds'] = pixel_id_json
         self.json_dict['ScanCodes'] = scancode_json
+
