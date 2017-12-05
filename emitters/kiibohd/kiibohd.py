@@ -677,9 +677,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             "sysCtrlOut",
             "usbKeyOut",
             "mouseOut",
-            "kbdProtocolBoot",
-            "kbdProtocolNKRO",
-            "toggleKbdProtocol",
             "flashMode",
         ]
         for dkey, dvalue in sorted(self.capabilities.data.items(), key=lambda x: x[1].association.name):
