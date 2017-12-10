@@ -83,6 +83,13 @@ class Schedule:
                 output += "{0}".format(param.kllify())
         return output
 
+    def json(self):
+        '''
+        JSON representation of Schedule
+        '''
+        # TODO Add schedule support
+        return dict()
+
     def kllify(self):
         '''
         KLL representation of object

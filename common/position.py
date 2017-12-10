@@ -134,5 +134,12 @@ class Position:
 
         return output
 
+    def json(self):
+        '''
+        JSON representation of Position
+        '''
+        # TODO (HaaTa) Add
+        return {}
+
     def __repr__(self):
         return self.strPosition()

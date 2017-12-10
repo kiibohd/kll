@@ -551,6 +551,9 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         animation_id_json = dict()
         pixel_id_json = dict()
         scancode_json = dict()
+        capabilities_json = dict()
+        defines_json = dict()
+        layers_json = dict()
 
         # Build string list of compiler arguments
         compilerArgs = ""
@@ -648,10 +651,15 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             if dvalue.name in variables.data.keys():
                 # TODO Handle arrays
                 if not isinstance(variables.data[dvalue.name].value, list):
+                    value = variables.data[dvalue.name].value.replace('\n', ' \\\n')
                     self.fill_dict['Defines'] += "\n#define {0} {1}".format(
                         dvalue.association,
-                        variables.data[dvalue.name].value.replace('\n', ' \\\n'),
+                        value,
                     )
+                    defines_json[dvalue.name] = {
+                        'name' : dvalue.association,
+                        'value' : value,
+                    }
             else:
                 print("{0} '{1}' not defined...".format(WARNING, dvalue.name))
 
@@ -694,6 +702,18 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             self.fill_dict['CapabilitiesFuncDecl'] += \
                 "void {0}( TriggerMacro *trigger, uint8_t state, uint8_t stateType, uint8_t *args );\n".format(funcName)
             self.fill_dict['CapabilitiesIndices'] += "\t{0}_index,\n".format(funcName)
+
+            # Add to json
+            capabilities_json[dkey] = {
+                'args_count' : len(dvalue.association.arg_list),
+                'args' : [],
+                'name' : funcName,
+            }
+            for arg in dvalue.association.arg_list:
+                capabilities_json[dkey]['args'].append({
+                    'name' : arg.name,
+                    'width' : arg.width,
+                })
 
             # Generate index for result lookup
             self.capabilities_index[dkey] = count
@@ -929,6 +949,18 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
         ## Layer State ##
         self.fill_dict['LayerState'] = "LayerStateType LayerState[ LayerNum ];"
+
+        ## Layers JSON ##
+        # Layer 0 is the default map
+        # Layer 1+ are the partial maps
+        for layer, layer_context in enumerate(reduced_contexts):
+            layer_info = dict()
+            for key, mapped_trigger in sorted(layer_context.organization.mapping_data.data.items()):
+                layer_info[key] = {
+                    'trigger' : mapped_trigger[0].triggersSequenceOfCombosOfIds(),
+                    'result' : mapped_trigger[0].resultsSequenceOfCombosOfIds(),
+                }
+            layers_json[layer] = layer_info
 
         ## PixelId Physical Positions ##
         for key, entry in sorted(pixel_positions.items()):
@@ -1294,10 +1326,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
         ## Finish up JSON datastructures
         # TODO Testing
-        # - Validate Triggers through 3 paths (don't run, just validate they all match)
-        #   1) Per layer
-        #   2) Per trigger
-        #   3) Per result
         # - Run trigger
         #   1) Validate result (will need infra per capability)
         #   2) Hook into animation testing?
@@ -1310,33 +1338,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         # - Merge output_com.c more so code can be shared better
         #   * Test out USB output formats (6kro vs nkro)
         #   * Test out HID IDLE (i.e. sending usb output when there were no changes)
-        # TODO
-        # 1) Layers
-        #    - Triggers by index
-        #    - Results from Triggers
-        # Layers: {
-        #   0 : {  -- Layer Number
-        #     0 : {} -- Trigger Number
-        #   }
-        #   1 : {}
-        # }
-        # Triggers: {
-        #   0 : { -- trigger
-        #     -- layer info
-        #     -- trigger info
-        #     -- result info per layer
-        #   }
-        # }
-        # Results: {
-        #   0 : { -- Result
-        #      trigger : { -- trigger per layer
-        #        -- layer info
-        #        -- trigger info
-        #      -- result info
-        #      }
-        #   }
-        # }
         self.json_dict['AnimationIds'] = animation_id_json
         self.json_dict['PixelIds'] = pixel_id_json
         self.json_dict['ScanCodes'] = scancode_json
+        self.json_dict['Capabilities'] = capabilities_json
+        self.json_dict['Defines'] = defines_json
+        self.json_dict['Layers'] = layers_json
 

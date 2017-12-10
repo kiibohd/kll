@@ -617,6 +617,41 @@ class MapExpression(Expression):
 
         return True
 
+    def triggersSequenceOfCombosOfIds(self, index=0):
+        '''
+        Takes triggers and converts into explicit ids
+
+        Only uses the first index by default.
+        @param index: Which trigger sequence to expand
+        @return: list of lists
+
+        Example (index=0)
+        [[[S10, S16], [S42]], [[S11, S16], [S42]]] -> [[10, 16], [42]]
+        '''
+        nsequence = []
+        for combo in self.triggers[index]:
+            ncombo = []
+            for identifier in combo:
+                ncombo.append(identifier.json())
+            nsequence.append(ncombo)
+        return nsequence
+
+    def resultsSequenceOfCombosOfIds(self, index=0):
+        '''
+        Takes results and converts into explicit capabilities
+
+        Only uses the first index by default.
+        @param index: Which result sequence to expand
+        @return: list of lists
+        '''
+        nsequence = []
+        for combo in self.results[index]:
+            ncombo = []
+            for identifier in combo:
+                ncombo.append(identifier.json())
+            nsequence.append(ncombo)
+        return nsequence
+
     def sequencesOfCombosOfIds(self, expression_param):
         '''
         Prettified Sequence of Combos of Identifiers

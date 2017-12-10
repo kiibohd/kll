@@ -628,7 +628,7 @@ class Make:
         '''
         Converts a capability tuple, argument list to a CapId Usage
         '''
-        return CapId(name, 'Usage', arguments)
+        return CapId(name, 'Capability', arguments)
 
     def debug(tokens):
         '''

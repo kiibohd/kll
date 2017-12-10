@@ -57,6 +57,16 @@ class Id:
         '''
         return self.uid
 
+    def json(self):
+        '''
+        JSON representation of Id
+        Generally each specialization of the Id class will need to enhance this function.
+        '''
+        return {
+            'type' : self.type,
+            'uid'  : self.uid,
+        }
+
     def kllify(self):
         '''
         Returns KLL version of the Id
@@ -133,6 +143,14 @@ class HIDId(Id, Schedule):
         output = 'HID({0})"{1}"{2}'.format(self.type, uid, schedule)
         return output
 
+    def json(self):
+        '''
+        JSON representation of HIDId
+        '''
+        output = Id.json(self)
+        output.update(Schedule.json(self))
+        return output
+
     def kllify(self):
         '''
         Returns KLL version of the Id
@@ -202,6 +220,15 @@ class ScanCodeId(Id, Schedule, Position):
             return "S{0:03d}({1})".format(self.get_uid(), schedule)
         else:
             return "S{0:03d}".format(self.get_uid())
+
+    def json(self):
+        '''
+        JSON representation of ScanCodeId
+        '''
+        output = Id.json(self)
+        output.update(Schedule.json(self))
+        output.update(Position.json(self))
+        return output
 
     def kllify(self):
         '''
@@ -533,6 +560,15 @@ class CapId(Id):
 
         return "{0}({1})".format(self.name, arg_string)
 
+    def json(self):
+        '''
+        JSON representation of CapId
+        '''
+        return {
+            'type' : self.type,
+            'name' : self.name,
+        }
+
     def total_arg_bytes(self, capabilities_dict=None):
         '''
         Calculate the total number of bytes needed for the args
@@ -577,6 +613,14 @@ class NoneId(CapId):
 
     def __init__(self):
         super().__init__('None', 'None')
+
+    def json(self):
+        '''
+        JSON representation of NoneId
+        '''
+        return {
+            'type' : self.type,
+        }
 
     def __repr__(self):
         return "None"
