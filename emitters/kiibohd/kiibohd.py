@@ -3,7 +3,7 @@
 KLL Kiibohd .h/.c File Emitter
 '''
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2018 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -708,6 +708,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 'args_count' : len(dvalue.association.arg_list),
                 'args' : [],
                 'name' : funcName,
+                'index' : count,
             }
             for arg in dvalue.association.arg_list:
                 capabilities_json[dkey]['args'].append({
