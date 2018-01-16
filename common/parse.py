@@ -10,7 +10,7 @@ REMEMBER: When editing parser BNF-like expressions, order matters. Specifically 
 # Parser doesn't play nice with linters, disable some checks
 # pylint: disable=no-self-argument, too-many-public-methods, no-self-use, bad-builtin
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2018 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ from common.hid_dict import kll_hid_lookup_dictionary
 
 from common.id import (
     AnimationId, AnimationFrameId,
-    CapArgId, CapId,
+    CapArgId, CapArgValue, CapId,
     HIDId,
     NoneId,
     PixelAddressId, PixelId, PixelLayerId,
@@ -624,6 +624,12 @@ class Make:
         '''
         return CapArgId(argument, width)
 
+    def capArgValue(value):
+        '''
+        Converts a capability argument value to a CapArgValue
+        '''
+        return CapArgValue(value)
+
     def capUsage(name, arguments):
         '''
         Converts a capability tuple, argument list to a CapId Usage
@@ -954,7 +960,7 @@ animation_modlist = animation_modifier >> Make.animationModlist
 animation_capability = ((animation_def | animation_elem) + maybe(skip(parenthesis('(')) + animation_modifier + skip(parenthesis(')')))) >> unarg(Make.animationCapability)
 
 # Capabilities
-capFunc_argument = number >> Make.capArg  # TODO Allow for symbolic arguments, i.e. arrays and variables
+capFunc_argument = number >> Make.capArgValue  # TODO Allow for symbolic arguments, i.e. arrays and variables
 capFunc_arguments = many(capFunc_argument + skip(maybe(comma)))
 capFunc_elem = name + skip(parenthesis('(')) + capFunc_arguments + skip(parenthesis(')')) >> unarg(Make.capUsage) >> listElem
 capFunc_combo = oneplus((hidCode_elem | capFunc_elem | animation_capability | pixel_capability) + skip(maybe(plus))) >> listElem

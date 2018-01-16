@@ -54,6 +54,16 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         'USB': 'usbKeyOut',
     }
 
+    # Code to capability mapping
+    code_to_capability = {
+        'Animation': 'animationIndex',
+        'Capability': None,
+        'ConsCode': 'consCtrlOut',
+        'ScanCode': None,
+        'SysCode': 'sysCtrlOut',
+        'USBCode': 'usbKeyOut',
+    }
+
     # Optional required capabilities
     # Used mostly for animationIndex
     optional_required_capabilities = [
@@ -275,7 +285,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     cap = "{0}".format(cap_index)
                     for arg, lookup in zip(identifier.arg_list, cap_lookup.arg_list):
                         cap += ", "
-                        cap += ", ".join(self.byte_split(arg.name, lookup.width))
+                        cap += ", ".join(self.byte_split(arg.value, lookup.width))
 
                 # Otherwise, no arguments necessary
                 else:
@@ -545,10 +555,12 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         pixel_display_params = self.control.stage('DataAnalysisStage').pixel_display_params
 
         animation_settings = self.control.stage('DataAnalysisStage').animation_settings
+        animation_settings_orig = self.control.stage('DataAnalysisStage').animation_settings_orig
         animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
 
         # Setup json datastructures
         animation_id_json = dict()
+        animation_settings_json = dict()
         pixel_id_json = dict()
         scancode_json = dict()
         capabilities_json = dict()
@@ -1134,9 +1146,13 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             self.fill_dict['AnimationSettings'] += "\n\n\t/* Additional Settings */\n"
             while count < len(animation_settings_list):
                 animation = animation_settings[animation_settings_list[count]]
+                animation_orig = animation_settings_orig[animation_settings_list[count]]
                 animation_name = "Animation__{0}".format(
                     animation.name
                 )
+
+                # Animation Settings JSON entry
+                animation_settings_json["{}".format(animation_orig)] = count
 
                 # Generate animation settings string entry
                 self.fill_dict['AnimationSettings'] += self.animation_settings_entry(
@@ -1336,13 +1352,12 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         #   3) Layer
         #   4) Animation
         #   5) Analog
-        # - Merge output_com.c more so code can be shared better
-        #   * Test out USB output formats (6kro vs nkro)
-        #   * Test out HID IDLE (i.e. sending usb output when there were no changes)
         self.json_dict['AnimationIds'] = animation_id_json
+        self.json_dict['AnimationSettings'] = animation_settings_json
         self.json_dict['PixelIds'] = pixel_id_json
         self.json_dict['ScanCodes'] = scancode_json
         self.json_dict['Capabilities'] = capabilities_json
         self.json_dict['Defines'] = defines_json
         self.json_dict['Layers'] = layers_json
+        self.json_dict['CodeLookup'] = self.code_to_capability
 

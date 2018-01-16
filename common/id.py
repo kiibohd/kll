@@ -3,7 +3,7 @@
 KLL Id Containers
 '''
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2018 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -277,6 +277,16 @@ class AnimationId(Id, AnimationModifierList):
         This is currently 2 bytes.
         '''
         return 2
+
+    def json(self):
+        '''
+        JSON representation of AnimationId
+        '''
+        output = Id.json(self)
+        output.update(AnimationModifierList.json(self))
+        output['name'] = self.name
+        output['setting'] = "{}".format(self)
+        return output
 
 
 class AnimationFrameId(Id, AnimationModifierList):
@@ -567,6 +577,7 @@ class CapId(Id):
         return {
             'type' : self.type,
             'name' : self.name,
+            'args' : [arg.json() for arg in self.arg_list]
         }
 
     def total_arg_bytes(self, capabilities_dict=None):
@@ -581,7 +592,7 @@ class CapId(Id):
         total_bytes = 0
         for index, arg in enumerate(self.arg_list):
             # Lookup actual width if necessary (wasn't set explicitly)
-            if capabilities_dict is not None and arg.width is None:
+            if capabilities_dict is not None and (arg.type == 'CapArgValue' or arg.width is None):
                 # Check if there are enough arguments
                 expected = len(capabilities_dict[self.name].association.arg_list)
                 got = len(self.arg_list)
@@ -646,3 +657,40 @@ class CapArgId(Id):
             return "{0}".format(self.name)
         else:
             return "{0}:{1}".format(self.name, self.width)
+
+    def json(self):
+        '''
+        JSON representation of CapArgId
+        '''
+        return {
+            'name' : self.name,
+            'width' : self.width,
+            'type' : self.type,
+        }
+
+
+class CapArgValue(Id):
+    '''
+    Capability Argument Value identifier
+    '''
+
+    def __init__(self, value):
+        '''
+        @param value: Value of argument
+        '''
+        Id.__init__(self)
+        self.value = value
+        self.type = 'CapArgValue'
+
+    def __repr__(self):
+        return "{}".format(self.value)
+
+    def json(self):
+        '''
+        JSON representation of CapArgValue
+        '''
+        return {
+            'value' : self.value,
+            'type' : self.type,
+        }
+

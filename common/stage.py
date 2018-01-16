@@ -3,7 +3,7 @@
 KLL Compiler Stage Definitions
 '''
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2018 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2237,6 +2237,7 @@ class DataAnalysisStage(Stage):
         self.pixel_display_params = dict()
 
         self.animation_settings = dict()
+        self.animation_settings_orig = dict()
         self.animation_settings_list = []
 
         self.partial_contexts = None
@@ -2651,7 +2652,7 @@ class DataAnalysisStage(Stage):
 
         This function reconciles default and used animation settings.
         Default settings are used to simplify used animation results.
-        Meaning that you don't have to remember to define the correct interpolation algorith every time.
+        Meaning that you don't have to remember to define the correct interpolation algorithm every time.
         Each permutation of animation settings is stored (along with the defaults even if not used directly).
 
         A reduction is done such that only the minimum number of settings entries are created.
@@ -2707,6 +2708,7 @@ class DataAnalysisStage(Stage):
 
             # Add update setting
             self.animation_settings[str_name] = new_setting
+            self.animation_settings_orig[str_name] = val
             self.animation_settings_list.append(str_name)
 
     def analyze(self):

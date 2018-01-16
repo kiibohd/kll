@@ -3,7 +3,7 @@
 KLL Modifier Containers
 '''
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2018 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -119,6 +119,15 @@ class AnimationModifierArg:
 
         return False
 
+    def json(self):
+        '''
+        JSON representation of AnimationModifierArg
+        '''
+        return {
+            'arg': self.arg,
+            'subarg': self.subarg,
+        }
+
     def kllify(self):
         '''
         Returns KLL version of the Modifier
@@ -187,6 +196,20 @@ class AnimationModifier:
 
     def __eq__(self, other):
         return self.like(other) and self.value.like(other.value)
+
+    def json(self):
+        '''
+        JSON representation of AnimationModifier
+        '''
+        # Determine json of self.value
+        value = None
+        if self.value is not None:
+            value = self.value.json()
+
+        return {
+            'name': self.name,
+            'value': value,
+        }
 
     def kllify(self):
         '''
@@ -272,6 +295,18 @@ class AnimationModifierList:
 
     def __repr__(self):
         return self.strModifiers()
+
+    def json(self):
+        '''
+        JSON representation of AnimationModifierList
+        '''
+        output = {
+            'modifiers' : [],
+        }
+        # Output sorted list of modifiers
+        for modifier in sorted(self.modifiers, key=lambda x: x.name):
+            output['modifiers'].append(modifier.json())
+        return output
 
     def kllify(self):
         '''
