@@ -972,6 +972,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 layer_info[key] = {
                     'trigger' : mapped_trigger[0].triggersSequenceOfCombosOfIds(),
                     'result' : mapped_trigger[0].resultsSequenceOfCombosOfIds(),
+                    'kll' : mapped_trigger[0].kllify()
                 }
             layers_json[layer] = layer_info
 
