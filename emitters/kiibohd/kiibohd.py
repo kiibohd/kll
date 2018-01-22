@@ -420,7 +420,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             return modifier
 
         if name == 'pfunc':
-            if not modifier or modifier is None:
+            if not modifier or modifier is None or modifier == 'off':
                 return 0
             if modifier.arg == 'interp':
                 return 1
@@ -561,6 +561,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         # Setup json datastructures
         animation_id_json = dict()
         animation_settings_json = dict()
+        animation_settings_index_json = []
         pixel_id_json = dict()
         scancode_json = dict()
         capabilities_json = dict()
@@ -1133,6 +1134,11 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 # Map index to name (json)
                 animation_id_json[animation.association.name] = count
 
+                # Animation Settings Index JSON entry
+                animation_entry_json = animation.association.json()
+                animation_entry_json.update(animation.value.json())
+                animation_settings_index_json.append(animation_entry_json)
+
                 # Generate animation settings string entry
                 self.fill_dict['AnimationSettings'] += self.animation_settings_entry(
                     animation.value,
@@ -1154,6 +1160,9 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
                 # Animation Settings JSON entry
                 animation_settings_json["{}".format(animation_orig)] = count
+
+                # Animation Settings Index JSON entry
+                animation_settings_index_json.append(animation.json())
 
                 # Generate animation settings string entry
                 self.fill_dict['AnimationSettings'] += self.animation_settings_entry(
@@ -1355,6 +1364,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         #   5) Analog
         self.json_dict['AnimationIds'] = animation_id_json
         self.json_dict['AnimationSettings'] = animation_settings_json
+        self.json_dict['AnimationSettingsIndex'] = animation_settings_index_json
         self.json_dict['PixelIds'] = pixel_id_json
         self.json_dict['ScanCodes'] = scancode_json
         self.json_dict['Capabilities'] = capabilities_json

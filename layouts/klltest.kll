@@ -1,0 +1,33 @@
+# klltest - Layout used for unit tests in Keyboards/Testing/klltest.bash
+
+Name = klltest;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2018";
+KLL = 0.5;
+
+# Modified Date
+Date = 2018-01-21;
+
+# Trigger Tests
+U"A" + U"B" : U"C";
+'abc' : U"D";
+'aa' : U"E";
+U"E", U"F" : U"G";
+
+# Result Tests
+U"G" : U"A" + U"B";
+U"H" : 'ijk';
+U"O" : 'ioo';
+
+# Layer Tests
+U"I" : layerShift(1);
+U"J" : layerLatch(2);
+U"K" : layerLock(3);
+U"L" : layerShift(10); # Supposed to be invalid
+
+# Consumer Control
+U"M" : CONS"Eject";
+
+# System Control
+U"N" : SYS"Sleep";
+

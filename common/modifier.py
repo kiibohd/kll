@@ -226,6 +226,9 @@ class AnimationModifierList:
 
     Contains a list of modifiers, the order does not matter
     '''
+    frameoption_modifiers = [
+        'framestretch',
+    ]
 
     def __init__(self):
         self.modifiers = []
@@ -306,6 +309,13 @@ class AnimationModifierList:
         # Output sorted list of modifiers
         for modifier in sorted(self.modifiers, key=lambda x: x.name):
             output['modifiers'].append(modifier.json())
+
+        # Look for any frameoption modifiers
+        frameoption_list = []
+        for modifier in self.modifiers:
+            if modifier.name in self.frameoption_modifiers:
+                frameoption_list.append(modifier.name)
+        output['frameoptions'] = frameoption_list
         return output
 
     def kllify(self):

@@ -286,6 +286,7 @@ class AnimationId(Id, AnimationModifierList):
         output.update(AnimationModifierList.json(self))
         output['name'] = self.name
         output['setting'] = "{}".format(self)
+        del output['uid']
         return output
 
 
