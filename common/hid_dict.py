@@ -5,7 +5,7 @@ KLL Compiler - HID Dictionary Lookup
 USB Code Lookup Dictionary
 '''
 
-# Copyright (C) 2014-2017 by Jacob Alexander
+# Copyright (C) 2014-2018 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -809,6 +809,10 @@ hid_lookup_dictionary = dict([
 kll_hid_lookup_dictionary = dict()
 kll_hid_lookup_dictionary['USBCode'] = dict([
         # USB HID Keyboard Codes
+        ('NOEVENT', ('USB', 0x00)),
+        ('ERRORROLLOVER', ('USB', 0x01)),
+        ('POSTFAIL', ('USB', 0x02)),
+        ('ERRORUNDEFINED', ('USB', 0x03)),
         ('A', ('USB', 0x04)),
         ('B', ('USB', 0x05)),
         ('C', ('USB', 0x06)),

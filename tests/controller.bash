@@ -1,6 +1,6 @@
 #!/bin/bash
 # Run through I:C keyboards to validate kll compiler usage.
-# Jacob Alexander 2017
+# Jacob Alexander 2017-2018
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Common functions
@@ -22,8 +22,12 @@ export CMakeExtraArgs='-DCompilerOverride=host'
 export ExtraBuildPath='.host_override'
 
 cmd_cmake ./ergodox.bash                  "" "-- kll_token kll_parser kll_debug kll_display"
-cmd_cmake ./infinity.bash                 "" "-- kll_token kll_parser kll_debug kll_display"
-cmd_cmake ./infinity_led.bash             "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity.alphabet.bash        "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity.hacker.bash          "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity.standard.bash        "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity_led.alphabet.bash    "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity_led.hacker.bash      "" "-- kll_token kll_parser kll_debug kll_display"
+cmd_cmake ./infinity_led.standard.bash    "" "-- kll_token kll_parser kll_debug kll_display"
 cmd_cmake ./kira.bash                     "" "-- kll_token kll_parser kll_debug kll_display"
 cmd_cmake ./k-type.bash                   "" "-- kll_token kll_parser kll_debug kll_display"
 cmd_cmake ./whitefox.aria.bash            "" "-- kll_token kll_parser kll_debug kll_display"

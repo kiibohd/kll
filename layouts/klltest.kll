@@ -6,18 +6,19 @@ Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2018-01-21;
+Date = 2018-01-27;
 
 # Trigger Tests
 U"A" + U"B" : U"C";
-'abc' : U"D";
-'aa' : U"E";
+'cab' : U"D";
+'qq' : U"E";
 U"E", U"F" : U"G";
 
 # Result Tests
 U"G" : U"A" + U"B";
 U"H" : 'ijk';
 U"O" : 'ioo';
+U"P" : U"Q", U"R";
 
 # Layer Tests
 U"I" : layerShift(1);

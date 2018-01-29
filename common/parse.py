@@ -380,7 +380,8 @@ class Make:
         '''
         Converts sequence string to a sequence of combinations
 
-        'Ab' -> U"Shift" + U"A", U"B"
+        'Ab'  -> U"Shift" + U"A", U"B"
+        'abb' -> U"A", U"B", U"NoEvent", U"B"
         '''
         # TODO - Add locale support
 
@@ -405,6 +406,7 @@ class Make:
 
         listOfLists = []
         shiftKey = kll_hid_lookup_dictionary['USBCode']["SHIFT"]
+        last_code = ('USB', None)
 
         # Creates a list of USB codes from the string: sequence (list) of combos (lists)
         for char in token[1:-1]:
@@ -424,6 +426,12 @@ class Make:
             # NOTE: Case-insensitive, which is why the shift must be pre-computed
             usb_code = kll_hid_lookup_dictionary['USBCode'][processedChar.upper()]
 
+            # If the last code was the same as this one, insert a NoEvent code (0)
+            if usb_code[1] == last_code[1]:
+                no_event = kll_hid_lookup_dictionary['USBCode']['NOEVENT']
+                block_code = [[HIDId('USBCode', no_event[1])]]
+                listOfLists.append(block_code)
+
             # Create Combo for this character, add shift key if shifted
             charCombo = []
             if shiftCombo:
@@ -432,6 +440,9 @@ class Make:
 
             # Add to list of lists
             listOfLists.append(charCombo)
+
+            # Store code to compare to the next one
+            last_code = usb_code
 
         return listOfLists
 
