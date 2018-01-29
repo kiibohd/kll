@@ -20,6 +20,7 @@ KLL Kiibohd .h/.c File Emitter
 
 ### Imports ###
 
+import os
 import sys
 
 from datetime import date
@@ -162,6 +163,20 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             help="Show debug info from kiibohd emitter.",
         )
 
+    def check_file(self, filepath):
+        '''
+        Check file, make sure it exists
+
+        @param filepath: File path
+
+        @returns: True if path exists
+        '''
+        if not os.path.isfile(filepath):
+            print("{} Did not generate: {}".format(
+                ERROR,
+                os.path.abspath(filepath),
+            ))
+
     def output(self):
         '''
         Final Stage of Emitter
@@ -170,11 +185,11 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         '''
         if self.kiibohd_debug:
             print("-- Generating --")
-            print(self.def_output)
-            print(self.map_output)
+            print(os.path.abspath(self.def_output))
+            print(os.path.abspath(self.map_output))
             if self.use_pixel_map:
-                print(self.pixel_output)
-            print(self.json_output)
+                print(os.path.abspath(self.pixel_output))
+            print(os.path.abspath(self.json_output))
 
         # Load define template and generate
         self.load_template(self.def_template)
@@ -195,6 +210,13 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
         # Generate Json Output
         self.generate_json(self.json_output)
+
+        # Make sure files were generated
+        self.check_file(self.def_output)
+        self.check_file(self.map_output)
+        if self.use_pixel_map:
+            self.check_file(self.pixel_output)
+        self.check_file(self.json_output)
 
     def byte_split(self, number, total_bytes):
         '''
