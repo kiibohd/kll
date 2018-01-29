@@ -1,0 +1,37 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+
+# DefineData
+
+# MappingData
+U0x004 + U0x005 : U0x006; # U"A" + U"B" : U"C"; # :0 HID(USBCode)"KEY_A" + 0 HID(USBCode)"KEY_B"[0]
+U0x006, U0x004, U0x005 : U0x007; # 'cab' : U"D"; # :0 HID(USBCode)"KEY_C", 0 HID(USBCode)"KEY_A", 0 HID(USBCode)"KEY_B"[0]
+U0x008, U0x009 : U0x00a; # U"E", U"F" : U"G"; # :0 HID(USBCode)"KEY_E", 0 HID(USBCode)"KEY_F"[0]
+U0x00a : U0x004 + U0x005; # U"G" : U"A" + U"B"; # :0 HID(USBCode)"KEY_G"[0]
+U0x00b : U0x00c, U0x00d, U0x00e; # U"H" : 'ijk'; # :0 HID(USBCode)"KEY_H"[0]
+U0x00c : layerShift(1); # U"I" : layerShift(1); # :0 HID(USBCode)"KEY_I"[0]
+U0x00d : layerLatch(2); # U"J" : layerLatch(2); # :0 HID(USBCode)"KEY_J"[0]
+U0x00e : layerLock(3); # U"K" : layerLock(3); # :0 HID(USBCode)"KEY_K"[0]
+U0x00f : layerShift(10); # U"L" : layerShift(10); # :0 HID(USBCode)"KEY_L"[0]
+U0x010 : CONS0x0b8; # U"M" : CONS"Eject"; # :0 HID(USBCode)"KEY_M"[0]
+U0x011 : SYS0x082; # U"N" : SYS"Sleep"; # :0 HID(USBCode)"KEY_N"[0]
+U0x012 : U0x00c, U0x012, U0x000, U0x012; # U"O" : 'ioo'; # :0 HID(USBCode)"KEY_O"[0]
+U0x013 : U0x014, U0x015; # U"P" : U"Q", U"R"; # :0 HID(USBCode)"KEY_P"[0]
+U0x014, U0x014 : U0x008; # 'qq' : U"E"; # :0 HID(USBCode)"KEY_Q", 0 HID(USBCode)"KEY_Q"[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"; # Author
+Date = 2018-01-27; # Date = 2018-01-27; # Date
+KLL = 0.5; # KLL = 0.5; # KLL
+Name = klltest; # Name = klltest; # Name
+Version = 0.1; # Version = 0.1; # Version
+

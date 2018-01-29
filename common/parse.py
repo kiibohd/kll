@@ -376,12 +376,14 @@ class Make:
         '''
         return [[[NoneId()]]]
 
-    def seqString(token):
+    def seqString(token, spec='lspec'):
         '''
         Converts sequence string to a sequence of combinations
 
         'Ab'  -> U"Shift" + U"A", U"B"
         'abb' -> U"A", U"B", U"NoEvent", U"B"
+
+        @param spec: 'lspec' or 'rspec'
         '''
         # TODO - Add locale support
 
@@ -427,7 +429,8 @@ class Make:
             usb_code = kll_hid_lookup_dictionary['USBCode'][processedChar.upper()]
 
             # If the last code was the same as this one, insert a NoEvent code (0)
-            if usb_code[1] == last_code[1]:
+            # Only use for rspec
+            if usb_code[1] == last_code[1] and spec == 'rspec':
                 no_event = kll_hid_lookup_dictionary['USBCode']['NOEVENT']
                 block_code = [[HIDId('USBCode', no_event[1])]]
                 listOfLists.append(block_code)
@@ -445,6 +448,26 @@ class Make:
             last_code = usb_code
 
         return listOfLists
+
+    def seqStringL(token):
+        '''
+        Converts sequence string to a sequence of combinations
+        lspec side
+
+        'Ab'  -> U"Shift" + U"A", U"B"
+        'abb' -> U"A", U"B", U"NoEvent", U"B"
+        '''
+        return Make.seqString(token, 'lspec')
+
+    def seqStringR(token):
+        '''
+        Converts sequence string to a sequence of combinations
+        rspec side
+
+        'Ab'  -> U"Shift" + U"A", U"B"
+        'abb' -> U"A", U"B", U"NoEvent", U"B"
+        '''
+        return Make.seqString(token, 'rspec')
 
     def string(token):
         '''
@@ -818,7 +841,8 @@ timing = tokenType('Timing') >> Make.timing
 
 string = tokenType('String') >> Make.string
 unString = tokenType('String')  # When the double quotes are still needed for internal processing
-seqString = tokenType('SequenceString') >> Make.seqString
+seqStringL = tokenType('SequenceStringL') >> Make.seqStringL # lspec
+seqStringR = tokenType('SequenceStringR') >> Make.seqStringR # rspec
 unseqString = tokenType('SequenceString') >> Make.unseqString  # For use with variables
 
 
@@ -911,7 +935,7 @@ usbCode_elem = usbCode + maybe(specifier_list) >> unarg(Make.specifierUnroll)
 hidCode_elem = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem | indCode_expanded | indCode_elem
 
 usbCode_combo = oneplus(hidCode_elem + skip(maybe(plus))) >> listElem
-usbCode_sequence = oneplus((usbCode_combo | seqString) + skip(maybe(comma))) >> oneLayerFlatten
+usbCode_sequence = oneplus((usbCode_combo | seqStringL | seqStringR) + skip(maybe(comma))) >> oneLayerFlatten
 
 # Pixels
 pixel_start = tokenType('PixelStart')
@@ -975,7 +999,7 @@ capFunc_argument = number >> Make.capArgValue  # TODO Allow for symbolic argumen
 capFunc_arguments = many(capFunc_argument + skip(maybe(comma)))
 capFunc_elem = name + skip(parenthesis('(')) + capFunc_arguments + skip(parenthesis(')')) >> unarg(Make.capUsage) >> listElem
 capFunc_combo = oneplus((hidCode_elem | capFunc_elem | animation_capability | pixel_capability) + skip(maybe(plus))) >> listElem
-capFunc_sequence = oneplus((capFunc_combo | seqString) + skip(maybe(comma))) >> oneLayerFlatten
+capFunc_sequence = oneplus((capFunc_combo | seqStringR) + skip(maybe(comma))) >> oneLayerFlatten
 
 # Trigger / Result Codes
 triggerCode_outerList = scanCode_sequence >> optionExpansion

@@ -155,11 +155,48 @@ interconnect_test() {
 		--json-output ${TEST_PATH}/kll.json ${@}
 }
 
+# klltest.kll
+klltest_test() {
+	local TEST_PATH=${OUT_PATH}/klltest
+	mkdir -p ${TEST_PATH}
+	echo "${FUNCNAME[0]}"
+	cmd ../kll \
+		--config \
+		${CONTROLLER}/Scan/Devices/MatrixARM/capabilities.kll \
+		${CONTROLLER}/Macro/PartialMap/capabilities.kll \
+		${CONTROLLER}/Output/USB/capabilities.kll \
+		--base \
+		${CONTROLLER}/Scan/Infinity_60/scancode_map.kll \
+		--default \
+		${CONTROLLER}/kll/layouts/klltest.kll \
+		--emitter kll \
+		--target-dir ${TEST_PATH} \
+		${@}
+	cmd ../kll \
+		--config \
+		${CONTROLLER}/Scan/Devices/MatrixARM/capabilities.kll \
+		${CONTROLLER}/Macro/PartialMap/capabilities.kll \
+		${CONTROLLER}/Output/USB/capabilities.kll \
+		--base \
+		${CONTROLLER}/Scan/Infinity_60/scancode_map.kll \
+		--default \
+		${CONTROLLER}/kll/layouts/klltest.kll \
+		--emitter kiibohd \
+		--def-template ${CONTROLLER}/kll/templates/kiibohdDefs.h \
+		--map-template ${CONTROLLER}/kll/templates/kiibohdKeymap.h \
+		--pixel-template ${CONTROLLER}/kll/templates/kiibohdPixelmap.c \
+		--def-output ${TEST_PATH}/kll_defs.h \
+		--map-output ${TEST_PATH}/generatedKeymap.h \
+		--pixel-output ${TEST_PATH}/generatedPixelmap.c \
+		--json-output ${TEST_PATH}/kll.json ${@}
+}
+
 
 simple_test ${@}
 func1_test ${@}
 add_test ${@}
 interconnect_test ${@}
+klltest_test ${@}
 
 
 ## Tests complete

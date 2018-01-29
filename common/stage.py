@@ -1256,7 +1256,7 @@ class OperationSpecificsStage(Stage):
             ('CodeEnd', (r'\]', )),
 
             ('String', (r'"[^"]*"', )),
-            ('SequenceString', (r"'[^']*'", )),
+            ('SequenceStringL', (r"'[^']*'", )),
 
             ('Operator', (r':', )),
             ('Comma', (r',', )),
@@ -1289,7 +1289,7 @@ class OperationSpecificsStage(Stage):
             ('CodeEnd', (r'\]', )),
 
             ('String', (r'"[^"]*"', )),
-            ('SequenceString', (r"'[^']*'", )),
+            ('SequenceStringR', (r"'[^']*'", )),
 
             ('None', (r'None', )),
 

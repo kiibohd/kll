@@ -1,7 +1,7 @@
 #!/bin/bash
 # Use example .kll files to check basic kll processing
 # Does a diff comparison with a pre-generated file for validation
-# Jacob Alexander 2016
+# Jacob Alexander 2016-2018
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Common functions
@@ -36,6 +36,7 @@ FILES=(
 	examples/simpleExample.kll
 	examples/state_scheduling.kll
 	layouts/mouseTest.kll
+	layouts/klltest.kll
 )
 
 
