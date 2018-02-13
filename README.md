@@ -3,6 +3,7 @@ kll - keyboard layout language
 
 [![https://travis-ci.org/kiibohd/kll](https://travis-ci.org/kiibohd/kll.svg?branch=master)](https://travis-ci.org/kiibohd/kll)
 [![Visit our IRC channel](https://kiwiirc.com/buttons/irc.freenode.net/input.club.png)](https://kiwiirc.com/client/irc.freenode.net/#input.club)
+
 [Visit our Discord Channel](https://discord.gg/GACJa4f)
 
 ## If you're trying to compile keyboard firmware, you want [THIS](https://github.com/kiibohd/controller/)
