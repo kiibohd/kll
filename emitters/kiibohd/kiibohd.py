@@ -714,7 +714,8 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             "layerLock",
             "layerShift",
             "layerRotate",
-            # pjrcUSB
+            "testThreadSafe",
+            # USB
             "consCtrlOut",
             "noneOut",
             "sysCtrlOut",
