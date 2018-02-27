@@ -816,9 +816,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             )
         self.fill_dict['ResultMacroList'] += "};"
 
-        ## Result Macro Record ##
-        self.fill_dict['ResultMacroRecord'] = "ResultMacroRecord ResultMacroRecordList[ ResultMacroNum ];"
-
         ## Trigger Macros ##
         self.fill_dict['TriggerMacros'] = ""
 

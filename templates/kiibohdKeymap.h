@@ -48,12 +48,6 @@
 <|ResultMacroList|>
 
 
-// -- Trigger Macro Record
-
-// Keeps a record/state of each result macro
-<|ResultMacroRecord|>
-
-
 // -- Trigger Macros
 
 // Trigger Macro Guides
