@@ -1,24 +1,24 @@
 # Animation Example Configuration
 
 Name = Animation Example;
-Version = 0.1;
-Author = "HaaTa (Jacob Alexander) 2017";
+Version = 0.2;
+Author = "HaaTa (Jacob Alexander) 2017-2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2017-01-22;
+Date = 2018-02-28;
 
 
 ### Animations ###
 
 # Pixel index 1 test
-A[testanimation] <= ;
+A[testanimation] <= loops:1;
 A[testanimation, 1] <= P[1](30,70,120);
 A[testanimation, 2] <= P[1](0,0,0);
 A[testanimation, 3] <= P[1](60,90,140);
 
 # Pixel clear test (scancodes)
-A[clear_pixels] <= ;
+A[clear_pixels] <= loops:1;
 A[clear_pixels, 1] <=
 	S[18](0,0,0),
 	S[19](0,0,0),

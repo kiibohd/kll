@@ -32,3 +32,8 @@ U"M" : CONS"Eject";
 # System Control
 U"N" : SYS"Sleep";
 
+# Animation Test
+U"Q" : A[testanimation](start);
+U"R" : A[blue_fill_interp](start);
+U"S" : A[testanimation](start) + A[blue_fill_interp](start);
+

@@ -2709,7 +2709,10 @@ class DataAnalysisStage(Stage):
             # Add update setting
             self.animation_settings[str_name] = new_setting
             self.animation_settings_orig[str_name] = val
-            self.animation_settings_list.append(str_name)
+
+            # Make sure we haven't added this setting to the list already
+            if str_name not in self.animation_settings_list:
+                self.animation_settings_list.append(str_name)
 
     def analyze(self):
         '''

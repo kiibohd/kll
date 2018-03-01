@@ -20,7 +20,10 @@ U0x010 : CONS0x0b8; # U"M" : CONS"Eject"; # :0 HID(USBCode)"KEY_M"[0]
 U0x011 : SYS0x082; # U"N" : SYS"Sleep"; # :0 HID(USBCode)"KEY_N"[0]
 U0x012 : U0x00c, U0x012, U0x000, U0x012; # U"O" : 'ioo'; # :0 HID(USBCode)"KEY_O"[0]
 U0x013 : U0x014, U0x015; # U"P" : U"Q", U"R"; # :0 HID(USBCode)"KEY_P"[0]
+U0x014 : A[testanimation](start); # U"Q" : A[testanimation](start); # :0 HID(USBCode)"KEY_Q"[0]
 U0x014, U0x014 : U0x008; # 'qq' : U"E"; # :0 HID(USBCode)"KEY_Q", 0 HID(USBCode)"KEY_Q"[0]
+U0x015 : A[blue_fill_interp](start); # U"R" : A[blue_fill_interp](start); # :0 HID(USBCode)"KEY_R"[0]
+U0x016 : A[testanimation](start) + A[blue_fill_interp](start); # U"S" : A[testanimation](start) + A[blue_fill_interp](start); # :0 HID(USBCode)"KEY_S"[0]
 
 # PixelChannelData
 
