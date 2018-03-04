@@ -1355,6 +1355,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.fill_dict['KLLDefines'] += "#define ResultMacroNum_KLL {0}\n".format(len(result_index))
         self.fill_dict['KLLDefines'] += "#define TriggerMacroNum_KLL {0}\n".format(len(trigger_index))
         self.fill_dict['KLLDefines'] += "#define MaxScanCode_KLL {0}\n".format(max(max_scan_code))
+        self.fill_dict['KLLDefines'] += "#define AnimationNum_KLL {0}\n".format(len(animations.data))
 
         # Only add defines if Pixel Buffer is defined
         if self.use_pixel_map:
