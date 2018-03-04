@@ -165,6 +165,7 @@ class AnimationModifier:
             'stack': None,
             'basic': None,
             'all': None,
+            'state': None,
         },
     }
 

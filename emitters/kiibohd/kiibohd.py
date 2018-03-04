@@ -1371,6 +1371,8 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 len(animation_settings_list)
             )
             self.fill_dict['KLLDefines'] += "#define AnimationNum_KLL {0}\n".format(len(animations.data))
+        else:
+            self.fill_dict['KLLDefines'] += "#define AnimationNum_KLL 0\n"
 
         ## Define Validation ##
         index_uint_t_size = int(variables.data['stateWordSize'].value)
