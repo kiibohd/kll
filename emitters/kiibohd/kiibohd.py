@@ -745,6 +745,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 'args' : [],
                 'name' : funcName,
                 'index' : count,
+                'features' : features,
             }
             for arg in dvalue.association.arg_list:
                 capabilities_json[dkey]['args'].append({
