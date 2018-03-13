@@ -1252,6 +1252,7 @@ class OperationSpecificsStage(Stage):
             ('PixelStart', (r'P\[', )),
             ('Animation', (r'A"[^"]+"', )),
             ('AnimationStart', (r'A\[', )),
+            ('LayerStart', (r'Layer(|Shift|Latch|Lock)\[', )),
             ('CodeBegin', (r'\[', )),
             ('CodeEnd', (r'\]', )),
 
@@ -1285,6 +1286,7 @@ class OperationSpecificsStage(Stage):
             ('PixelLayerStart', (r'PL\[', )),
             ('Animation', (r'A"[^"]+"', )),
             ('AnimationStart', (r'A\[', )),
+            ('LayerStart', (r'Layer(|Shift|Latch|Lock)\[', )),
             ('CodeBegin', (r'\[', )),
             ('CodeEnd', (r'\]', )),
 
@@ -1470,23 +1472,20 @@ class OperationSpecificsStage(Stage):
         '''
         # Import parse elements/lambda functions
         from common.parse import (
-            animation_expanded,
             none,
             operator,
             pixelchan_elem,
             resultCode_outerList,
             scanCode_single,
             triggerCode_outerList,
-            triggerUSBCode_outerList,
             unarg,
         )
 
         # Mapping
         # <trigger> : <result>;
         operatorTriggerResult = operator(':') | operator(':+') | operator(':-') | operator('::') | operator('i:') | operator('i:+') | operator('i:-') | operator('i::')
-        scanCode_expression = triggerCode_outerList + operatorTriggerResult + resultCode_outerList >> unarg(kll_expression.scanCode)
-        usbCode_expression = triggerUSBCode_outerList + operatorTriggerResult + resultCode_outerList >> unarg(kll_expression.usbCode)
-        animation_trigger = animation_expanded + operatorTriggerResult + resultCode_outerList >> unarg(kll_expression.animationTrigger)
+        triggerCode_expression = triggerCode_outerList + operatorTriggerResult + resultCode_outerList >> unarg(kll_expression.triggerCode)
+        #animation_trigger = animation_expanded + operatorTriggerResult + resultCode_outerList >> unarg(kll_expression.animationTrigger) # XXX (HaaTa) when syntax allowed frame triggers, may be brought back later (expensive to implement)
 
         # Data Association
         # <pixel chan> : <scanCode>;
@@ -1494,10 +1493,8 @@ class OperationSpecificsStage(Stage):
 
         # Top-level Parser
         expr = (
-            scanCode_expression |
-            usbCode_expression |
-            pixelChan_expression |
-            animation_trigger
+            triggerCode_expression |
+            pixelChan_expression
         )
 
         return self.parse_base(kll_expression, expr, quiet)

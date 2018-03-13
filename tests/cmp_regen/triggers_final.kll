@@ -1,0 +1,42 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+
+# DefineData
+
+# MappingData
+A[MyAnimation, End] : U0x012; # A[MyAnimation, End] : U"O"; # :0 A[MyAnimation, End][0]
+A[MyAnimation, Repeat] : U0x013; # A[MyAnimation, Repeat] : U"P"; # :0 A[MyAnimation, Repeat][0]
+A[MyAnimation] : U0x011; # A[MyAnimation] : U"N"; # :0 A[MyAnimation][0]
+I0x001 : U0x006; # I"NumLock" : U"C"; # :0 HID(IndCode)"LED_NUM_LOCK"[0]
+I0x002 : U0x007; # I"CapsLock" : U"D"; # :0 HID(IndCode)"LED_CAPS_LOCK"[0]
+I0x003 : U0x008; # I["ScrollLock"] : U"E"; # :0 HID(IndCode)"LED_SCROLL_LOCK"[0]
+I0x004 : U0x014; # I0x04 : U"Q"; # :0 HID(IndCode)"LED_COMPOSE"[0]
+LayerLatch[2] : U0x00c; # LayerLatch[2] : U"I"; # :0 LayerLatch[2][0]
+LayerLock[2] : U0x00b; # LayerLock[2] : U"H"; # :0 LayerLock[2][0]
+LayerShift[2] : U0x00a; # LayerShift[2] : U"G"; # :0 LayerShift[2][0]
+Layer[1] : U0x015; # Layer[1-3] : U"R"; # :0 Layer[1][0]
+Layer[2] : U0x016; # Layer[2,3] : U"S"; # :0 Layer[2][0]
+Layer[3] : U0x016; # Layer[2,3] : U"S"; # :0 Layer[3][0]
+S0x002 : U0x004; # S0x2 : U"A"; # :0 S002[0]
+U0x00d : Layer[1]; # U"J" : Layer[1]; # :0 HID(USBCode)"KEY_J"[0]
+U0x00e : LayerShift[1]; # U"K" : LayerShift[1]; # :0 HID(USBCode)"KEY_K"[0]
+U0x00f : LayerLock[1]; # U"L" : LayerLock[1]; # :0 HID(USBCode)"KEY_L"[0]
+U0x010 : LayerLatch[1]; # U"M" : LayerLatch[1]; # :0 HID(USBCode)"KEY_M"[0]
+U0x017 : Layer[1]; # U"T" : Layer[1-3]; # :0 HID(USBCode)"KEY_T"[0]
+U0x018 : Layer[2]; # U"U" : Layer[2,3]; # :0 HID(USBCode)"KEY_U"[0]
+U0x01d : U0x005; # U"Z" : U"B"; # :0 HID(USBCode)"KEY_Z"[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"; # Author
+KLL = 0.5; # KLL = 0.5; # KLL
+Name = triggers; # Name = triggers; # Name
+

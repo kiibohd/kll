@@ -67,10 +67,13 @@ A[RainbowFillInterp, 2] <= P[c:0%](0,255,0), P[c:20%](255,255,0), P[c:40%](255,0
 
 # Animation Triggers
 myCapability  => myFunc( myArg1 : 1, myArg2 : 4 );
-A[BLEEdsing, 3] : myCapability( 0x8, 0x25 );
-A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 );
-A[BLEEdsing, 7, 9] : myCapability( 0x8, 0x25 );
+# XXX (HaaTa) Frame triggers no longer supported
+#A[BLEEdsing, 3] : myCapability( 0x8, 0x25 );
+#A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 );
+#A[BLEEdsing, 7, 9] : myCapability( 0x8, 0x25 );
 A[BLEEdsing2] : myCapability( 0x8, 0x25 );
+A[BLEEdsing2, End] : myCapability( 0x8, 0x25 );
+A[BLEEdsing2, Repeat] : myCapability( 0x8, 0x25 );
 
 # Animation Results
 S[0x37, 0x38] : A"BLEEdsing";

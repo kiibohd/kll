@@ -43,12 +43,8 @@ myCapability <= myFunc(myArg1:1,myArg2:4); # myCapability  => myFunc( myArg1 : 1
 # DefineData
 
 # MappingData
-A[BLEEdsing, 3] : myCapability(8,37); # A[BLEEdsing, 3] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 3][0]
-A[BLEEdsing, 4] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 4][0]
-A[BLEEdsing, 5] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 5][0]
-A[BLEEdsing, 6] : myCapability(8,37); # A[BLEEdsing, 4-6] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 6][0]
-A[BLEEdsing, 7] : myCapability(8,37); # A[BLEEdsing, 7, 9] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 7][0]
-A[BLEEdsing, 9] : myCapability(8,37); # A[BLEEdsing, 7, 9] : myCapability( 0x8, 0x25 ); # :0 AF[BLEEdsing, 9][0]
+A[BLEEdsing2, End] : myCapability(8,37); # A[BLEEdsing2, End] : myCapability( 0x8, 0x25 ); # :0 A[BLEEdsing2, End][0]
+A[BLEEdsing2, Repeat] : myCapability(8,37); # A[BLEEdsing2, Repeat] : myCapability( 0x8, 0x25 ); # :0 A[BLEEdsing2, Repeat][0]
 A[BLEEdsing2] : myCapability(8,37); # A[BLEEdsing2] : myCapability( 0x8, 0x25 ); # :0 A[BLEEdsing2][0]
 S0x037 : A[BLEEdsing]; # S[0x37, 0x38] : A"BLEEdsing"; # :0 S055[0]
 S0x038 : A[BLEEdsing]; # S[0x37, 0x38] : A"BLEEdsing"; # :0 S056[0]

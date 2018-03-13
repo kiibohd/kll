@@ -18,7 +18,6 @@ rm -rf ${SCRIPT_DIR}/generated_regen*
 ARGS="--emitter kll --output-debug"
 LAST_ARG=" --target-dir ${SCRIPT_DIR}/generated_regen/"
 FAIL_ARGS="--emitter kll --token-debug --parser-token-debug --operation-organization-display --data-organization-display --data-finalization-display"
-FAIL_ARGS=""
 
 # Files to check syntax on
 FILES=(
@@ -37,6 +36,7 @@ FILES=(
 	examples/state_scheduling.kll
 	layouts/mouseTest.kll
 	layouts/klltest.kll
+	examples/triggers.kll
 )
 
 

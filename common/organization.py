@@ -355,9 +355,6 @@ class MappingData(Data):
             if max_dict[connect_id] < max_uid:
                 max_dict[connect_id] = max_uid
 
-            # TODO REMOVEME
-            #print( key,value[0], value[0].__class__, value[0].max_trigger_uid(), value[0].connect_id )
-
         return max_dict
 
     def merge_lazy_operators(self, debug):
@@ -1015,9 +1012,7 @@ class Organization:
                 'ScanCodePosition': self.scan_code_position_data,
             },
             'MapExpression': {
-                'ScanCode': self.mapping_data,
-                'USBCode': self.mapping_data,
-                'Animation': self.mapping_data,
+                'TriggerCode': self.mapping_data,
                 'PixelChannel': self.pixel_channel_data,
             },
             'NameAssociationExpression': {

@@ -1,0 +1,36 @@
+# Various triggers
+Name = triggers;
+Author = "HaaTa (Jacob Alexander) 2018";
+KLL = 0.5;
+
+# Scancode Trigger
+S0x2 : U"A";
+
+# USB Code Trigger
+U"Z" : U"B";
+
+# Indicator Light Trigger
+I"NumLock" : U"C";
+I"CapsLock" : U"D";
+I["ScrollLock"] : U"E";
+I0x04 : U"Q";
+
+# Layer Trigger (new syntax)
+Layer[1] : U"F";
+Layer[1-3] : U"R";
+Layer[2,3] : U"S";
+LayerShift[2] : U"G";
+LayerLock[2] : U"H";
+LayerLatch[2] : U"I";
+U"J" : Layer[1]; # Functions as LayerShift[1]
+U"T" : Layer[1-3]; # Functions as LayerShift[1-3]
+U"U" : Layer[2,3]; # Functions as LayerShift[2,3]
+U"K" : LayerShift[1];
+U"L" : LayerLock[1];
+U"M" : LayerLatch[1];
+
+# Animation Trigger
+A[MyAnimation] : U"N";
+A[MyAnimation, End] : U"O";
+A[MyAnimation, Repeat] : U"P";
+

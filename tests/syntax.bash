@@ -13,6 +13,8 @@ cd ${SCRIPT_DIR}/..
 
 # Args used for each of the tests
 ARGS="--emitter none --data-finalization-display"
+ARGS_TOKEN="--emitter none --data-finalization-display --parser-token-debug"
+ARGS_OPER="--emitter none --data-finalization-display --operation-organization-display"
 FAIL_ARGS="--emitter none --token-debug --parser-token-debug --operation-organization-display --data-organization-display --data-finalization-display"
 
 # Files to check syntax on
@@ -32,6 +34,7 @@ FILES=(
 	examples/state_scheduling.kll
 	layouts/mouseTest.kll
 	layouts/klltest.kll
+	examples/triggers.kll
 )
 
 
@@ -39,6 +42,8 @@ FILES=(
 
 
 cmds "./kll" "${ARGS}" "${FAIL_ARGS}" ${FILES[@]}
+cmds "./kll" "${ARGS_TOKEN}" "${FAIL_ARGS}" ${FILES[@]}
+cmds "./kll" "${ARGS_OPER}" "${FAIL_ARGS}" ${FILES[@]}
 
 
 ## Tests complete

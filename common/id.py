@@ -91,7 +91,7 @@ class HIDId(Id, Schedule):
         'USBCode': 'U',
         'SysCode': 'SYS',
         'ConsCode': 'CONS',
-        'IndCode': 'IND',
+        'IndCode': 'I',
     }
 
     type_width = {
@@ -135,13 +135,20 @@ class HIDId(Id, Schedule):
         '''
         Use string name instead of integer, easier to debug
         '''
-        uid = hid_lookup_dictionary[(self.second_type, self.uid)]
-        schedule = self.strSchedule()
-        if len(schedule) > 0:
-            schedule = "({0})".format(schedule)
+        try:
+            uid = hid_lookup_dictionary[(self.second_type, self.uid)]
+            schedule = self.strSchedule()
+            if len(schedule) > 0:
+                schedule = "({0})".format(schedule)
 
-        output = 'HID({0})"{1}"{2}'.format(self.type, uid, schedule)
-        return output
+            output = 'HID({0})"{1}"{2}'.format(self.type, uid, schedule)
+            return output
+        except:
+            print("{} '{}' is an invalid dictionary lookup.".format(
+                WARNING,
+                (self.second_type, self.uid),
+            ))
+            return "<INVALID>"
 
     def json(self):
         '''
@@ -246,29 +253,77 @@ class ScanCodeId(Id, Schedule, Position):
         return output
 
 
+class LayerId(Id, Schedule):
+    '''
+    Layer identifier container class
+    '''
+
+    def __init__(self, type, layer):
+        Id.__init__(self)
+        Schedule.__init__(self)
+        self.type = type
+        self.uid = layer
+
+    def __repr__(self):
+        schedule = self.strSchedule()
+        if len(schedule) > 0:
+            return "{0}[{1}]({2})".format(
+                self.type,
+                self.uid,
+                schedule,
+            )
+        else:
+            return "{0}[{1}]".format(
+                self.type,
+                self.uid,
+            )
+
+    def json(self):
+        '''
+        JSON representation of LayerId
+        '''
+        output = Id.json(self)
+        output.update(Schedule.json(self))
+        return output
+
+    def kllify(self):
+        '''
+        Returns KLL version of the Id
+        '''
+        # The string __repr__ is KLL in this case
+        return str(self)
+
+
 class AnimationId(Id, AnimationModifierList):
     '''
     Animation identifier container class
     '''
     name = None
 
-    def __init__(self, name):
+    def __init__(self, name, state=None):
         Id.__init__(self)
         AnimationModifierList.__init__(self)
         self.name = name
         self.type = 'Animation'
         self.second_type = 'A'
+        self.state = state
 
     def __repr__(self):
+        state = ""
+        if self.state is not None:
+            state = ", {}".format(self.state)
         if len(self.modifiers) > 0:
-            return "A[{0}]({1})".format(self.name, self.strModifiers())
+            return "A[{0}{1}]({2})".format(self.name, state, self.strModifiers())
         return self.base_repr()
 
     def base_repr(self):
         '''
         Returns string of just the identifier, exclude animation modifiers
         '''
-        return "A[{0}]".format(self.name)
+        state = ""
+        if self.state is not None:
+            state = ", {}".format(self.state)
+        return "A[{0}{1}]".format(self.name, state)
 
     def width(self):
         '''
@@ -286,6 +341,7 @@ class AnimationId(Id, AnimationModifierList):
         output.update(AnimationModifierList.json(self))
         output['name'] = self.name
         output['setting'] = "{}".format(self)
+        output['state'] = self.state
         del output['uid']
         return output
 

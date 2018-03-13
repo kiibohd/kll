@@ -545,7 +545,7 @@ class MapExpression(Expression):
         @param operator: Type of map operation
         @param results: Sequence of combos of ranges of namedtuples
         '''
-        self.type = 'ScanCode'
+        self.type = 'TriggerCode'
         self.triggers = triggers
         self.operator = operator
         self.results = results
@@ -553,9 +553,10 @@ class MapExpression(Expression):
         self.connect_id = 0
 
     ## Setters ##
-    def scanCode(self, triggers, operator, results):
+    def triggerCode(self, triggers, operator, results):
         '''
-        Scan Code mapping
+        Trigger Code mapping
+        Takes in any combination of triggers and sets the expression accordingly.
 
         @param triggers: Sequence of combos of ranges of namedtuples
         @param operator: Type of map operation
@@ -563,43 +564,8 @@ class MapExpression(Expression):
 
         @return: True if parsing was successful
         '''
-        self.type = 'ScanCode'
+        self.type = 'TriggerCode'
         self.triggers = triggers
-        self.operator = operator
-        self.results = results
-
-        return True
-
-    def usbCode(self, triggers, operator, results):
-        '''
-        USB Code mapping
-
-        @param triggers: Sequence of combos of ranges of namedtuples
-        @param operator: Type of map operation
-        @param results: Sequence of combos of ranges of namedtuples
-
-        @return: True if parsing was successful
-        '''
-        self.type = 'USBCode'
-        self.triggers = triggers
-        self.operator = operator
-        self.results = results
-
-        return True
-
-    def animationTrigger(self, animation, operator, results):
-        '''
-        Animation Trigger mapping
-
-        @param animation: Animation trigger of result
-        @param operator: Type of map operation
-        @param results: Sequence of combos of ranges of namedtuples
-
-        @return: True if parsing was successful
-        '''
-        self.type = 'Animation'
-        self.animation = animation
-        self.triggers = animation
         self.operator = operator
         self.results = results
 

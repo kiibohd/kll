@@ -33,6 +33,7 @@ from common.id import (
     AnimationId, AnimationFrameId,
     CapArgId, CapArgValue, CapId,
     HIDId,
+    LayerId,
     NoneId,
     PixelAddressId, PixelId, PixelLayerId,
     ScanCodeId
@@ -155,20 +156,21 @@ class Make:
         else:
             return AnimationId(name)
 
-    def animationTrigger(animation, frame_indices):
+    def animationTrigger(animation, frame_identifier):
         '''
         Generate either an AnimationId or an AnimationFrameId
 
-        frame_indices indicate that this is an AnimationFrameId
+        frame_identifier indicate that this is an AnimationFrameId or AnimationStateId
         '''
         trigger_list = []
         # AnimationFrameId
-        if len(frame_indices) > 0:
-            for index in frame_indices:
+        if isinstance(frame_identifier, list):
+            for index in frame_identifier:
                 trigger_list.append([[AnimationFrameId(animation, index)]])
+
         # AnimationId
         else:
-            trigger_list.append([[AnimationId(animation)]])
+            trigger_list.append([[AnimationId(animation, frame_identifier)]])
 
         return trigger_list
 
@@ -560,6 +562,25 @@ class Make:
 
         return [identifier]
 
+    def layerTypeIdent(layer_type, inner_list, specifier):
+        '''
+        Given a layer expression, determine what kind of layer expression
+
+        Layer
+        LayerShift
+        LayerLatch
+        LayerLock
+        '''
+        # Determine layer type (remove [)
+        layer_type = layer_type[:-1]
+
+        # Add layer type to each given layer
+        identifier_list = []
+        for layer in inner_list:
+            identifier_list.append(LayerId(layer_type, layer))
+
+        return identifier_list, specifier
+
     # Range can go from high to low or low to high
     def scanCode_range(rangeVals):
         '''
@@ -873,8 +894,7 @@ scanCode_specifier = (scanCode_range | scanCode_listElem) + maybe(specifier_list
 scanCode_innerList = many(scanCode_specifier + skip(maybe(comma))) >> flatten
 scanCode_expanded = skip(scanCode_start) + scanCode_innerList + skip(code_end) + maybe(specifier_list) >> unarg(Make.specifierUnroll)
 scanCode_elem = scanCode + maybe(specifier_list) >> unarg(Make.specifierUnroll)
-scanCode_combo = oneplus((scanCode_expanded | scanCode_elem) + skip(maybe(plus)))
-scanCode_sequence = oneplus(scanCode_combo + skip(maybe(comma)))
+scanCode_combo = oneplus((scanCode_expanded | scanCode_elem) + skip(maybe(plus))) >> listElem
 scanCode_single = (skip(scanCode_start) + scanCode_listElem + skip(code_end)) | scanCode
 scanCode_il_nospec = oneplus((scanCode_range | scanCode_listElem) + skip(maybe(comma)))
 scanCode_nospecifier = skip(scanCode_start) + scanCode_il_nospec + skip(code_end)
@@ -935,7 +955,14 @@ usbCode_elem = usbCode + maybe(specifier_list) >> unarg(Make.specifierUnroll)
 hidCode_elem = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem | indCode_expanded | indCode_elem
 
 usbCode_combo = oneplus(hidCode_elem + skip(maybe(plus))) >> listElem
-usbCode_sequence = oneplus((usbCode_combo | seqStringL | seqStringR) + skip(maybe(comma))) >> oneLayerFlatten
+
+# Layers
+layer_start = tokenType('LayerStart')
+layer_range = (number) + skip(dash) + (number) >> unarg(Make.range)
+layer_listElem = number >> listElem
+layer_innerList = oneplus((layer_range | layer_listElem) + skip(maybe(comma))) >> flatten
+layer_expanded = layer_start + layer_innerList + skip(code_end) + maybe(specifier_list) >> unarg(Make.layerTypeIdent) >> unarg(Make.specifierUnroll)
+layer_expanded_trigger = layer_expanded >> listElem >> listElem
 
 # Pixels
 pixel_start = tokenType('PixelStart')
@@ -979,10 +1006,12 @@ pixel_capability = pixelmod_elem
 # Animations
 animation_start = tokenType('AnimationStart')
 animation_name = name
+animation_trigger_pos = name
 animation_frame_range = (number) + skip(dash) + (number) >> unarg(Make.range)
 animation_name_frame = many((animation_frame_range | number) + skip(maybe(comma))) >> maybeFlatten
 animation_def = skip(animation_start) + animation_name + skip(code_end) >> Make.animation
 animation_expanded = skip(animation_start) + animation_name + skip(maybe(comma)) + animation_name_frame + skip(code_end) >> unarg(Make.animationTrigger)
+animation_trigger = skip(animation_start) + animation_name + maybe(skip(comma) + animation_trigger_pos) + skip(code_end) >> unarg(Make.animationTrigger)
 animation_flattened = animation_expanded >> flatten >> flatten
 animation_elem = animation
 
@@ -998,12 +1027,12 @@ animation_capability = ((animation_def | animation_elem) + maybe(skip(parenthesi
 capFunc_argument = number >> Make.capArgValue  # TODO Allow for symbolic arguments, i.e. arrays and variables
 capFunc_arguments = many(capFunc_argument + skip(maybe(comma)))
 capFunc_elem = name + skip(parenthesis('(')) + capFunc_arguments + skip(parenthesis(')')) >> unarg(Make.capUsage) >> listElem
-capFunc_combo = oneplus((hidCode_elem | capFunc_elem | animation_capability | pixel_capability) + skip(maybe(plus))) >> listElem
+capFunc_combo = oneplus((hidCode_elem | capFunc_elem | animation_capability | pixel_capability | layer_expanded) + skip(maybe(plus))) >> listElem
 capFunc_sequence = oneplus((capFunc_combo | seqStringR) + skip(maybe(comma))) >> oneLayerFlatten
 
 # Trigger / Result Codes
-triggerCode_outerList = scanCode_sequence >> optionExpansion
-triggerUSBCode_outerList = usbCode_sequence >> optionExpansion
+triggerCode_sequence = oneplus((scanCode_combo | usbCode_combo | seqStringL | seqStringR | layer_expanded_trigger | animation_trigger) + skip(maybe(comma))) >> oneLayerFlatten
+triggerCode_outerList = triggerCode_sequence >> optionExpansion
 resultCode_outerList = ((capFunc_sequence >> optionExpansion) | none)
 
 # Positions
