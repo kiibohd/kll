@@ -27,7 +27,15 @@ from datetime import date
 
 from common.emitter import JsonEmitter, Emitter, TextEmitter
 from common.hid_dict import hid_lookup_dictionary
-from common.id import AnimationId, CapId, HIDId, NoneId, ScanCodeId
+from common.id import (
+    AnimationId,
+    CapId,
+    HIDId,
+    LayerId,
+    NoneId,
+    ScanCodeId,
+    TriggerId
+)
 
 
 
@@ -370,31 +378,109 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             trigger = "/* XXX INVALID XXX */"
 
             # TODO Add support for Analog keys
-            # TODO Add support for LED states
             # TODO Add support for non-press states
+            uid = identifier.get_uid()
+            trigger_type = "/* XXX INVALID TYPE XXX */"
+            state = "ScheduleType_P"
+            no_error = False
+
             # ScanCodeId
             if isinstance(identifier, ScanCodeId):
-                uid = identifier.get_uid()
-                trigger_type = "/* XXX INVALID TYPE XXX */"
-                state = "ScheduleType_P"
+                no_error = True
 
-                # Determine the type
+                # Determine the type and adjust uid
                 if uid < 256:
                     trigger_type = "TriggerType_Switch1"
+
                 elif uid < 512:
                     trigger_type = "TriggerType_Switch2"
+                    uid -= 256
+
                 elif uid < 768:
                     trigger_type = "TriggerType_Switch3"
+                    uid -= 512
+
                 elif uid < 1024:
                     trigger_type = "TriggerType_Switch4"
+                    uid -= 768
 
-                # <type>, <state>, <scanCode>
-                trigger = "{0}, {1}, 0x{2:02X}".format(trigger_type, state, uid)
+                else:
+                    no_error = False
+
+            # LayerId
+            elif isinstance(identifier, LayerId):
+                no_error = True
+
+                # Determine the type and adjust uid
+                if uid < 256:
+                    trigger_type = "TriggerType_Layer1"
+
+                elif uid < 512:
+                    trigger_type = "TriggerType_Layer2"
+                    uid -= 256
+
+                elif uid < 768:
+                    trigger_type = "TriggerType_Layer3"
+                    uid -= 512
+
+                elif uid < 1024:
+                    trigger_type = "TriggerType_Layer4"
+                    uid -= 768
+
+                else:
+                    no_error = False
+
+            # AnimationId
+            elif isinstance(identifier, AnimationId):
+                no_error = True
+
+                # Determine the type and adjust uid
+                if uid < 256:
+                    trigger_type = "TriggerType_Animation1"
+
+                elif uid < 512:
+                    trigger_type = "TriggerType_Animation2"
+                    uid -= 256
+
+                elif uid < 768:
+                    trigger_type = "TriggerType_Animation3"
+                    uid -= 512
+
+                elif uid < 1024:
+                    trigger_type = "TriggerType_Animation4"
+                    uid -= 768
+
+                else:
+                    no_error = False
+
+            # IndCode HIDId
+            elif isinstance(identifier, HIDId) and identifier.type == 'IndCode':
+                no_error = True
+
+                # Determine the type and adjust uid
+                if uid < 256:
+                    trigger_type = "TriggerType_LED1"
+
+                else:
+                    no_error = False
+
+            # TriggerId
+            elif isinstance(identifier, TriggerId):
+                no_error = True
+
+                # No need to decode as a TriggerId has all the necessary information ready
+                trigger_type = identifier.idcode
+                uid = identifier.uid
 
             # Unknown/Invalid Id
             else:
                 print("{0} Unknown identifier -> {1}".format(ERROR, identifier))
                 self.error_exit = True
+
+            # Set trigger if there wasn't an error
+            if no_error:
+                # <type>, <state>, <uid>
+                trigger = "{0}, {1}, 0x{2:02X}".format(trigger_type, state, uid)
 
             # Generate identifier string for element of the combo
             output += ", {0}".format(

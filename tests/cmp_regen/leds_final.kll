@@ -43,8 +43,6 @@ myCapability <= myFunc(myArg1:1,myArg2:4); # myCapability  => myFunc( myArg1 : 1
 # DefineData
 
 # MappingData
-A[BLEEdsing2, End] : myCapability(8,37); # A[BLEEdsing2, End] : myCapability( 0x8, 0x25 ); # :0 A[BLEEdsing2, End][0]
-A[BLEEdsing2, Repeat] : myCapability(8,37); # A[BLEEdsing2, Repeat] : myCapability( 0x8, 0x25 ); # :0 A[BLEEdsing2, Repeat][0]
 A[BLEEdsing2] : myCapability(8,37); # A[BLEEdsing2] : myCapability( 0x8, 0x25 ); # :0 A[BLEEdsing2][0]
 S0x037 : A[BLEEdsing]; # S[0x37, 0x38] : A"BLEEdsing"; # :0 S055[0]
 S0x038 : A[BLEEdsing]; # S[0x37, 0x38] : A"BLEEdsing"; # :0 S056[0]
@@ -82,7 +80,7 @@ S0x07c <= x:20,rx:15; # S[122-125] <= x:20, rx:15; # S124
 S0x07d <= x:20,rx:15; # S[122-125] <= x:20, rx:15; # S125
 
 # VariableData
-Author = HaaTa (Jacob Alexander) 2016-2017; # Author = "HaaTa (Jacob Alexander) 2016-2017"; # Author
+Author = HaaTa (Jacob Alexander) 2016-2018; # Author = "HaaTa (Jacob Alexander) 2016-2018"; # Author
 KLL = 0.5; # KLL = 0.5; # KLL
 Name = leds; # Name = leds; # Name
 myarray[] = "elem0" "elem1" "elem 2" "" "test"; # myarray[] = elem0 elem1 "elem 2"; # myarray

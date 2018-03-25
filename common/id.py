@@ -294,7 +294,47 @@ class LayerId(Id, Schedule):
         return str(self)
 
 
-class AnimationId(Id, AnimationModifierList):
+class TriggerId(Id, Schedule):
+    '''
+    Generic trigger identifier container class
+    '''
+
+    def __init__(self, idcode, uid):
+        Id.__init__(self)
+        Schedule.__init__(self)
+        self.type = 'GenericTrigger'
+        self.uid = uid
+        self.idcode = idcode
+
+    def __repr__(self):
+        schedule = self.strSchedule()
+        schedule_val = ""
+        if len(schedule) > 0:
+            schedule_val = "({})".format(schedule)
+
+        return "T[{0},{1}]{2}".format(
+            self.idcode,
+            self.uid,
+            schedule_val,
+        )
+
+    def json(self):
+        '''
+        JSON representation of TriggerId
+        '''
+        output = Id.json(self)
+        output.update(Schedule.json(self))
+        return output
+
+    def kllify(self):
+        '''
+        Returns KLL version of the Id
+        '''
+        # The string __repr__ is KLL in this case
+        return str(self)
+
+
+class AnimationId(Id, Schedule, AnimationModifierList):
     '''
     Animation identifier container class
     '''
@@ -302,6 +342,7 @@ class AnimationId(Id, AnimationModifierList):
 
     def __init__(self, name, state=None):
         Id.__init__(self)
+        Schedule.__init__(self)
         AnimationModifierList.__init__(self)
         self.name = name
         self.type = 'Animation'

@@ -31,6 +31,18 @@ U"M" : LayerLatch[1];
 
 # Animation Trigger
 A[MyAnimation] : U"N";
-A[MyAnimation, End] : U"O";
-A[MyAnimation, Repeat] : U"P";
+#A[MyAnimation](D) : U"O";
+#A[MyAnimation](R) : U"P";
+
+# Generic Triggers (all uid 0)
+T[0,0] : U"A"; # Switch Bank 1
+T[4,0] : U"B"; # LED Bank 1
+T[5,0] : U"C"; # Analog Bank 1
+T[9,0] : U"D"; # Layer Bank 1
+T[13,0] : U"E"; # Animation Bank 1
+T[17,0] : U"F"; # Sleep Bank 1
+T[18,0] : U"G"; # Inactive Bank 1
+T[0,0] + T[0,1], T[0,2] : U"H";
+T[0,0] + T[0,1] : U"I";
+T[0,0], T[0,1] : U"J";
 

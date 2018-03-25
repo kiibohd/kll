@@ -36,7 +36,8 @@ from common.id import (
     LayerId,
     NoneId,
     PixelAddressId, PixelId, PixelLayerId,
-    ScanCodeId
+    ScanCodeId,
+    TriggerId
 )
 from common.modifier import AnimationModifierList
 from common.schedule import AnalogScheduleParam, ScheduleParam, Time
@@ -156,21 +157,26 @@ class Make:
         else:
             return AnimationId(name)
 
-    def animationTrigger(animation, frame_identifier):
+    def animationTrigger(animation, specifier):
         '''
-        Generate either an AnimationId or an AnimationFrameId
-
-        frame_identifier indicate that this is an AnimationFrameId or AnimationStateId
+        Generate an AnimationId
         '''
         trigger_list = []
-        # AnimationFrameId
-        if isinstance(frame_identifier, list):
-            for index in frame_identifier:
-                trigger_list.append([[AnimationFrameId(animation, index)]])
 
         # AnimationId
-        else:
-            trigger_list.append([[AnimationId(animation, frame_identifier)]])
+        trigger_list.append(AnimationId(animation))
+
+        return trigger_list, specifier
+
+    def animationAssociation(animation, frame_identifier):
+        '''
+        Generate an AnimationFrameId
+        '''
+        trigger_list = []
+
+        # AnimationFrameId
+        for index in frame_identifier:
+            trigger_list.append([[AnimationFrameId(animation, index)]])
 
         return trigger_list
 
@@ -581,6 +587,16 @@ class Make:
 
         return identifier_list, specifier
 
+    def genericTriggerIdent(identifier, code, specifier):
+        '''
+        Given a generic trigger, create a TriggerId object
+
+        Generic Triggers don't support ranges
+        '''
+        trigger_obj = TriggerId(identifier, code)
+
+        return trigger_obj, specifier
+
     # Range can go from high to low or low to high
     def scanCode_range(rangeVals):
         '''
@@ -894,7 +910,7 @@ scanCode_specifier = (scanCode_range | scanCode_listElem) + maybe(specifier_list
 scanCode_innerList = many(scanCode_specifier + skip(maybe(comma))) >> flatten
 scanCode_expanded = skip(scanCode_start) + scanCode_innerList + skip(code_end) + maybe(specifier_list) >> unarg(Make.specifierUnroll)
 scanCode_elem = scanCode + maybe(specifier_list) >> unarg(Make.specifierUnroll)
-scanCode_combo = oneplus((scanCode_expanded | scanCode_elem) + skip(maybe(plus))) >> listElem
+scanCode_combo_elem = scanCode_expanded | scanCode_elem
 scanCode_single = (skip(scanCode_start) + scanCode_listElem + skip(code_end)) | scanCode
 scanCode_il_nospec = oneplus((scanCode_range | scanCode_listElem) + skip(maybe(comma)))
 scanCode_nospecifier = skip(scanCode_start) + scanCode_il_nospec + skip(code_end)
@@ -954,15 +970,17 @@ usbCode_elem = usbCode + maybe(specifier_list) >> unarg(Make.specifierUnroll)
 # HID Codes
 hidCode_elem = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem | indCode_expanded | indCode_elem
 
-usbCode_combo = oneplus(hidCode_elem + skip(maybe(plus))) >> listElem
-
 # Layers
 layer_start = tokenType('LayerStart')
 layer_range = (number) + skip(dash) + (number) >> unarg(Make.range)
 layer_listElem = number >> listElem
 layer_innerList = oneplus((layer_range | layer_listElem) + skip(maybe(comma))) >> flatten
 layer_expanded = layer_start + layer_innerList + skip(code_end) + maybe(specifier_list) >> unarg(Make.layerTypeIdent) >> unarg(Make.specifierUnroll)
-layer_expanded_trigger = layer_expanded >> listElem >> listElem
+
+# Generic Triggers
+gtrigger_start = tokenType('TriggerStart')
+gtrigger_parts = skip(gtrigger_start) + number + skip(comma) + number + skip(code_end) + maybe(specifier_list)
+gtrigger_expanded = gtrigger_parts >> unarg(Make.genericTriggerIdent) >> unarg(Make.specifierUnroll)
 
 # Pixels
 pixel_start = tokenType('PixelStart')
@@ -1006,12 +1024,11 @@ pixel_capability = pixelmod_elem
 # Animations
 animation_start = tokenType('AnimationStart')
 animation_name = name
-animation_trigger_pos = name
 animation_frame_range = (number) + skip(dash) + (number) >> unarg(Make.range)
 animation_name_frame = many((animation_frame_range | number) + skip(maybe(comma))) >> maybeFlatten
 animation_def = skip(animation_start) + animation_name + skip(code_end) >> Make.animation
-animation_expanded = skip(animation_start) + animation_name + skip(maybe(comma)) + animation_name_frame + skip(code_end) >> unarg(Make.animationTrigger)
-animation_trigger = skip(animation_start) + animation_name + maybe(skip(comma) + animation_trigger_pos) + skip(code_end) >> unarg(Make.animationTrigger)
+animation_expanded = skip(animation_start) + animation_name + skip(maybe(comma)) + animation_name_frame + skip(code_end) >> unarg(Make.animationAssociation)
+animation_trigger = skip(animation_start) + animation_name + skip(code_end) + maybe(specifier_list) >> unarg(Make.animationTrigger) >> unarg(Make.specifierUnroll)
 animation_flattened = animation_expanded >> flatten >> flatten
 animation_elem = animation
 
@@ -1031,7 +1048,8 @@ capFunc_combo = oneplus((hidCode_elem | capFunc_elem | animation_capability | pi
 capFunc_sequence = oneplus((capFunc_combo | seqStringR) + skip(maybe(comma))) >> oneLayerFlatten
 
 # Trigger / Result Codes
-triggerCode_sequence = oneplus((scanCode_combo | usbCode_combo | seqStringL | seqStringR | layer_expanded_trigger | animation_trigger) + skip(maybe(comma))) >> oneLayerFlatten
+triggerCode_combo = oneplus((scanCode_combo_elem | hidCode_elem | layer_expanded | animation_trigger | gtrigger_expanded) + skip(maybe(plus))) >> listElem
+triggerCode_sequence = oneplus((triggerCode_combo | seqStringL | seqStringR) + skip(maybe(comma))) >> oneLayerFlatten
 triggerCode_outerList = triggerCode_sequence >> optionExpansion
 resultCode_outerList = ((capFunc_sequence >> optionExpansion) | none)
 

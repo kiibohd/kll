@@ -1253,6 +1253,7 @@ class OperationSpecificsStage(Stage):
             ('Animation', (r'A"[^"]+"', )),
             ('AnimationStart', (r'A\[', )),
             ('LayerStart', (r'Layer(|Shift|Latch|Lock)\[', )),
+            ('TriggerStart', (r'T\[', )),
             ('CodeBegin', (r'\[', )),
             ('CodeEnd', (r'\]', )),
 
@@ -1485,7 +1486,6 @@ class OperationSpecificsStage(Stage):
         # <trigger> : <result>;
         operatorTriggerResult = operator(':') | operator(':+') | operator(':-') | operator('::') | operator('i:') | operator('i:+') | operator('i:-') | operator('i::')
         triggerCode_expression = triggerCode_outerList + operatorTriggerResult + resultCode_outerList >> unarg(kll_expression.triggerCode)
-        #animation_trigger = animation_expanded + operatorTriggerResult + resultCode_outerList >> unarg(kll_expression.animationTrigger) # XXX (HaaTa) when syntax allowed frame triggers, may be brought back later (expensive to implement)
 
         # Data Association
         # <pixel chan> : <scanCode>;
