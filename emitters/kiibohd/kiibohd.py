@@ -1462,16 +1462,17 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             self.fill_dict['KLLDefines'] += "#define AnimationNum_KLL 0\n"
 
         ## Define Validation ##
-        index_uint_t_size = int(variables.data['stateWordSize'].value)
-        total_index = max(len(trigger_index), len(result_index))
-        if total_index > 2 ** index_uint_t_size:
-            print("{} 'stateWordSize = {}' is not large enough! {} > {}".format(
-                ERROR,
-                index_uint_t_size,
-                total_index,
-                2 ** index_uint_t_size,
-            ))
-            self.error_exit = True
+        if 'stateWordSize' in variables.data.keys():
+            index_uint_t_size = int(variables.data['stateWordSize'].value)
+            total_index = max(len(trigger_index), len(result_index))
+            if total_index > 2 ** index_uint_t_size:
+                print("{} 'stateWordSize = {}' is not large enough! {} > {}".format(
+                    ERROR,
+                    index_uint_t_size,
+                    total_index,
+                    2 ** index_uint_t_size,
+                ))
+                self.error_exit = True
 
         ## Finish up JSON datastructures
         # TODO Testing
