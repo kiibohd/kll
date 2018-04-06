@@ -1,0 +1,20 @@
+# USB Debug Settings
+# These options limit the keyboard to only the keyboard descriptor.
+# This means that many of the features will be disabled.
+# However, it does help greatly when debugging USB issues.
+Name = USBDebugSettings;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2018";
+KLL = 0.5;
+
+# Modified Date
+Date = 2018-04-06;
+
+
+## Settings ##
+
+enableJoystick = 0;
+enableMouse = 0;
+enableVirtualSerialPort = 0;
+enableRawIO = 0;
+
