@@ -548,6 +548,8 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 return 1
             if modifier.arg == 'all':
                 return 2
+            if modifier.arg == 'state':
+                return 3
             print("{0} '{1}:{2}' is unsupported".format(WARNING, name, modifier))
             return 0
 
