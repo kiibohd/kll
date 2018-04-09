@@ -1,11 +1,11 @@
 # Mouse Test
 Name = mouseTest;
-Version = 0.2;
-Author = "HaaTa (Jacob Alexander) 2016";
-KLL = 0.3d;
+Version = 0.3;
+Author = "HaaTa (Jacob Alexander) 2016-2018";
+KLL = 0.5;
 
 # Modified Date
-Date = 2016-03-21;
+Date = 2018-04-08;
 
 # mouseOut
 # Arg1, button, 1-16
@@ -38,4 +38,14 @@ U"W" : mouseOut( 0, 0, 5 );
 U"S" : mouseOut( 0, 0, -5 );
 U"A" : mouseOut( 0, -5, 0 );
 U"D" : mouseOut( 0, 5, 0 );
+
+
+# mouseWheelOut
+# Arg1, vertical wheel, -127 to 127
+# Arg2, horizontal wheel, -127 to 127
+
+U"=" : mouseWheelOut( 1, 0 );
+U"-" : mouseWheelOut( -1, 0 );
+U"]" : mouseWheelOut( 0, 1 );
+U"[" : mouseWheelOut( 0, -1 );
 
