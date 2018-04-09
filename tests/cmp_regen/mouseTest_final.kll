@@ -26,6 +26,10 @@ U0x022 : mouseOut(5,0,0); # U"5" : mouseOut( 5, 0, 0 ); # :0 HID(USBCode)"KEY_5"
 U0x023 : mouseOut(6,0,0); # U"6" : mouseOut( 6, 0, 0 ); # :0 HID(USBCode)"KEY_6"[0]
 U0x024 : mouseOut(7,0,0); # U"7" : mouseOut( 7, 0, 0 ); # :0 HID(USBCode)"KEY_7"[0]
 U0x025 : mouseOut(8,0,0); # U"8" : mouseOut( 8, 0, 0 ); # :0 HID(USBCode)"KEY_8"[0]
+U0x02d : mouseWheelOut(-1,0); # U"-" : mouseWheelOut( -1, 0 ); # :0 HID(USBCode)"KEY_MINUS"[0]
+U0x02e : mouseWheelOut(1,0); # U"=" : mouseWheelOut( 1, 0 ); # :0 HID(USBCode)"KEY_EQUAL"[0]
+U0x02f : mouseWheelOut(0,-1); # U"[" : mouseWheelOut( 0, -1 ); # :0 HID(USBCode)"KEY_LEFT_BRACKET"[0]
+U0x030 : mouseWheelOut(0,1); # U"]" : mouseWheelOut( 0, 1 ); # :0 HID(USBCode)"KEY_RIGHT_BRACKET"[0]
 U0x036 : mouseOut(16,0,0); # U"Comma" : mouseOut( 16, 0, 0 ); # :0 HID(USBCode)"KEY_COMMA"[0]
 U0x04f : mouseOut(0,1,0); # U"Right" : mouseOut( 0, 1, 0 ); # :0 HID(USBCode)"KEY_RIGHT"[0]
 U0x050 : mouseOut(0,-1,0); # U"Left" : mouseOut( 0, -1, 0 ); # :0 HID(USBCode)"KEY_LEFT"[0]
@@ -39,9 +43,9 @@ U0x052 : mouseOut(0,0,1); # U"Up" : mouseOut( 0, 0, 1 ); # :0 HID(USBCode)"KEY_U
 # ScanCodePositionData
 
 # VariableData
-Author = HaaTa (Jacob Alexander) 2016; # Author = "HaaTa (Jacob Alexander) 2016"; # Author
-Date = 2016-03-21; # Date = 2016-03-21; # Date
-KLL = 0.3d; # KLL = 0.3d; # KLL
+Author = HaaTa (Jacob Alexander) 2016-2018; # Author = "HaaTa (Jacob Alexander) 2016-2018"; # Author
+Date = 2018-04-08; # Date = 2018-04-08; # Date
+KLL = 0.5; # KLL = 0.5; # KLL
 Name = mouseTest; # Name = mouseTest; # Name
-Version = 0.2; # Version = 0.2; # Version
+Version = 0.3; # Version = 0.3; # Version
 
