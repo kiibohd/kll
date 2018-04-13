@@ -470,6 +470,35 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
                 # No need to decode as a TriggerId has all the necessary information ready
                 trigger_type = identifier.idcode
+
+                # However, for the types that are known, use the full name
+                lookup = {
+                    0x00: 'TriggerType_Switch1',
+                    0x01: 'TriggerType_Switch2',
+                    0x02: 'TriggerType_Switch3',
+                    0x03: 'TriggerType_Switch4',
+                    0x04: 'TriggerType_LED1',
+                    0x05: 'TriggerType_Analog1',
+                    0x06: 'TriggerType_Analog2',
+                    0x07: 'TriggerType_Analog3',
+                    0x08: 'TriggerType_Analog4',
+                    0x09: 'TriggerType_Layer1',
+                    0x0A: 'TriggerType_Layer2',
+                    0x0B: 'TriggerType_Layer3',
+                    0x0C: 'TriggerType_Layer4',
+                    0x0D: 'TriggerType_Animation1',
+                    0x0E: 'TriggerType_Animation2',
+                    0x0F: 'TriggerType_Animation3',
+                    0x10: 'TriggerType_Animation4',
+                    0x11: 'TriggerType_Sleep1',
+                    0x12: 'TriggerType_Resume1',
+                    0x13: 'TriggerType_Inactive1',
+                    0x14: 'TriggerType_Active1',
+                    0xFF: 'TriggerType_Debug',
+                }
+                if trigger_type in lookup.keys():
+                    trigger_type = lookup[trigger_type]
+
                 uid = identifier.uid
 
             # Unknown/Invalid Id
@@ -809,6 +838,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             "sysCtrlOut",
             "usbKeyOut",
             "mouseOut",
+            "mouseWheelOut",
             "flashMode",
         ]
         for dkey, dvalue in sorted(self.capabilities.data.items(), key=lambda x: x[1].association.name):

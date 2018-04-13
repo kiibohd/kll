@@ -534,6 +534,7 @@ class MapExpression(Expression):
     animation_frame = None
     pixels = None
     position = None
+    trigger_identifiers = ['IndCode', 'GenericTrigger', 'Layer', 'LayerLock', 'LayerShift', 'LayerLatch', 'ScanCode']
 
     def __init__(self, triggers, operator, results):
         '''
@@ -709,13 +710,13 @@ class MapExpression(Expression):
     def min_trigger_uid(self):
         '''
         Returns the min numerical uid
-        Used for ScanCodes
+        Used for trigger identifiers
         '''
         min_uid = 0xFFFF
 
         # Iterate over list of identifiers in trigger
         for identifier in self.trigger_id_list():
-            if identifier.type == 'ScanCode' and identifier.get_uid() < min_uid:
+            if identifier.type in self.trigger_identifiers and identifier.get_uid() < min_uid:
                 min_uid = identifier.get_uid()
 
         return min_uid
@@ -723,13 +724,13 @@ class MapExpression(Expression):
     def max_trigger_uid(self):
         '''
         Returns the max numerical uid
-        Used for ScanCodes
+        Used for trigger identifiers
         '''
         max_uid = 0
 
         # Iterate over list of identifiers in trigger
         for identifier in self.trigger_id_list():
-            if identifier.type == 'ScanCode' and identifier.get_uid() > max_uid:
+            if identifier.type in self.trigger_identifiers and identifier.get_uid() > max_uid:
                 max_uid = identifier.get_uid()
 
         return max_uid

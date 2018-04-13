@@ -41,7 +41,7 @@ T[5,0] : U"C"; # Analog Bank 1
 T[9,0] : U"D"; # Layer Bank 1
 T[13,0] : U"E"; # Animation Bank 1
 T[17,0] : U"F"; # Sleep Bank 1
-T[18,0] : U"G"; # Inactive Bank 1
+T[18,40] : U"G"; # Inactive Bank 1, after 40 seconds
 T[0,0] + T[0,1], T[0,2] : U"H";
 T[0,0] + T[0,1] : U"I";
 T[0,0], T[0,1] : U"J";

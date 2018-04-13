@@ -3,7 +3,7 @@
 KLL Data Organization
 '''
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2018 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -645,7 +645,7 @@ class MappingData(Data):
 
             for sub_expr in expr:
                 # 1) Single USB Codes trigger results will replace the original ScanCode result
-                if sub_expr.elems()[0] == 1 and sub_expr.triggers[0][0][0].type != 'ScanCode':
+                if sub_expr.elems()[0] == 1 and sub_expr.triggers[0][0][0].type in ['USBCode', 'SysCode', 'ConsCode']:
                     # Debug info
                     if debug:
                         print("\033[1mSingle\033[0m", key, expr)
@@ -750,8 +750,8 @@ class MappingData(Data):
                                     sub_expr.triggers[seq_in][com_in][ident_in] = match_expr[0].triggers[0][0][0]
                                     replace = True
 
-                                # Ignore ScanCodes
-                                elif identifier.type == 'ScanCode':
+                                # Ignore non-USB triggers
+                                elif identifier.type in ['IndCode', 'GenericTrigger', 'Layer', 'LayerLock', 'LayerShift', 'LayerLatch', 'ScanCode']:
                                     pass
 
                                 # Drop everything else

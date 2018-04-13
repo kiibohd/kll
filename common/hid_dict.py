@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 '''
 KLL Compiler - HID Dictionary Lookup
 

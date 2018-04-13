@@ -2398,7 +2398,7 @@ class DataAnalysisStage(Stage):
             print("Scan Code Offsets: {0}".format(self.interconnect_scancode_offsets))
             print("Pixel Id Offsets:  {0}".format(self.interconnect_pixel_offsets))
 
-        # FIXME Should this me removed entirely?
+        # FIXME Should this be removed entirely?
         return
         print("{0} This functionality is handled by the preprocessor".format(ERROR))
 
@@ -2460,7 +2460,7 @@ class DataAnalysisStage(Stage):
                     # Get list of ids from expression
                     # Append each uid (if a ScanCode) to Trigger List
                     for identifier in sub_expr.trigger_id_list():
-                        if identifier.type == 'ScanCode':
+                        if identifier.type in ['IndCode', 'GenericTrigger', 'Layer', 'LayerLock', 'LayerShift', 'LayerLatch', 'ScanCode']:
                             # In order to uniquely identify each trigger, using full kll expression as lookup
                             trigger_index = self.trigger_index_lookup[sub_expr.kllify()]
 
