@@ -1,12 +1,12 @@
 # klltest - Layout used for unit tests in Keyboards/Testing/klltest.bash
 
 Name = klltest;
-Version = 0.1;
+Version = 0.2;
 Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2018-01-27;
+Date = 2018-04-16;
 
 # Trigger Tests
 U"A" + U"B" : U"C";
@@ -36,4 +36,11 @@ U"N" : SYS"Sleep";
 U"Q" : A[testanimation](start);
 U"R" : A[blue_fill_interp](start);
 U"S" : A[testanimation](start) + A[blue_fill_interp](start);
+
+# Indicator Test
+I"NumLock" : testThreadSafe();
+I"CapsLock" : testThreadSafe();
+I"ScrollLock" : testThreadSafe();
+I"Compose" : testThreadSafe();
+I"Kana" : testThreadSafe();
 
