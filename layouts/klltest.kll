@@ -1,12 +1,12 @@
 # klltest - Layout used for unit tests in Keyboards/Testing/klltest.bash
 
 Name = klltest;
-Version = 0.2;
+Version = 0.3;
 Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2018-04-16;
+Date = 2018-04-21;
 
 # Trigger Tests
 U"A" + U"B" : U"C";
@@ -20,11 +20,12 @@ U"H" : 'ijk';
 U"O" : 'ioo';
 U"P" : U"Q", U"R";
 
-# Layer Tests
-U"I" : layerShift(1);
-U"J" : layerLatch(2);
-U"K" : layerLock(3);
-U"L" : layerShift(10); # Supposed to be invalid
+# Layer Tests (new syntax)
+U"I" : Layer[1];
+U"T" : LayerShift[1];
+U"J" : LayerLatch[2];
+U"K" : LayerLock[3];
+U"L" : Layer[10]; # Supposed to be invalid
 
 # Consumer Control
 U"M" : CONS"Eject";

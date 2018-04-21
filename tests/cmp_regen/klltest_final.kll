@@ -17,10 +17,10 @@ U0x006, U0x004, U0x005 : U0x007; # 'cab' : U"D"; # :0 HID(USBCode)"KEY_C", 0 HID
 U0x008, U0x009 : U0x00a; # U"E", U"F" : U"G"; # :0 HID(USBCode)"KEY_E", 0 HID(USBCode)"KEY_F"[0]
 U0x00a : U0x004 + U0x005; # U"G" : U"A" + U"B"; # :0 HID(USBCode)"KEY_G"[0]
 U0x00b : U0x00c, U0x00d, U0x00e; # U"H" : 'ijk'; # :0 HID(USBCode)"KEY_H"[0]
-U0x00c : layerShift(1); # U"I" : layerShift(1); # :0 HID(USBCode)"KEY_I"[0]
-U0x00d : layerLatch(2); # U"J" : layerLatch(2); # :0 HID(USBCode)"KEY_J"[0]
-U0x00e : layerLock(3); # U"K" : layerLock(3); # :0 HID(USBCode)"KEY_K"[0]
-U0x00f : layerShift(10); # U"L" : layerShift(10); # :0 HID(USBCode)"KEY_L"[0]
+U0x00c : Layer[1]; # U"I" : Layer[1]; # :0 HID(USBCode)"KEY_I"[0]
+U0x00d : LayerLatch[2]; # U"J" : LayerLatch[2]; # :0 HID(USBCode)"KEY_J"[0]
+U0x00e : LayerLock[3]; # U"K" : LayerLock[3]; # :0 HID(USBCode)"KEY_K"[0]
+U0x00f : Layer[10]; # U"L" : Layer[10]; # :0 HID(USBCode)"KEY_L"[0]
 U0x010 : CONS0x0b8; # U"M" : CONS"Eject"; # :0 HID(USBCode)"KEY_M"[0]
 U0x011 : SYS0x082; # U"N" : SYS"Sleep"; # :0 HID(USBCode)"KEY_N"[0]
 U0x012 : U0x00c, U0x012, U0x000, U0x012; # U"O" : 'ioo'; # :0 HID(USBCode)"KEY_O"[0]
@@ -29,6 +29,7 @@ U0x014 : A[testanimation](start); # U"Q" : A[testanimation](start); # :0 HID(USB
 U0x014, U0x014 : U0x008; # 'qq' : U"E"; # :0 HID(USBCode)"KEY_Q", 0 HID(USBCode)"KEY_Q"[0]
 U0x015 : A[blue_fill_interp](start); # U"R" : A[blue_fill_interp](start); # :0 HID(USBCode)"KEY_R"[0]
 U0x016 : A[testanimation](start) + A[blue_fill_interp](start); # U"S" : A[testanimation](start) + A[blue_fill_interp](start); # :0 HID(USBCode)"KEY_S"[0]
+U0x017 : LayerShift[1]; # U"T" : LayerShift[1]; # :0 HID(USBCode)"KEY_T"[0]
 
 # PixelChannelData
 
@@ -38,8 +39,8 @@ U0x016 : A[testanimation](start) + A[blue_fill_interp](start); # U"S" : A[testan
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"; # Author
-Date = 2018-04-16; # Date = 2018-04-16; # Date
+Date = 2018-04-21; # Date = 2018-04-21; # Date
 KLL = 0.5; # KLL = 0.5; # KLL
 Name = klltest; # Name = klltest; # Name
-Version = 0.2; # Version = 0.2; # Version
+Version = 0.3; # Version = 0.3; # Version
 

@@ -278,6 +278,14 @@ class LayerId(Id, Schedule):
                 self.uid,
             )
 
+    def width(self):
+        '''
+        Returns the bit width of the LayerId
+
+        This is currently 2 bytes.
+        '''
+        return 2
+
     def json(self):
         '''
         JSON representation of LayerId

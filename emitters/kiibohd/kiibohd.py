@@ -61,6 +61,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         'NONE': 'noneOut',
         'SYS': 'sysCtrlOut',
         'USB': 'usbKeyOut',
+        'Layer': 'layerShift',
+        'LayerShift': 'layerShift',
+        'LayerLatch': 'layerLatch',
+        'LayerLock': 'layerLock',
     }
 
     # Code to capability mapping
@@ -68,6 +72,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         'Animation': 'animationIndex',
         'Capability': None,
         'ConsCode': 'consCtrlOut',
+        'Layer': 'layerShift',
+        'LayerShift': 'layerShift',
+        'LayerLatch': 'layerLatch',
+        'LayerLock': 'layerLock',
         'ScanCode': None,
         'SysCode': 'sysCtrlOut',
         'USBCode': 'usbKeyOut',
@@ -341,6 +349,21 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 if identifier.width() > 1:
                     cap_arg = ", ".join(
                             self.byte_split(settings_index, identifier.width())
+                    )
+
+                cap = "{0}, {1}".format(cap_index, cap_arg)
+
+            # LayerId
+            elif isinstance(identifier, LayerId):
+                # Lookup capabilityIndex
+                cap_index = self.capabilities_index[self.required_capabilities[identifier.type]]
+                cap_arg = ""
+                layer_number = identifier.uid
+
+                # Check for a split argument (e.g. Consumer codes)
+                if identifier.width() > 1:
+                    cap_arg = ", ".join(
+                            self.byte_split(layer_number, identifier.width())
                     )
 
                 cap = "{0}, {1}".format(cap_index, cap_arg)
