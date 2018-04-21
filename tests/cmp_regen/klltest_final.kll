@@ -7,6 +7,11 @@
 # DefineData
 
 # MappingData
+I0x001 : testThreadSafe(); # I"NumLock" : testThreadSafe(); # :0 HID(IndCode)"LED_NUM_LOCK"[0]
+I0x002 : testThreadSafe(); # I"CapsLock" : testThreadSafe(); # :0 HID(IndCode)"LED_CAPS_LOCK"[0]
+I0x003 : testThreadSafe(); # I"ScrollLock" : testThreadSafe(); # :0 HID(IndCode)"LED_SCROLL_LOCK"[0]
+I0x004 : testThreadSafe(); # I"Compose" : testThreadSafe(); # :0 HID(IndCode)"LED_COMPOSE"[0]
+I0x005 : testThreadSafe(); # I"Kana" : testThreadSafe(); # :0 HID(IndCode)"LED_KANA"[0]
 U0x004 + U0x005 : U0x006; # U"A" + U"B" : U"C"; # :0 HID(USBCode)"KEY_A" + 0 HID(USBCode)"KEY_B"[0]
 U0x006, U0x004, U0x005 : U0x007; # 'cab' : U"D"; # :0 HID(USBCode)"KEY_C", 0 HID(USBCode)"KEY_A", 0 HID(USBCode)"KEY_B"[0]
 U0x008, U0x009 : U0x00a; # U"E", U"F" : U"G"; # :0 HID(USBCode)"KEY_E", 0 HID(USBCode)"KEY_F"[0]
@@ -33,8 +38,8 @@ U0x016 : A[testanimation](start) + A[blue_fill_interp](start); # U"S" : A[testan
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"; # Author
-Date = 2018-01-27; # Date = 2018-01-27; # Date
+Date = 2018-04-16; # Date = 2018-04-16; # Date
 KLL = 0.5; # KLL = 0.5; # KLL
 Name = klltest; # Name = klltest; # Name
-Version = 0.1; # Version = 0.1; # Version
+Version = 0.2; # Version = 0.2; # Version
 
