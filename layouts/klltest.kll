@@ -45,3 +45,9 @@ I"ScrollLock" : testThreadSafe();
 I"Compose" : testThreadSafe();
 I"Kana" : testThreadSafe();
 
+# Layer Trigger Tests
+Layer[1] : testThreadSafe();
+LayerShift[1] : testThreadUnsafe();
+LayerLock[1] : testThreadSafe();
+LayerLatch[1] : testThreadSafe();
+
