@@ -453,6 +453,20 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 else:
                     no_error = False
 
+                # Determine additional state information to encode
+                # OR additional information onto trigger state
+                if identifier.type in ['Layer', 'LayerShift']:
+                    state += " | ScheduleType_Shift"
+
+                elif identifier.type == 'LayerLatch':
+                    state += " | ScheduleType_Latch"
+
+                elif identifier.type == 'LayerLock':
+                    state += " | ScheduleType_Lock"
+
+                else:
+                    no_error = False
+
             # AnimationId
             elif isinstance(identifier, AnimationId):
                 no_error = True
