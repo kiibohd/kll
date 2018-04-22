@@ -455,8 +455,11 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
                 # Determine additional state information to encode
                 # OR additional information onto trigger state
-                if identifier.type in ['Layer', 'LayerShift']:
+                if identifier.type == 'LayerShift':
                     state += " | ScheduleType_Shift"
+
+                elif identifier.type == 'Layer':
+                    pass
 
                 elif identifier.type == 'LayerLatch':
                     state += " | ScheduleType_Latch"
