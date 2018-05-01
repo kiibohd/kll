@@ -30,6 +30,7 @@ U"L" : LayerLock[1];
 U"M" : LayerLatch[1];
 
 # Animation Trigger
+A[MyAnimation] <= start;
 A[MyAnimation] : U"N";
 #A[MyAnimation](D) : U"O";
 #A[MyAnimation](R) : U"P";

@@ -474,6 +474,30 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             elif isinstance(identifier, AnimationId):
                 no_error = True
 
+                # Retrieve uid of animation
+                animation_uid_lookup = self.control.stage('DataAnalysisStage').animation_uid_lookup
+                uid = animation_uid_lookup[identifier.name]
+
+                # Retrieve state
+                states = set(identifier.strSchedule())
+
+                # Default to either Repeat or Done
+                state = ""
+                if states == set(['R', 'D']) or len(states) == 0:
+                    state = "ScheduleType_Repeat | ScheduleType_Done"
+
+                # Repeat
+                elif 'R' in states:
+                    state = "ScheduleType_Repeat"
+
+                # Done
+                elif 'D' in states:
+                    state = "ScheduleType_Done"
+
+                # Invalid
+                else:
+                    no_error = False
+
                 # Determine the type and adjust uid
                 if uid < 256:
                     trigger_type = "TriggerType_Animation1"
@@ -736,6 +760,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         animation_settings = self.control.stage('DataAnalysisStage').animation_settings
         animation_settings_orig = self.control.stage('DataAnalysisStage').animation_settings_orig
         animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
+        animation_uid_lookup = self.control.stage('DataAnalysisStage').animation_uid_lookup
 
         # Setup json datastructures
         animation_id_json = dict()
@@ -1295,9 +1320,12 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             animations = full_context.query('DataAssociationExpression', 'Animation')
             count = 0
             for key, animation in sorted(animations.data.items()):
+                # Lookup uid
+                uid = animation_uid_lookup[animation.association.name]
+
                 # Name each frame collection
                 self.fill_dict['Animations'] += "\n\t/*{0}*/ {1}_frames,".format(
-                    count,
+                    uid,
                     animation.association.name,
                 )
 
@@ -1307,11 +1335,11 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 )
                 self.fill_dict['AnimationList'] += "\n#define {0} {1}".format(
                     animation_name,
-                    count,
+                    uid,
                 )
 
                 # Map index to name (json)
-                animation_id_json[animation.association.name] = count
+                animation_id_json[animation.association.name] = uid
 
                 # Animation Settings Index JSON entry
                 animation_entry_json = animation.association.json()
@@ -1322,7 +1350,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 self.fill_dict['AnimationSettings'] += self.animation_settings_entry(
                     animation.value,
                     animation_name,
-                    count,
+                    uid,
                     additional=False,
                 )
                 count += 1

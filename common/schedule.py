@@ -3,7 +3,7 @@
 KLL Schedule Containers
 '''
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2018 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@ KLL Schedule Containers
 # along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ### Imports ###
+
+import numbers
 
 
 
@@ -66,9 +68,13 @@ class Schedule:
         If schedule is already set, do not overwrite, expressions are read inside->out
         '''
         # Ignore if already set
-        if self.parameters is not None:
+        if self.parameters is not None or parameters is None:
             return
 
+        # Morph parameter based on Schedule type
+        for param in parameters:
+            param.setType(self)
+            param.checkParam()
         self.parameters = parameters
 
     def strSchedule(self, kll=False):
@@ -87,8 +93,12 @@ class Schedule:
         '''
         JSON representation of Schedule
         '''
-        # TODO Add schedule support
-        return dict()
+        output = dict()
+        output['schedule'] = []
+        if self.parameters is not None:
+            for param in self.parameters:
+                output['schedule'].append(param.json())
+        return output
 
     def kllify(self):
         '''
@@ -108,24 +118,73 @@ class ScheduleParam:
     '''
 
     def __init__(self, state, timing=None):
+        '''
+        @param state: State identifier (string)
+        @param timing: Timing parameter
+        '''
         self.state = state
         self.timing = timing
+        self.parent = None
 
-        # Mutate class into the desired type
-        if self.state in ['P', 'H', 'R', 'O', 'UP', 'UR']:
-            self.__class__ = ButtonScheduleParam
-        elif self.state in ['A', 'On', 'D', 'Off']:
+    def setType(self, parent):
+        '''
+        Change class type to match the Schedule object
+
+        @param parent: Parent Schedule object
+        '''
+        self.parent = parent
+
+        if self.parent.__class__.__name__ in ["HIDId"] and self.parent.type == 'IndCode':
             self.__class__ = IndicatorScheduleParam
+        elif self.parent.__class__.__name__ in ["LayerId"]:
+            self.__class__ = IndicatorScheduleParam
+        elif self.parent.__class__.__name__ in ["HIDId", "ScanCodeId", "TriggerId"]:
+            # Check if an analog
+            if isinstance(self.state, numbers.Number):
+                self.__class__ = AnalogScheduleParam
+            else:
+                self.__class__ = ButtonScheduleParam
+        elif self.parent.__class__.__name__ in ["AnimationId"]:
+            self.__class__ = AnimationScheduleParam
+
+    def checkParam(self):
+        '''
+        Validate that parameter is valid
+
+        @returns: If assigned state is valid for the assigned class
+        '''
+        # Check for invalid state
+        invalid_state = True
+
+        if self.state in ['P', 'H', 'R', 'O', 'UP', 'UR'] and self.__class__.__name__ == 'ButtonScheduleParam':
+            invalid_state = False
+        elif self.state in ['A', 'On', 'D', 'Off'] and self.__class__.__name__ == 'IndicatorScheduleParam':
+            invalid_state = False
+        elif self.state in ['D', 'R', 'O'] and self.__class__.__name__ == 'AnimationScheduleParam':
+            invalid_state = False
+        elif isinstance(self.state, numbers.Number) and self.__class__.__name__ == 'AnalogScheduleParam':
+            invalid_state = False
         elif self.state is None and self.timing is not None:
-            pass
-        else:
-            print("{0} Invalid ScheduleParam state '{1}'".format(ERROR, self.state))
+            invalid_state = False
+
+        if invalid_state:
+            print("{0} Invalid {2} state '{1}'".format(ERROR, self.state, self.__class__.__name__))
+        return not invalid_state
 
     def setTiming(self, timing):
         '''
         Set parameter timing
         '''
         self.timing = timing
+
+    def json(self):
+        '''
+        JSON representation of ScheduleParam
+        '''
+        output = dict()
+        output['state'] = self.state
+        output['timing'] = self.timing
+        return output
 
     def kllify(self):
         '''
@@ -163,9 +222,13 @@ class ButtonScheduleParam(ScheduleParam):
     '''
 
     def __repr__(self):
-        output = "{0}".format(self.state)
+        output = ""
+        if self.state is not None:
+            output += "{0}".format(self.state)
+        if self.state is not None and self.timing is not None:
+            output += ":"
         if self.timing is not None:
-            output += ":{0}".format(self.timing)
+            output += "{0}".format(self.timing)
         return output
 
     def kllify(self):
@@ -185,11 +248,15 @@ class AnalogScheduleParam(ScheduleParam):
     XXX: Might be useful to accept decimal percentages
     '''
 
-    def __init__(self, state):
-        self.state = state
-
     def __repr__(self):
-        return "Analog({0})".format(self.state)
+        output = ""
+        if self.state is not None:
+            output += "{0}".format(self.state)
+        if self.state is not None and self.timing is not None:
+            output += ":"
+        if self.timing is not None:
+            output += "{0}".format(self.timing)
+        return output
 
     def kllify(self):
         '''
@@ -213,9 +280,43 @@ class IndicatorScheduleParam(ScheduleParam):
     '''
 
     def __repr__(self):
-        output = "{0}".format(self.state)
+        output = ""
+        if self.state is not None:
+            output += "{0}".format(self.state)
+        if self.state is not None and self.timing is not None:
+            output += ":"
         if self.timing is not None:
-            output += ":{0}".format(self.timing)
+            output += "{0}".format(self.timing)
+        return output
+
+    def kllify(self):
+        '''
+        KLL representation of object
+        '''
+        return "{0}".format(self)
+
+
+class AnimationScheduleParam(ScheduleParam):
+    '''
+    Animation Schedule Parameter
+
+    Accepts:
+    D   - Done
+    R   - Repeat
+    O   - Off
+
+    Timing specifiers are valid.
+    Validity of specifiers are context dependent, and may error at a later stage, or be stripped altogether
+    '''
+
+    def __repr__(self):
+        output = ""
+        if self.state is not None:
+            output += "{0}".format(self.state)
+        if self.state is not None and self.timing is not None:
+            output += ":"
+        if self.timing is not None:
+            output += "{0}".format(self.timing)
         return output
 
     def kllify(self):

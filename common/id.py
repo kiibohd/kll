@@ -361,6 +361,9 @@ class AnimationId(Id, Schedule, AnimationModifierList):
         state = ""
         if self.state is not None:
             state = ", {}".format(self.state)
+        schedule = self.strSchedule()
+        if len(schedule) > 0:
+            return "A[{0}{1}]({2})".format(self.name, state, self.strSchedule())
         if len(self.modifiers) > 0:
             return "A[{0}{1}]({2})".format(self.name, state, self.strModifiers())
         return self.base_repr()
@@ -388,6 +391,7 @@ class AnimationId(Id, Schedule, AnimationModifierList):
         '''
         output = Id.json(self)
         output.update(AnimationModifierList.json(self))
+        output.update(Schedule.json(self))
         output['name'] = self.name
         output['setting'] = "{}".format(self)
         output['state'] = self.state

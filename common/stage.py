@@ -2236,6 +2236,7 @@ class DataAnalysisStage(Stage):
         self.animation_settings = dict()
         self.animation_settings_orig = dict()
         self.animation_settings_list = []
+        self.animation_uid_lookup = dict()
 
         self.partial_contexts = None
         self.layer_contexts = None
@@ -2458,9 +2459,13 @@ class DataAnalysisStage(Stage):
                 # Each trigger, may have multiple results
                 for sub_expr in elem:
                     # Get list of ids from expression
-                    # Append each uid (if a ScanCode) to Trigger List
                     for identifier in sub_expr.trigger_id_list():
-                        if identifier.type in ['IndCode', 'GenericTrigger', 'Layer', 'LayerLock', 'LayerShift', 'LayerLatch', 'ScanCode']:
+                        # If animation, set the uid first by doing a uid lookup
+                        if identifier.type in ['Animation']:
+                            identifier.uid = self.animation_uid_lookup[identifier.name]
+
+                        # Append each uid to Trigger List
+                        if identifier.type in ['Animation', 'IndCode', 'GenericTrigger', 'Layer', 'LayerLock', 'LayerShift', 'LayerLatch', 'ScanCode']:
                             # In order to uniquely identify each trigger, using full kll expression as lookup
                             trigger_index = self.trigger_index_lookup[sub_expr.kllify()]
 
@@ -2711,6 +2716,12 @@ class DataAnalysisStage(Stage):
             if str_name not in self.animation_settings_list:
                 self.animation_settings_list.append(str_name)
 
+        # Build uid lookup for each of the animations
+        count = 0
+        for key, animation in sorted(animations.data.items()):
+            self.animation_uid_lookup[animation.association.name] = count
+            count += 1
+
     def analyze(self):
         '''
         Analyze the set of configured contexts
@@ -2738,6 +2749,12 @@ class DataAnalysisStage(Stage):
                     print(self.color and output or ansi_escape.sub('', output))
                     print(self.color and store or ansi_escape.sub('', store), end="")
 
+        # Generate 2D Pixel Display Mapping
+        self.generate_pixel_display_mapping()
+
+        # Generate Animation Settings List
+        self.generate_animation_settings()
+
         # Generate Offset Table
         # This is needed for interconnect devices
         self.generate_map_offset_table()
@@ -2748,12 +2765,6 @@ class DataAnalysisStage(Stage):
 
         # Generate Trigger Lists
         self.generate_trigger_lists()
-
-        # Generate 2D Pixel Display Mapping
-        self.generate_pixel_display_mapping()
-
-        # Generate Animation Settings List
-        self.generate_animation_settings()
 
     def process(self):
         '''
