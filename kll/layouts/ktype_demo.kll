@@ -1,0 +1,17 @@
+Name = ktype demo;
+Version = 0.2;
+Author = "HaaTa (Jacob Alexander) 2016-2017";
+KLL = 0.3d;
+
+# Modified Date
+Date = 2017-01-17;
+
+# Toggle Rainbow
+# TODO
+#U"Menu" + U"F12" : rainbowToggle();
+
+# Reactive Rainbow
+# Single shot rainbow
+# On each keypress flash one loop of rainbow
+# TODO
+

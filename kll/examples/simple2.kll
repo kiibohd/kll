@@ -1,0 +1,50 @@
+#
+Name = colemak;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+mydefine = "stuffs here";
+mydefine2 = '"stuffs here"'; # For outputting c define strings
+mynumber = 414;
+
+mydefine => myCdef;
+mydefine2 => myCdef2;
+mydefine3 => myCdef3;
+mynumber => myCnumber;
+usbKeyOut => Output_usbCodeSend_capability( usbCode : 1 );
+consCtrlOut => Output_consCtrlSend_capability( consCode : 2 );
+noneOut     => Output_noneSend_capability();
+sysCtrlOut  => Output_sysCtrlSend_capability( sysCode : 1 );
+myCapability2 => myFunc2();
+myCapability3 => myFunc3( myArg1 : 2 );
+myCapability  => myFunc( myArg1 : 1, myArg2 : 4 );
+
+S0x3 : myCapability2();
+S[0x4] : myCapability( 0x8, 0x25 );
+S[ 0x7 - 0x9 ] : U"6";
+S0x40 : U[0x1-0x4];
+S0x12 : U[122] + U[123];
+S0x6 : 'abcdDfF';
+S0x40 : U[0x1];
+S0x0B : U["Esc"];
+S0x0B :+ U["Q"];
+S[ 0x7 - 0x9 ], S[0x2,0x3] : U"6";
+S[ 0x2 - 0x9, 0x10 ] :+ U"r";
+S0x0B :- U["Esc"];
+S[ 0x3 - 0x4 ] + S[ 0x10 ], S[ 0x20 ] : U"Enter";
+S127 + S128 : U"0";
+
+S0x41 : CONS[0x30];
+S0x42 : CONS["Play"];
+S0x43 : CONS0x31;
+
+S0x45 : SYS[0xA0];
+S0x46 : SYS["UnDock"];
+S0x47 : SYS0xA2;
+
+S[0x48] : None;
+S0x30(P) : U"A";
+S0x29(P:10ms) : U"A";
+S0x28(20) : U"A";
+S0x31(H:20ms, R:1s) : U"B";
+S0x32(P,H,R) : U"B";
+

@@ -1,0 +1,18 @@
+# Test Layout Using a de_DE locale
+Name = de_DE-Test;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2018";
+KLL = 0.5;
+HIDMapping = de_DE;
+
+# Modified Date
+Date = 2018-06-04;
+
+# Remap Y to Z and Z to Y
+# Then check that:
+# S44 -> 0x1D (US Z, DE Y)
+# S73 -> 0x1C (US Y, DE Z)
+# Will valid
+U"Y" : U"Z";
+U"Z" : U"Y";
+

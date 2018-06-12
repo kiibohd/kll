@@ -1,0 +1,37 @@
+# TEMP TEST, REMOVEME
+
+A[BLEEdsing2] <= start, div:1, loop, replace:0,interp:on;
+
+# Animation Frames
+A[BLEEdsing, 0] <= P[4](+32);
+A[BLEEdsing, 1] <= P[4](42);
+
+A[BLEEdsing2, 1] <= P[1-20,40](40,50,0x60);
+A[BLEEdsing2, 2] <= P[c:0](40,50,0x60);
+A[BLEEdsing2, 3] <= P[c:10%](40,50,0x60);
+A[BLEEdsing2, 4] <= P[r:10%,c:20](40,50,0x60);
+A[BLEEdsing2, 5] <= P[r:i+10%,c:i-20](40,50,0x60);
+A[BLEEdsing2, 6] <= P[r:i+10%](40,50,0x60);
+
+A[BLEEdsing2, 7] <= U["A"](40,50,0x60);
+A[BLEEdsing2, 8] <= U"B"(40,50,0x60);
+A[BLEEdsing2, 9] <= S120(40,50,0x60);
+A[BLEEdsing2, 10] <= S[0x10](40,50,0x60);
+
+A[RainbowFillInterp] <= toggle, interp:on;
+A[RainbowFillInterp, 1] <= P[c:20%](255,255,0), P[c:40%](255,0,0), P[c:60%](127,0,255), P[c:80%](0,0,255);
+A[RainbowFillInterp, 2] <= P[c:0%](0,255,0), P[c:20%](255,255,0), P[c:40%](255,0,0), P[c:60%](127,0,255), P[c:80%](0,0,255);
+
+P[22-25] <= x:20, rx:15;
+P[22] <= z:13;
+
+S[122-125] <= x:20, rx:15;
+S[122] <= z:14;
+
+S0x47 : P[1](11,23,45);
+S0x47 : P1(11,23,45);
+
+P[12](40:8, 50:8, 120:8) : S59;
+P11(40:8, 50:8, 120:8) : S54;
+
+S0x42 : A[BLEEdsing](loop:2,div:3);

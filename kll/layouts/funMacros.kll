@@ -1,0 +1,27 @@
+Name = funMacros;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+
+# Modified Date
+Date = 2014-10-14;
+
+# TODO
+
+#U"Function1" : layerShift( 1 );
+U"Function2" : '!haata', U"Enter";
+U"Function3" : '!w', U"Enter";
+#U"Function4" : layerShift( 4 );
+#U"Function5" : layerShift( 5 );
+#U"Function6" : layerShift( 6 );
+#U"Function7" : layerShift( 7 );
+#U"Function8" : layerShift( 8 );
+#U"Function9" : layerShift( 9 );
+#U"Function10" : layerShift( 10 );
+#U"Function11" : layerShift( 11 );
+#U"Function12" : layerShift( 12 );
+#U"Function13" : layerShift( 13 );
+#U"Function14" : layerShift( 14 );
+#U"Function15" : layerShift( 15 );
+#U"Function16" : layerShift( 16 );
+

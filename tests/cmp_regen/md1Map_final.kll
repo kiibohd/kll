@@ -75,10 +75,10 @@ S0x03b : U0x0e6; # S0x3B : U"RAlt"; # :0 S059[0]
 S0x03c : U0x0f2; # S0x3C : U"Function3"; # :0 S060[0]
 S0x03d : U0x0f3; # S0x3D : U"Function4"; # :0 S061[0]
 S0x03e : U0x035; # S0x3E : U"BackTick"; # :0 S062[0]
-U0x0f0 : layerShift(1); # U"Function1" : layerShift( 1 ); # :0 HID(USBCode)"KEY_FUN1"[0]
-U0x0f1 : layerShift(1); # U"Function2" : layerShift( 1 ); # :0 HID(USBCode)"KEY_FUN2"[0]
-U0x0f2 : layerShift(1); # U"Function3" : layerShift( 1 ); # :0 HID(USBCode)"KEY_FUN3"[0]
-U0x0f3 : layerShift(1); # U"Function4" : layerShift( 1 ); # :0 HID(USBCode)"KEY_FUN4"[0]
+U0x0f0 : layerShift(1); # U"Function1" : layerShift( 1 ); # :0 HID(USBCode,default)"240"Function1[0]
+U0x0f1 : layerShift(1); # U"Function2" : layerShift( 1 ); # :0 HID(USBCode,default)"241"Function2[0]
+U0x0f2 : layerShift(1); # U"Function3" : layerShift( 1 ); # :0 HID(USBCode,default)"242"Function3[0]
+U0x0f3 : layerShift(1); # U"Function4" : layerShift( 1 ); # :0 HID(USBCode,default)"243"Function4[0]
 
 # PixelChannelData
 

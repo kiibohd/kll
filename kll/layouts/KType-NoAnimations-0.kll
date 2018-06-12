@@ -1,0 +1,180 @@
+Variant = "standard";
+Generator = "NONE";
+Base = "Base";
+Date = "2017-10-13";
+KLL = "0.5c";
+Author = "jbondeson (Jeremy Bondeson) 2017";
+Version = "0.2";
+Name = "KType";
+Layout = "NoAnimations";
+
+ResultMacroBufferSize = "100";
+
+Pixel_AnimationStackSize = "50";
+
+DelayedCapabilitiesStackSize = "25";
+
+
+U"ESC" : U"ESC";
+U"F1" : U"F1";
+U"F2" : U"F2";
+U"F3" : U"F3";
+U"F4" : U"F4";
+U"F5" : U"F5";
+U"F6" : U"F6";
+U"F7" : U"F7";
+U"F8" : U"F8";
+U"F9" : U"F9";
+U"F10" : U"F10";
+U"F11" : U"F11";
+U"F12" : U"F12";
+U"PRINTSCREEN" : U"PRINTSCREEN";
+U"SCROLLLOCK" : U"SCROLLLOCK";
+U"PAUSE" : U"PAUSE";
+U"BACKTICK" : U"`";
+U"1" : U"1";
+U"2" : U"2";
+U"3" : U"3";
+U"4" : U"4";
+U"5" : U"5";
+U"6" : U"6";
+U"7" : U"7";
+U"8" : U"8";
+U"9" : U"9";
+U"0" : U"0";
+U"MINUS" : U"-";
+U"EQUALS" : U"=";
+U"BACKSPACE" : U"\";
+U"INSERT" : U"INSERT";
+U"HOME" : U"HOME";
+U"PAGEUP" : U"PAGEUP";
+U"TAB" : U"TAB";
+U"Q" : U"Q";
+U"W" : U"W";
+U"E" : U"E";
+U"R" : U"R";
+U"T" : U"T";
+U"Y" : U"Y";
+U"U" : U"U";
+U"I" : U"I";
+U"O" : U"O";
+U"P" : U"P";
+U"LBRACE" : U"[";
+U"RBRACE" : U"]";
+U"BACKSLASH" : U"BACKSPACE";
+U"DELETE" : U"DELETE";
+U"END" : U"END";
+U"PAGEDOWN" : U"PAGEDOWN";
+U"CAPSLOCK" : U"LCTRL";
+U"A" : U"A";
+U"S" : U"S";
+U"D" : U"D";
+U"F" : U"F";
+U"G" : U"G";
+U"H" : U"H";
+U"J" : U"J";
+U"K" : U"K";
+U"L" : U"L";
+U"SEMICOLON" : U";";
+U"QUOTE" : U"'";
+U"ENTER" : U"ENTER";
+U"LSHIFT" : U"LSHIFT";
+U"Z" : U"Z";
+U"X" : U"X";
+U"C" : U"C";
+U"V" : U"V";
+U"B" : U"B";
+U"N" : U"N";
+U"M" : U"M";
+U"COMMA" : U",";
+U"PERIOD" : U".";
+U"SLASH" : U"/";
+U"RSHIFT" : U"RSHIFT";
+U"UP" : U"UP";
+U"LCTRL" : U"LCTRL";
+U"LGUI" : U"LGUI";
+U"LALT" : U"LALT";
+U"SPACE" : U"SPACE";
+U"RALT" : U"RALT";
+U"RGUI" : U"FUNCTION1";
+U"APP" : U"APP";
+U"RCTRL" : U"RCTRL";
+U"LEFT" : U"LEFT";
+U"DOWN" : U"DOWN";
+U"RIGHT" : U"RIGHT";
+
+
+
+S[0x00-0x5F] :+ A[countdown2m](start);
+
+### Added by canned animation fingerprints_two_tone ###
+S[0x00-0x5F] :+ A[fingerprints_two_tone](start);
+
+
+A[countdown2m] <= replace:all, pfunc:interp,framestretch,framedelay:254, loops:1;
+### AUTO GENERATED - DO NOT EDIT ###
+A[countdown2m, 1] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 2] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 3] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 4] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 5] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 6] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 7] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 8] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 9] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 10] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 11] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 12] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 13] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 14] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 15] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 16] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 17] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 18] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 19] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 20] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 21] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 22] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 23] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 24] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 25] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 26] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 27] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 28] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 29] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 30] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 31] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 32] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 33] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 34] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 35] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 36] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 37] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 38] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 39] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 40] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 41] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 42] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 43] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 44] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 45] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 46] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 47] <= P[c:0%](255,255,255), P[c:100%](255,255,255);
+A[countdown2m, 48] <= P[c:0%](0,0,0), P[c:100%](0,0,0);
+
+A[fingerprints_two_tone] <= framedelay:8, framestretch, loops:1, replace:basic;
+### AUTO GENERATED - DO NOT EDIT ###
+A[fingerprints_two_tone, 1] <= P[r:i,c:i](255,0,0);
+A[fingerprints_two_tone, 2] <= P[r:i,c:i](255,0,0);
+A[fingerprints_two_tone, 3] <= P[r:i,c:i](255,0,0);
+A[fingerprints_two_tone, 4] <= P[r:i,c:i](255,0,0);
+A[fingerprints_two_tone, 5] <= P[r:i,c:i](255,115,82);
+A[fingerprints_two_tone, 6] <= P[r:i,c:i](255,178,153);
+A[fingerprints_two_tone, 7] <= P[r:i,c:i](255,207,191);
+A[fingerprints_two_tone, 8] <= P[r:i,c:i](255,217,203);
+A[fingerprints_two_tone, 9] <= P[r:i,c:i](255,226,216);
+A[fingerprints_two_tone, 10] <= P[r:i,c:i](255,236,229);
+A[fingerprints_two_tone, 11] <= P[r:i,c:i](255,245,242);
+A[fingerprints_two_tone, 12] <= P[r:i,c:i](255,255,255);
+
+

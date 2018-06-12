@@ -1,5 +1,4 @@
-kll - keyboard layout language
-==============================
+# kll - keyboard layout language
 
 [![https://travis-ci.org/kiibohd/kll](https://travis-ci.org/kiibohd/kll.svg?branch=master)](https://travis-ci.org/kiibohd/kll)
 
@@ -11,17 +10,32 @@ kll - keyboard layout language
 
 
 
-KLL Compiler
-------------
+## KLL Compiler
 
 Most current version of the [KLL Spec](https://github.com/kiibohd/kll-spec).
 
-Uses [funcparserlib](https://code.google.com/p/funcparserlib/)
+Uses [funcparserlib](https://github.com/vlasovskikh/funcparserlib)
 
 
+## Dependencies
 
-Usage
------
+Dependencies can be installed manually, or by using a pipenv.
+
+* [layouts-python](https://github.com/hid-io/layouts-python) -> [pip](https://pypi.org/project/layouts/)
+
+```bash
+pipenv install
+pipenv run kll/kll --version
+```
+
+*or*
+
+```bash
+pip install layouts
+```
+
+
+## Usage
 
 ### General Usage
 
@@ -39,8 +53,7 @@ See `kll --help` for the most up to date documentation
 
 
 
-Unit Tests
-----------
+## Unit Tests
 
 Unit tests can be found in the [tests](tests) directory.
 They are run by Travis-CI, but can be useful when testing your own changes.
@@ -49,20 +62,18 @@ Remember to add new tests when adding new features/changes.
 
 
 
-Code Organization
------------------
+## Code Organization
 
-* [common](common) - Main portion of KLL compiler.
-* [emitters](emitters) - Various output formats of the KLL compiler.
-* [examples](examples) - Example kll files, often used for test cases.
-* [funcparserlib](funcparserlib) - Copy of funcparserlib with a few debugging enhancements.
-* [layouts](layouts) - Layout kll files used for various keyboards and tests.
-* [templates](templates) - Templates used by emitters when generating output.
+* [kll/common](kll/common) - Main portion of KLL compiler.
+* [kll/emitters](kll/emitters) - Various output formats of the KLL compiler.
+* [kll/examples](kll/examples) - Example kll files, often used for test cases.
+* [kll/extern](kll/extern) - External libraries, copied into git repo for convenience.
+* [kll/layouts](kll/layouts) - Layout kll files used for various keyboards and tests.
+* [kll/templates](kll/templates) - Templates used by emitters when generating output.
 * [tests](tests) - Unit tests for the KLL compiler.
 
 
 
-Patches/Features/Backends
--------------------------
+## Patches/Features/Backends
 
 Completely welcome :D

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "kll"
+author = "Jacob Alexander"
+author-email = "haata@kiibohd.com"
+home-page = "https://github.com/kiibohd/kll"
+classifiers = [
+    "Topic :: Software Development :: Compilers",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+]
+description-file = "README.md"
+requires = [
+    "layouts",
+]
+requires-python = ">=3.4"
+

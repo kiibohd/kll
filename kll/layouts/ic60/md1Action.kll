@@ -1,0 +1,21 @@
+Name = md1Overlay;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2015";
+KLL = 0.3c;
+
+# Modified Date
+Date = 2015-08-16;
+
+# Example of blocking ESC (0x29) when holding either Shift key
+# Currently, kll only supports numbers (this may be fixed in a future kll spec)
+U["LShift", "RShift"] : blockHold( 0x29 );
+U"Esc" : blockKey( 0x29 );
+
+# Now that Esc is blocked, it's possible to use this macro
+U["LShift", "RShift"] + U"Esc" : '~';
+
+
+U"Function2" : layerLock( 1 );
+U"Function3" : action1();
+U"Function4" : U"CapsLock";
+

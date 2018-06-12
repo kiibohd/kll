@@ -34,8 +34,8 @@ S0x017, S0x018 i: U0x019; # S0x17, S0x18  i: U"V"; # i:0 S023, 0 S024[0]
 S0x019 i: U0x01a; # S[0x19, 0x1A] i: U"W"; # i:0 S025[0]
 S0x01a i: U0x01a; # S[0x19, 0x1A] i: U"W"; # i:0 S026[0]
 S0x01b i:- U0x01b; # S0x1B i:- U"X"; # i:-0 S027[0]
-U0x005 :: U0x006; # U"B"  :: U"C"; # ::0 HID(USBCode)"KEY_B"[0]
-U0x011 i:: U0x012; # U"N"  i:: U"O"; # i::0 HID(USBCode)"KEY_N"[0]
+U0x005 :: U0x006; # U"B"  :: U"C"; # ::0 HID(USBCode,default)"5"B[0]
+U0x011 i:: U0x012; # U"N"  i:: U"O"; # i::0 HID(USBCode,default)"17"N[0]
 
 # PixelChannelData
 

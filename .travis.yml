@@ -10,27 +10,15 @@ language:
   - python
 
 python:
-  - "3.2"
-  - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
   - "3.7-dev"
   - "nightly"
 
-addons:
-  apt:
-    packages:
-      - tree
-
-# Test Scripts
 env:
-  # Basic KLL Tests
-  - DIR=tests SCRIPT=sanity.bash
-  - DIR=tests SCRIPT=syntax.bash
-  - DIR=tests SCRIPT=regen.bash
-  - DIR=tests SCRIPT=controller.bash
-  - DIR=tests SCRIPT=kiibohd.bash
+  global:
+    - PIPENV_IGNORE_VIRTUALENVS=1
 
 # Exclusions
 matrix:
@@ -43,17 +31,12 @@ install:
   # Info about OS
   - uname -a
 
-  # Directory tree to validate kll.git
-  - tree
-
-  # Python Version
-  - python3 --version
+  # Prepare pipenv
+  - pip install pipenv flit
+  - pipenv install -d
 
 # Run test script(s)
 script:
-  - (cd ${DIR} && ./${SCRIPT})
-
-# Post test script commands
-after_script:
-  - tree
+  - pipenv run pytest -s
+  - pipenv run flit build
 

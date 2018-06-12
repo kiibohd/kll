@@ -1,0 +1,56 @@
+Name = hhkbpro2_shiftLeft;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.3;
+
+# Same has hhkbpro2 but accomodates a right FN key that is further to the left
+# This means that all the keys meant to be pressed together with FN (same hand) are shifted left 1 key
+
+# Modified Date
+Date = 2014-10-02;
+
+# Number Row
+U"1" : U"F1";
+U"2" : U"F2";
+U"3" : U"F3";
+U"4" : U"F4";
+U"5" : U"F5";
+U"6" : U"F6";
+U"7" : U"F7";
+U"8" : U"F8";
+U"9" : U"F9";
+U"0" : U"F10";
+U"-" : U"F11";
+U"=" : U"F12";
+U"Backslash" : U"Insert";
+U"Backtick" : U"Delete";
+
+# Top Row
+U"Tab" : U"Capslock";
+U"U" : U"PrintScreen";
+U"I" : U"ScrollLock";
+U"O" : U"Pause";
+U"P" : U"Up";
+
+# Middle Row
+U"A" : U"VolumeDown";
+U"S" : U"VolumeUp";
+U"D" : U"Mute";
+#U"F" : U"Eject"; # TODO Requires additional firmware support for media keys -HaaTa
+U"G" : U"Keypad Asterix";
+U"H" : U"Keypad Slash";
+U"J" : U"Home";
+U"K" : U"PageUp";
+U"L" : U"Left";
+U";" : U"Right";
+
+# Bottom Row
+U"B" : U"Keypad Plus";
+U"N" : U"Keypad Minus";
+U"M" : U"End";
+U"Comma" : U"PageDown";
+U"Period" : U"Down";
+
+# Space Row
+# N/A
+
