@@ -27,3 +27,11 @@ def test_help():
     ret = kll_run(args)
     assert ret == 0
 
+def test_path():
+    '''
+    Calls --path argument
+    '''
+    args = ['--path']
+    ret = kll_run(args)
+    assert ret == 0
+
