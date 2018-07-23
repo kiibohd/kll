@@ -140,12 +140,23 @@ def command_line_args(control, input_args):
         version="{0} {1}".format(kll_name, control.version),
         help="Show program's version number and exit"
     )
+    parser.add_argument(
+        '--path',
+        action="store_true",
+        help="Shows the absolute path to the kll compiler installation directory. Then exits.",
+    )
 
     # Add stage arguments
     control.command_line_flags(parser)
 
     # Process Arguments
     args = parser.parse_args(input_args)
+
+    # If --path defined, lookup installation path, then exit
+    if args.path:
+        install_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+        print(install_path)
+        sys.exit(0)
 
     # Utilize parsed arguments in each of the stages
     control.command_line_args(args)

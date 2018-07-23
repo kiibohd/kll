@@ -98,11 +98,17 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         TextEmitter.__init__(self)
         JsonEmitter.__init__(self)
 
+        # Script directory (relative location to default templates)
+        kll_module_dir = os.path.abspath(
+            os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+        )
+        template_dir = os.path.join(kll_module_dir, 'templates')
+
         # Defaults
-        self.map_template = "templates/kiibohdKeymap.h"
-        self.hid_template = "templates/kiibohd_usb_hid.h"
-        self.pixel_template = "templates/kiibohdPixelmap.c"
-        self.def_template = "templates/kiibohdDefs.h"
+        self.map_template = os.path.join(template_dir, "kiibohdKeymap.h")
+        self.hid_template = os.path.join(template_dir, "kiibohd_usb_hid.h")
+        self.pixel_template = os.path.join(template_dir, "kiibohdPixelmap.c")
+        self.def_template = os.path.join(template_dir, "kiibohdDefs.h")
         self.map_output = "generatedKeymap.h"
         self.hid_output = "usb_hid.h"
         self.pixel_output = "generatedPixelmap.c"
