@@ -762,7 +762,8 @@ class PreprocessorStage(Stage):
         pool = self.control.stage('CompilerConfigurationStage').pool
 
         # Build list of layouts
-        self.layout_mgr = Layouts(layout_path='/home/hyatt/Source/layouts')
+        #self.layout_mgr = Layouts(layout_path='/home/hyatt/Source/layouts')
+        self.layout_mgr = Layouts()
         self.layout_list = self.layout_mgr.list_layouts()
 
         # TODO
