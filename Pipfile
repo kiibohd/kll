@@ -8,6 +8,7 @@ layouts = "==0.4.1"
 pytest = "*"
 pytest-xdist = "*"
 gitpython = "*"
+pygithub = "==1.39"
 
 [dev-packages]
 

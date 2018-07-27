@@ -145,6 +145,11 @@ def command_line_args(control, input_args):
         action="store_true",
         help="Shows the absolute path to the kll compiler installation directory. Then exits.",
     )
+    parser.add_argument(
+        '--layout-cache-path',
+        action="store_true",
+        help="Shows the absolute path to the kll layouts cache director. Then exits.",
+    )
 
     # Add stage arguments
     control.command_line_flags(parser)
@@ -156,6 +161,14 @@ def command_line_args(control, input_args):
     if args.path:
         install_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
         print(install_path)
+        sys.exit(0)
+
+    # If --layout-cache-path defined, lookup cache directory for layouts cache, then exit
+    if args.layout_cache_path:
+        import layouts
+        mgr = layouts.Layouts()
+        layout_path = mgr.layout_path
+        print(layout_path)
         sys.exit(0)
 
     # Utilize parsed arguments in each of the stages
