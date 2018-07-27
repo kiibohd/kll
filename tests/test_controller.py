@@ -36,6 +36,7 @@ test_builds = [
 
 ### Tests ###
 
+@pytest.mark.skip(reason="Missing full controller infrastructure...")
 @pytest.mark.parametrize('input_build', test_builds)
 def test_build(input_build, kiibohd_controller_repo):
     '''
