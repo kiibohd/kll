@@ -35,3 +35,11 @@ def test_path():
     ret = kll_run(args)
     assert ret == 0
 
+def test_layout_cache_path():
+    '''
+    Calls --layout-cache-path argument
+    '''
+    args = ['--layout-cache-path']
+    ret = kll_run(args)
+    assert ret == 0
+
