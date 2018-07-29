@@ -31,7 +31,7 @@ import kll.common.stage as stage
 
 ## Variables
 
-__version__ = '0.5.5.2'
+__version__ = '0.5.5.3'
 kll_name = 'kll'
 
 
@@ -61,37 +61,41 @@ argparse._ = textFormatter_gettext
 
 ### Misc Utility Functions ###
 
-def git_revision(kllPath):
+def git_revision(kll_path):
     '''
     Retrieve git information using given path
 
-    @return: (revision, changed, revision_date)
-    '''
-    import subprocess
+    @param kll_path: Path to git directory
 
-    # Change the path to where kll.py is
-    origPath = os.getcwd()
-    os.chdir(kllPath)
+    @return: (revision, changed, revision_date, long_version)
+    '''
+    import git
+
+    # Default values if git is not available
+    revision = "<no git>"
+    changed = []
+    date = "<no date>"
+    long_version = ""
 
     # Just in case git can't be found
     try:
+        # Initialize repo
+        repo = git.Repo(kll_path)
+
         # Get hash of the latest git commit
-        revision = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()[:-1]
+        revision = repo.head.object.hexsha
 
         # Get list of files that have changed since the commit
-        changed = subprocess.check_output(['git', 'diff-index', '--name-only', 'HEAD', '--']).decode().splitlines()
+        changed = [item.a_path for item in repo.index.diff(None)] + [item.a_path for item in repo.index.diff('HEAD')]
 
         # Get commit date
-        date = subprocess.check_output(['git', 'show', '-s', '--format=%ci']).decode()[:-1]
-    except BaseException:
-        revision = "<no git>"
-        changed = []
-        date = "<no date>"
+        date = repo.head.commit.committed_datetime
 
-    # Change back to the old working directory
-    os.chdir(origPath)
+        long_version = ".{0} - {1}".format(revision, date)
+    except git.exc.InvalidGitRepositoryError:
+        pass
 
-    return revision, changed, date
+    return revision, changed, date, long_version
 
 
 ### Argument Parsing ###
@@ -122,11 +126,14 @@ def command_line_args(control, input_args):
         add_help=False,
     )
 
+    # Install path
+    install_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+
     # Get git information
-    control.git_rev, control.git_changes, control.git_date = git_revision(
-            os.path.dirname(os.path.realpath(__file__))
+    control.git_rev, control.git_changes, control.git_date, long_version = git_revision(
+        os.path.join(install_path, '..')
     )
-    control.version = "{2}.{0} - {1}".format(control.git_rev, control.git_date, __version__)
+    control.version = "{0}{1}".format(__version__, long_version)
 
     # Optional Arguments
     parser.add_argument(
@@ -159,7 +166,6 @@ def command_line_args(control, input_args):
 
     # If --path defined, lookup installation path, then exit
     if args.path:
-        install_path = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
         print(install_path)
         sys.exit(0)
 
