@@ -77,6 +77,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         'LayerShift': 'layerShift',
         'LayerLatch': 'layerLatch',
         'LayerLock': 'layerLock',
+        'None': 'none',
         'ScanCode': None,
         'SysCode': 'sysCtrlOut',
         'USBCode': 'usbKeyOut',
