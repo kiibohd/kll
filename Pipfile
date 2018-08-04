@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-layouts = ">=0.4.2"
+layouts = ">=0.4.3"
 pytest = "*"
 pytest-xdist = "*"
 gitpython = "*"
