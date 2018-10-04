@@ -157,6 +157,11 @@ def command_line_args(control, input_args):
         action="store_true",
         help="Shows the absolute path to the kll layouts cache director. Then exits.",
     )
+    parser.add_argument(
+        '--layout-cache-refresh',
+        action="store_true",
+        help="Does a refresh on the kll layouts cache. Then exits. Don't do this too often or you'll get GitHub RateLimit Errors.",
+    )
 
     # Add stage arguments
     control.command_line_flags(parser)
@@ -173,6 +178,14 @@ def command_line_args(control, input_args):
     if args.layout_cache_path:
         import layouts
         mgr = layouts.Layouts()
+        layout_path = mgr.layout_path
+        print(layout_path)
+        sys.exit(0)
+
+    # If --layout-cache-refresh defined, show the refreshed layout path
+    if args.layout_cache_refresh:
+        import layouts
+        mgr = layouts.Layouts(force_refresh=True)
         layout_path = mgr.layout_path
         print(layout_path)
         sys.exit(0)

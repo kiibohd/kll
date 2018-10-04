@@ -43,3 +43,11 @@ def test_layout_cache_path():
     ret = kll_run(args)
     assert ret == 0
 
+def test_layout_cache_refresh():
+    '''
+    Calls --layout-cache-refresh argument
+    '''
+    args = ['--layout-cache-refresh']
+    ret = kll_run(args)
+    assert ret == 0
+
