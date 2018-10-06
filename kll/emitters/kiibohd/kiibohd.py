@@ -1254,6 +1254,28 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 variables.data[defines.data['Pixel_Buffer_Size'].name].value[bufsize - 1],
             )
 
+            # Only include if defined
+            # XXX (HaaTa) This has to be done to make sure KLL compiler is still compatible with older KLL files
+            if 'LED_Buffer_Size' in variables.data.keys():
+                self.fill_dict['PixelBufferSetup'] += "\nPixelBuf LED_Buffers[] = {\n"
+
+                # Lookup number of buffers (LED)
+                ledbufsize = len(variables.data[defines.data['LED_Buffer_Size'].name].value)
+                for index in range(ledbufsize):
+                    self.fill_dict['PixelBufferSetup'] += "\tPixelBufElem( {0}, {1}, {2}, {3} ),\n".format(
+                        variables.data[defines.data['LED_Buffer_Length'].name].value[index],
+                        variables.data[defines.data['LED_Buffer_Width'].name].value[index],
+                        variables.data[defines.data['LED_Buffer_Size'].name].value[index],
+                        variables.data[defines.data['LED_Buffer_Buffer'].name].value[index],
+                    )
+                self.fill_dict['PixelBufferSetup'] += "};"
+
+            # Compute total number of channels (LED)
+            totalchannels = "{0} + {1}".format(
+                variables.data[defines.data['LED_Buffer_Length'].name].value[ledbufsize - 1],
+                variables.data[defines.data['LED_Buffer_Size'].name].value[ledbufsize - 1],
+            )
+
             ## Pixel Mapping ##
             ## ScanCode to Pixel Mapping ##
             pixel_indices = full_context.query('MapExpression', 'PixelChannel')
