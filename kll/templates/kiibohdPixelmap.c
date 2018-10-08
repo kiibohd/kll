@@ -38,6 +38,10 @@
 <|PixelBufferSetup|>
 
 
+// Fade Configuration
+<|PixelFadeConfig|>
+
+
 // Pixel Mapping
 <|PixelMapping|>
 

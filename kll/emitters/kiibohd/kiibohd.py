@@ -1270,6 +1270,60 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     )
                 self.fill_dict['PixelBufferSetup'] += "};"
 
+                # Add LED fade group(s)
+                self.fill_dict['PixelFadeConfig'] = ""
+                ledgroupsize = len(variables.data[defines.data['KLL_LED_FadeGroup'].name].value)
+                for index in range(ledgroupsize):
+                    self.fill_dict['PixelFadeConfig'] += "const uint16_t Pixel_LED_DefaultFadeGroup{}[] = {{\n".format(
+                        index
+                    )
+                    data = variables.data[defines.data['KLL_LED_FadeGroup'].name].value[index]
+                    if data != "":
+                        self.fill_dict['PixelFadeConfig'] += "\t{}\n".format(data)
+                    self.fill_dict['PixelFadeConfig'] += "};\n"
+
+                self.fill_dict['PixelFadeConfig'] += "const PixelLEDGroupEntry Pixel_LED_DefaultFadeGroups[] = {\n"
+                for index in range(ledgroupsize):
+                    # Count number of elements
+                    data = variables.data[defines.data['KLL_LED_FadeGroup'].name].value[index]
+                    count = len(data.split(','))
+                    if data == "":
+                        count = 0
+
+                    self.fill_dict['PixelFadeConfig'] += "\t{{ {}, Pixel_LED_DefaultFadeGroup{} }},\n".format(
+                        count,
+                        index,
+                    )
+                self.fill_dict['PixelFadeConfig'] += "};\n"
+
+                # Add fade periods
+                self.fill_dict['PixelFadeConfig'] += "const PixelPeriodConfig Pixel_LED_FadePeriods[16] = {\n"
+                periodgroupsize = len(variables.data[defines.data['KLL_LED_FadePeriod'].name].value)
+                for index in range(periodgroupsize):
+                    # Construct array
+                    self.fill_dict['PixelFadeConfig'] += "\t{}, // {}\n".format(
+                        variables.data[defines.data['KLL_LED_FadePeriod'].name].value[index],
+                        index,
+                    )
+                self.fill_dict['PixelFadeConfig'] += "};\n"
+
+                def fade_default_config(name):
+                    fadeconfigsize = len(variables.data[defines.data[name].name].value)
+                    self.fill_dict['PixelFadeConfig'] += "\t{ "
+                    for index in range(fadeconfigsize):
+                        self.fill_dict['PixelFadeConfig'] += "{}, ".format(
+                            variables.data[defines.data[name].name].value[index]
+                        )
+                    self.fill_dict['PixelFadeConfig'] += "}}, // {}\n".format(name)
+
+                # Add fade configs
+                self.fill_dict['PixelFadeConfig'] += "const uint8_t Pixel_LED_FadePeriod_Defaults[4][4] = {\n"
+                fade_default_config('KLL_LED_FadeDefaultConfig0')
+                fade_default_config('KLL_LED_FadeDefaultConfig1')
+                fade_default_config('KLL_LED_FadeDefaultConfig2')
+                fade_default_config('KLL_LED_FadeDefaultConfig3')
+                self.fill_dict['PixelFadeConfig'] += "};"
+
             # Compute total number of channels (LED)
             totalchannels = "{0} + {1}".format(
                 variables.data[defines.data['LED_Buffer_Length'].name].value[ledbufsize - 1],
