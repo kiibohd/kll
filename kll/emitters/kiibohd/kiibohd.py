@@ -1324,11 +1324,11 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 fade_default_config('KLL_LED_FadeDefaultConfig3')
                 self.fill_dict['PixelFadeConfig'] += "};"
 
-            # Compute total number of channels (LED)
-            totalchannels = "{0} + {1}".format(
-                variables.data[defines.data['LED_Buffer_Length'].name].value[ledbufsize - 1],
-                variables.data[defines.data['LED_Buffer_Size'].name].value[ledbufsize - 1],
-            )
+                # Compute total number of channels (LED)
+                totalchannels = "{0} + {1}".format(
+                    variables.data[defines.data['LED_Buffer_Length'].name].value[ledbufsize - 1],
+                    variables.data[defines.data['LED_Buffer_Size'].name].value[ledbufsize - 1],
+                )
 
             ## Pixel Mapping ##
             ## ScanCode to Pixel Mapping ##
