@@ -781,6 +781,8 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         interconnect_scancode_offsets = self.control.stage('DataAnalysisStage').interconnect_scancode_offsets
         interconnect_pixel_offsets = self.control.stage('DataAnalysisStage').interconnect_pixel_offsets
 
+        rotation_map = self.control.stage('DataAnalysisStage').rotation_map
+
         scancode_positions = self.control.stage('DataAnalysisStage').scancode_positions
         pixel_positions = self.control.stage('DataAnalysisStage').pixel_positions
         pixel_display_mapping = self.control.stage('DataAnalysisStage').pixel_display_mapping
@@ -1230,6 +1232,18 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             # Add physical scancode positions and PixelId (if available) to json
             scancode_json.setdefault(key, dict()).update(entry)
 
+        ## Rotation Trigger Parameters
+        max_rotations = 0
+        if rotation_map.keys():
+            max_rotations = max(rotation_map.keys())
+        self.fill_dict['RotationParameters'] = 'const uint8_t Rotation_MaxParameter[] = {\n'
+        for key, entry in sorted(rotation_map):
+            self.fill_dict['RotationParameters'] += '\t{}, // {}\n'.format(
+                entry,
+                key,
+            )
+        self.fill_dict['RotationParameters'] += '};'
+
         ## Pixel Buffer Setup ##
         # Only add sections if Pixel Buffer is defined
         self.use_pixel_map = 'Pixel_Buffer_Size' in defines.data.keys()
@@ -1657,6 +1671,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.fill_dict['KLLDefines'] += "#define ResultMacroNum_KLL {0}\n".format(len(result_index))
         self.fill_dict['KLLDefines'] += "#define TriggerMacroNum_KLL {0}\n".format(len(trigger_index))
         self.fill_dict['KLLDefines'] += "#define MaxScanCode_KLL {0}\n".format(max(max_scan_code))
+        self.fill_dict['KLLDefines'] += "#define RotationNum_KLL {0}\n".format(max_rotations)
 
         # Only add defines if Pixel Buffer is defined
         if self.use_pixel_map:

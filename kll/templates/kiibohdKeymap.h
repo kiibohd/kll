@@ -132,6 +132,13 @@
 
 
 
+// ----- Rotation Parameters -----
+
+// Each position represents the maximum rotation value for the index
+<|RotationParameters|>
+
+
+
 // ----- Key Positions -----
 
 // -- Physical Key Positions
