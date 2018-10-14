@@ -1,0 +1,104 @@
+# Kira Layer 2 - Animation Layer
+Name = "Kira Control Layer";
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2018";
+KLL = 0.5;
+
+# Modified Date
+Date = 2018-10-13;
+
+
+
+### General Animation Control ###
+
+U"Esc"       : animation_control(4); # Animations reset
+U"Equals"    : ledControl(0, 15); # Increase brightness
+U"Minus"     : ledControl(1, 15); # Decrease brightness
+U"Print"     : ledControl(4, 255); # Turn on animations (LEDs)
+U"Delete"    : ledControl(3, 255); # Turn off animations (LEDs)
+U"Home"      : animation_control(2); # Animation start (Forward)
+U"End"       : animation_control(3); # Animation stop
+U"Page Up"   : ledControl(7, 1); # Animation Speed Increase (overall)
+U"Page Down" : ledControl(8, 1); # Animation Speed Decrease (overall)
+
+
+
+
+### Color-Select Keys ###
+
+# Rotation Select
+U"F1" : rotate(0, 1);
+T[20,0](0)  : A[keys_only_rotation](single, pos:1);
+T[20,0](1)  : A[keys_only_rotation](single, pos:2);
+T[20,0](2)  : A[keys_only_rotation](single, pos:3);
+T[20,0](3)  : A[keys_only_rotation](single, pos:4);
+T[20,0](4)  : A[keys_only_rotation](single, pos:5);
+T[20,0](5)  : A[keys_only_rotation](single, pos:6);
+T[20,0](6)  : A[keys_only_rotation](single, pos:7);
+T[20,0](7)  : A[keys_only_rotation](single, pos:8);
+T[20,0](8)  : A[keys_only_rotation](single, pos:9);
+T[20,0](9)  : A[keys_only_rotation](single, pos:10);
+T[20,0](10) : A[keys_only_rotation](single, pos:11);
+
+
+
+### Color-Select Underglow ###
+
+# Rotation Select
+U"F2" : rotate(1, 1);
+T[20,1](0)  : A[underlighting_only_rotation](single, pos:1);
+T[20,1](1)  : A[underlighting_only_rotation](single, pos:2);
+T[20,1](2)  : A[underlighting_only_rotation](single, pos:3);
+T[20,1](3)  : A[underlighting_only_rotation](single, pos:4);
+T[20,1](4)  : A[underlighting_only_rotation](single, pos:5);
+T[20,1](5)  : A[underlighting_only_rotation](single, pos:6);
+T[20,1](6)  : A[underlighting_only_rotation](single, pos:7);
+T[20,1](7)  : A[underlighting_only_rotation](single, pos:8);
+T[20,1](8)  : A[underlighting_only_rotation](single, pos:9);
+T[20,1](9)  : A[underlighting_only_rotation](single, pos:10);
+T[20,1](10) : A[underlighting_only_rotation](single, pos:11);
+
+
+
+### Fade Control ###
+
+# Keys
+U"F3" : rotate(2, 1);
+T[20,2](0) : fade_set(0, 0, 0) + fade_set(0, 1, 0) + fade_set(0, 2, 0) + fade_set(0, 3, 0);
+#TODO
+
+# Underlighting
+U"F4" : rotate(3, 1);
+T[20,3](0) : fade_set(1, 0, 0) + fade_set(1, 1, 0) + fade_set(1, 2, 0) + fade_set(1, 3, 0);
+#TODO
+
+# Indicators
+U"F5" : rotate(4, 1);
+T[20,4](0) : fade_set(2, 0, 0) + fade_set(2, 1, 0) + fade_set(2, 2, 0) + fade_set(2, 3, 0);
+#TODO
+
+# Layer
+U"F6" : rotate(5, 1);
+T[20,5](0) : fade_set(3, 0, 0) + fade_set(3, 1, 0) + fade_set(3, 2, 0) + fade_set(3, 3, 0);
+#TODO
+
+
+
+### General Animations ###
+
+# Waves
+U"F7" : rotate(6, 1);
+# TODO
+
+# Tron
+U"F8" : rotate(7, 1);
+# TODO
+
+# Pulsate
+U"F9" : rotate(8, 1);
+# TODO
+
+# Indicator Mode
+U"F10" : rotate(9, 1);
+# TODO
+
