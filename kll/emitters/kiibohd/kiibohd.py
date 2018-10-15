@@ -672,6 +672,8 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 return 2
             if modifier.arg == 'state':
                 return 3
+            if modifier.arg == 'clear':
+                return 4
             print("{0} '{1}:{2}' is unsupported".format(WARNING, name, modifier))
             return 0
 
@@ -687,12 +689,15 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         a_start = 1
         a_pause = 1
         a_stop = 1
+        a_single = 1
         if not animation.getModifier('start'):
             a_start = 0
         if not animation.getModifier('pause'):
             a_pause = 0
         if not animation.getModifier('stop'):
             a_stop = 0
+        if not animation.getModifier('single'):
+            a_single = 0
         # <index>        - Animation id (Animation__<name>)
         a_name = animation_name
         # <pos>          - Frame position
@@ -723,6 +728,8 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             a_state = "AnimationPlayState_Stop"
         elif a_start == 1:
             a_state = "AnimationPlayState_Start"
+        elif a_single == 1:
+            a_state = "AnimationPlayState_Single"
         else:
             a_state = "AnimationPlayState_Pause"
 
@@ -1237,7 +1244,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         if rotation_map.keys():
             max_rotations = max(rotation_map.keys())
         self.fill_dict['RotationParameters'] = 'const uint8_t Rotation_MaxParameter[] = {\n'
-        for key, entry in sorted(rotation_map):
+        for key, entry in sorted(rotation_map.items()):
             self.fill_dict['RotationParameters'] += '\t{}, // {}\n'.format(
                 entry,
                 key,

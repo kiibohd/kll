@@ -2773,6 +2773,7 @@ class DataAnalysisStage(Stage):
             # Otherwise just add it, if there isn't a default
             if not found:
                 self.animation_settings[str_name] = val
+                self.animation_settings_orig[str_name] = val
                 self.animation_settings_list.append(str_name)
                 continue
 

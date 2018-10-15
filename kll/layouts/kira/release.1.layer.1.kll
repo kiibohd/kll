@@ -34,7 +34,7 @@ U"Keypad Minus"    : CONS"Fast Forward";
 # System Control Keys
 U"F5" : CONS"Brightness Increment";
 U"F6" : CONS"Brightness Decrement";
-U"F7" : SYS"Wakeup";
+U"F7" : SYS"Wake Up";
 U"F8" : SYS"Sleep";
 
 # International Keys
@@ -60,10 +60,10 @@ U"Keypad 9" : U"LANG9"; # LANG9
 
 # Other Keys
 U"A" : U"App";
-U"C" : U"Calculator";
-U"E" : U"Eject";
-U"F" : U"File Browser";
-U"I" : U"Internet Browser";
+U"C" : CONS"Calculator";
+U"E" : CONS"Eject";
+U"F" : CONS"File Browser";
+U"I" : CONS"Internet Browser";
 U"M" : U"Menu";
 U"P" : U"Pause";
 U"S" : U"ScrollLock";

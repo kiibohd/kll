@@ -150,6 +150,7 @@ class AnimationModifier:
         'start': None,
         'pause': None,
         'stop': None,
+        'single': None,
         'pos': int,
         'pfunc': {
             'off': None,
@@ -166,6 +167,7 @@ class AnimationModifier:
             'basic': None,
             'all': None,
             'state': None,
+            'clear': None,
         },
     }
 

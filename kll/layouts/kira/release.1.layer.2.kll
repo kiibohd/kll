@@ -40,6 +40,13 @@ T[20,0](8)  : A[keys_only_rotation](single, pos:9);
 T[20,0](9)  : A[keys_only_rotation](single, pos:10);
 T[20,0](10) : A[keys_only_rotation](single, pos:11);
 
+T[20,0](11) : A[keys_only_rotation](single, pos:12);
+T[20,0](12) : A[keys_only_rotation](single, pos:13);
+T[20,0](13) : A[keys_only_rotation](single, pos:14);
+T[20,0](14) : A[keys_only_rotation](single, pos:15);
+T[20,0](15) : A[keys_only_rotation](single, pos:16);
+T[20,0](16) : A[keys_only_rotation](single, pos:17);
+
 
 
 ### Color-Select Underglow ###
@@ -57,6 +64,13 @@ T[20,1](7)  : A[underlighting_only_rotation](single, pos:8);
 T[20,1](8)  : A[underlighting_only_rotation](single, pos:9);
 T[20,1](9)  : A[underlighting_only_rotation](single, pos:10);
 T[20,1](10) : A[underlighting_only_rotation](single, pos:11);
+
+T[20,1](11) : A[underlighting_only_rotation](single, pos:12);
+T[20,1](12) : A[underlighting_only_rotation](single, pos:13);
+T[20,1](13) : A[underlighting_only_rotation](single, pos:14);
+T[20,1](14) : A[underlighting_only_rotation](single, pos:15);
+T[20,1](15) : A[underlighting_only_rotation](single, pos:16);
+T[20,1](16) : A[underlighting_only_rotation](single, pos:17);
 
 
 
@@ -88,17 +102,33 @@ T[20,5](0) : fade_set(3, 0, 0) + fade_set(3, 1, 0) + fade_set(3, 2, 0) + fade_se
 
 # Waves
 U"F7" : rotate(6, 1);
-# TODO
-
-# Tron
-U"F8" : rotate(7, 1);
+T[20,6](0) : A[miami_wave](replace:clear); # Miami
+T[20,6](1) : A[rainbow_wave](replace:clear); # Rainbow
+#T[20,6](2) : ; # Pastel Rainbow
+#T[20,6](3) : ; # Kira Wave Orange
+#T[20,6](4) : ; # Kira Wave Pink
+#T[20,6](5) : ; # Kira Wave Blue
+#T[20,6](6) : ; # Kira Wave Purple
 # TODO
 
 # Pulsate
-U"F9" : rotate(8, 1);
+U"F8" : rotate(7, 1);
+#T[20,8](0) : ; # Keys
+#T[20,8](1) : ; # Underlighting
+#T[20,8](2) : ; # Keys + Underlighting
 # TODO
 
-# Indicator Mode
+# Decimate Keys
+U"F9" : rotate(8, 1);
+T[20,10](0) : A[decimate_keys](); # Speed 1
+T[20,10](0) : A[decimate_keys](framedelay:1); # Speed 2
+T[20,10](0) : A[decimate_keys](framedelay:2); # Speed 3
+T[20,10](0) : A[decimate_keys](framedelay:3); # Speed 4
+
+# Decimate Underlighting
 U"F10" : rotate(9, 1);
-# TODO
+T[20,10](0) : A[decimate_underlighting](); # Speed 1
+T[20,10](0) : A[decimate_underlighting](framedelay:1); # Speed 2
+T[20,10](0) : A[decimate_underlighting](framedelay:2); # Speed 3
+T[20,10](0) : A[decimate_underlighting](framedelay:3); # Speed 4
 

@@ -22,11 +22,70 @@ Layer[1] : fade_layer_highlight(1);
 Layer[2] : fade_layer_highlight(2);
 
 
+### Default Animation ###
+
+A[default_animation] <= start;
+A[default_animation, 1] <= P[1-128](0,0,0);
+A[default_animation, 2] <= P[1-128](10,10,10);
+A[default_animation, 3] <= P[1-128](20,20,20);
+A[default_animation, 4] <= P[1-128](30,30,30);
+A[default_animation, 5] <= P[1-128](40,40,40);
+A[default_animation, 6] <= P[1-128](50,50,50);
+A[default_animation, 7] <= P[1-128](60,60,60);
+A[default_animation, 8] <= P[1-128](70,70,70);
+A[default_animation, 9] <= P[1-128](80,80,80);
+A[default_animation, 10] <= P[1-128](90,90,90);
+A[default_animation, 11] <= P[1-128](100,100,100);
+A[default_animation, 12] <= P[1-128](110,110,110);
+A[default_animation, 13] <= P[1-128](120,120,120);
+A[default_animation, 14] <= P[1-128](130,130,130);
+A[default_animation, 15] <= P[1-128](140,140,140);
+A[default_animation, 16] <= P[1-128](150,150,150);
+A[default_animation, 17] <= P[1-128](160,160,160);
+A[default_animation, 18] <= P[1-128](170,170,170);
+A[default_animation, 19] <= P[1-128](180,180,180);
+A[default_animation, 20] <= P[1-128](190,190,190);
+A[default_animation, 21] <= P[1-128](200,200,200);
+A[default_animation, 22] <= P[1-128](210,210,210);
+A[default_animation, 23] <= P[1-128](220,220,220);
+A[default_animation, 24] <= P[1-128](230,230,230);
+A[default_animation, 25] <= P[1-128](240,240,240);
+A[default_animation, 26] <= P[1-128](250,250,250);
+A[default_animation, 27] <= P[1-128](255,255,255);
+A[default_animation, 28] <= P[1-128](255,250,250);
+A[default_animation, 29] <= P[1-128](255,240,240);
+A[default_animation, 30] <= P[1-128](255,230,230);
+A[default_animation, 31] <= P[1-128](255,220,220);
+A[default_animation, 32] <= P[1-128](255,210,210);
+A[default_animation, 33] <= P[1-128](255,200,200);
+A[default_animation, 34] <= P[1-128](255,190,190);
+A[default_animation, 35] <= P[1-128](255,180,180);
+A[default_animation, 36] <= P[1-128](255,170,170);
+A[default_animation, 37] <= P[1-128](255,160,160);
+A[default_animation, 38] <= P[1-128](255,150,150);
+A[default_animation, 39] <= P[1-128](255,140,140);
+A[default_animation, 40] <= P[1-128](255,130,130);
+A[default_animation, 41] <= P[1-128](255,120,120);
+A[default_animation, 42] <= P[1-128](255,110,110);
+A[default_animation, 43] <= P[1-128](255,100,100);
+A[default_animation, 44] <= P[1-128](255,90,90);
+A[default_animation, 45] <= P[1-128](255,88,80);
+A[default_animation, 46] <= P[1-128](255,88,70);
+A[default_animation, 47] <= P[1-128](255,88,60);
+A[default_animation, 48] <= P[1-128](255,88,50);
+A[default_animation, 49] <= P[1-128](255,88,40);
+A[default_animation, 50] <= P[1-128](255,88,30);
+A[default_animation, 51] <= P[1-128](255,88,20);
+A[default_animation, 52] <= P[1-128](255,88,10);
+A[default_animation, 53] <= P[1-128](255,88,0);
+A[default_animation, 53] <= P[126-128](0,0,0); # Indicators
+
+
 
 ### Wave Animations ###
 
 # Miami wave
-A[miami_wave] <= start, framedelay:3, framestretch, loop, replace:all, pfunc:interp;
+A[miami_wave] <= framedelay:3, framestretch, loop, replace:all, pfunc:interp;
 A[miami_wave, 1]  <=                       P[c:0%] (0,255,0),   P[c:25%](255,255,0), P[c:50%](255,255,255),   P[c:75%](127,0,255), P[c:100%](0,0,255);
 A[miami_wave, 2]  <= P[c:-24%](0,0,255),   P[c:2%] (0,255,0),   P[c:27%](255,255,0), P[c:52%](255,255,255),   P[c:77%](127,0,255), P[c:102%](0,0,255);
 A[miami_wave, 3]  <= P[c:-22%](0,0,255),   P[c:4%] (0,255,0),   P[c:29%](255,255,0), P[c:54%](255,255,255),   P[c:79%](127,0,255), P[c:104%](0,0,255);
@@ -94,7 +153,7 @@ A[miami_wave, 65] <= P[c:-4%] (0,255,0),   P[c:22%](255,255,0), P[c:47%](255,255
 A[miami_wave, 66] <= P[c:-2%] (0,255,0),   P[c:24%](255,255,0), P[c:49%](255,255,255),   P[c:74%](127,0,255), P[c:99%](0,0,255),   P[c:124%](0,255,0);
 
 # Rainbow wave
-A[rainbow_wave] <= start, framedelay:3, framestretch, loop, replace:all, pfunc:interp;
+A[rainbow_wave] <= framedelay:3, framestretch, loop, replace:all, pfunc:interp;
 A[rainbow_wave, 1]  <=                       P[c:0%] (0,255,0),   P[c:25%](255,255,0), P[c:50%](255,0,0),   P[c:75%](127,0,255), P[c:100%](0,0,255);
 A[rainbow_wave, 2]  <= P[c:-24%](0,0,255),   P[c:2%] (0,255,0),   P[c:27%](255,255,0), P[c:52%](255,0,0),   P[c:77%](127,0,255), P[c:102%](0,0,255);
 A[rainbow_wave, 3]  <= P[c:-22%](0,0,255),   P[c:4%] (0,255,0),   P[c:29%](255,255,0), P[c:54%](255,0,0),   P[c:79%](127,0,255), P[c:104%](0,0,255);
@@ -161,6 +220,9 @@ A[rainbow_wave, 64] <= P[c:-6%] (0,255,0),   P[c:20%](255,255,0), P[c:45%](255,0
 A[rainbow_wave, 65] <= P[c:-4%] (0,255,0),   P[c:22%](255,255,0), P[c:47%](255,0,0),   P[c:72%](127,0,255), P[c:97%](0,0,255),   P[c:122%](0,255,0);
 A[rainbow_wave, 66] <= P[c:-2%] (0,255,0),   P[c:24%](255,255,0), P[c:49%](255,0,0),   P[c:74%](127,0,255), P[c:99%](0,0,255),   P[c:124%](0,255,0);
 
+# Pastel Rainbow
+# TODO
+
 # Kira Wave - Orange
 # TODO
 # Kira Wave - Pink
@@ -187,10 +249,18 @@ A[keys_only_rotation, 9]  <= S1(0x71, 0x1C, 0x9E), S114(0x71, 0x1C, 0x9E);
 A[keys_only_rotation, 10] <= S1(0xCD, 0x3B, 0x70), S114(0xCD, 0x3B, 0x70);
 A[keys_only_rotation, 11] <= S1(0xB8, 0x34, 0x3E), S114(0xB8, 0x34, 0x3E);
 
+# Pastel Rainbow
+A[keys_only_rotation, 12] <= S1(0xFE, 0xA3, 0xAA), S114(0xFE, 0xA3, 0xAA);
+A[keys_only_rotation, 13] <= S1(0xF8, 0xB8, 0x8B), S114(0xF8, 0xB8, 0x8B);
+A[keys_only_rotation, 14] <= S1(0xFA, 0xB8, 0x84), S114(0xF8, 0xB8, 0x8B);
+A[keys_only_rotation, 15] <= S1(0xBA, 0xED, 0x91), S114(0xF8, 0xB8, 0x8B);
+A[keys_only_rotation, 16] <= S1(0xB2, 0xCE, 0xFE), S114(0xF8, 0xB8, 0x8B);
+A[keys_only_rotation, 17] <= S1(0xF2, 0xA2, 0xE8), S114(0xF8, 0xB8, 0x8B);
 
 
 ### Color-Select Underglow ###
 
+A[underlighting_only_rotation] <= ;
 A[underlighting_only_rotation, 1]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xC1, 0x2D, 0x1D);
 A[underlighting_only_rotation, 2]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xEE, 0x6D, 0x28);
 A[underlighting_only_rotation, 3]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xE0, 0x9E, 0x3B);
@@ -203,25 +273,63 @@ A[underlighting_only_rotation, 9]  <= P[18,21,24,27,30,115,118,120,122,113,33,10
 A[underlighting_only_rotation, 10] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xCD, 0x3B, 0x70);
 A[underlighting_only_rotation, 11] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xB8, 0x34, 0x3E);
 
-
-
-### Tron ###
-
-#TODO
+# Pastel Rainbow
+A[underlighting_only_rotation, 12] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xFE, 0xA3, 0xAA);
+A[underlighting_only_rotation, 13] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xF8, 0xB8, 0x8B);
+A[underlighting_only_rotation, 14] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xFA, 0xB8, 0x84);
+A[underlighting_only_rotation, 15] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xBA, 0xED, 0x91);
+A[underlighting_only_rotation, 16] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xB2, 0xCE, 0xFE);
+A[underlighting_only_rotation, 17] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xF2, 0xA2, 0xE8);
 
 
 
 ### Pulsate ###
 
 # TODO - Choose a ton of colors, go in rainbow sequence
+# Use fade to handle pulsing, animation to handle color selection
+# keys_only_rotation (different animation settings) + fade handles pulsate
+#A[pulsate] <= pfunc:interp;
+
+
+
+### Decimate ###
+
+# Main animation which handles the decimation (keys only)
+# TODO May need to slow down/delay
+A[decimate_keys] <= loop;
+A[decimate_keys, 1] <= S[1-114](>>1, >>1, >>1);
+
+A[decimate_underlighting] <= loop;
+A[decimate_underlighting, 1] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](>>1, >>1, >>1);
+
+
+
+### Painter ###
+
+# A capability selects the color (rotate along rgb values)
+# TODO - Is there a way to use keys_only_rotation as the color picker instead?
+#        ?? Force keys_only_rotation to aaaa_keys_only_rotation so it's animation index 0
+#        ?? Then check for the top-most animation with index 0 in the stack (if nothing in stack, ignore)
+#        ?? If found, check the current position
+#        ?? Query the const animation data at position, get first element and retrieve color
+
+# All keys have a capability added to check whether painter is active
+# On replace:clear or Pixel_clearAnimations, painter is disabled
+# TODO
+
 
 
 
 ### Indicator Mode ###
 
-# TODO Needs to be done per-layer for configuration
-# TODO
-# - Cylon, where each color represents something (Layer 1-7, NumLock, CapsLock and ScrollLock)
-# - Binary (Layer 1-7; color flash represents NumLock, CapsLock and ScrollLock)
-# - Selected color? (might be annoying)
+A[numlock] <= ;
+A[numlock, 1] <= P[126](255,255,255);
+A[capslock] <= ;
+A[capslock, 1] <= P[126](255,255,255);
+A[scrolllock] <= ;
+A[scrolllock, 1] <= P[126](255,255,255);
+
+I"NumLock" : A[numlock]();
+I"CapsLock" : A[capslock]();
+I"ScrollLock" : A[scrolllock]();
 
