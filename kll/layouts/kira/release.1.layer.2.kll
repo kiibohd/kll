@@ -28,24 +28,24 @@ U"Page Down" : ledControl(8, 1); # Animation Speed Decrease (overall)
 
 # Rotation Select
 U"F1" : rotate(0, 1);
-T[20,0](0)  : A[keys_only_rotation](single, pos:1);
-T[20,0](1)  : A[keys_only_rotation](single, pos:2);
-T[20,0](2)  : A[keys_only_rotation](single, pos:3);
-T[20,0](3)  : A[keys_only_rotation](single, pos:4);
-T[20,0](4)  : A[keys_only_rotation](single, pos:5);
-T[20,0](5)  : A[keys_only_rotation](single, pos:6);
-T[20,0](6)  : A[keys_only_rotation](single, pos:7);
-T[20,0](7)  : A[keys_only_rotation](single, pos:8);
-T[20,0](8)  : A[keys_only_rotation](single, pos:9);
-T[20,0](9)  : A[keys_only_rotation](single, pos:10);
-T[20,0](10) : A[keys_only_rotation](single, pos:11);
-
-T[20,0](11) : A[keys_only_rotation](single, pos:12);
-T[20,0](12) : A[keys_only_rotation](single, pos:13);
-T[20,0](13) : A[keys_only_rotation](single, pos:14);
-T[20,0](14) : A[keys_only_rotation](single, pos:15);
-T[20,0](15) : A[keys_only_rotation](single, pos:16);
-T[20,0](16) : A[keys_only_rotation](single, pos:17);
+#T[20,0](0)  : A[keys_only_rotation](single, pos:1);
+#T[20,0](1)  : A[keys_only_rotation](single, pos:2);
+#T[20,0](2)  : A[keys_only_rotation](single, pos:3);
+#T[20,0](3)  : A[keys_only_rotation](single, pos:4);
+#T[20,0](4)  : A[keys_only_rotation](single, pos:5);
+#T[20,0](5)  : A[keys_only_rotation](single, pos:6);
+#T[20,0](6)  : A[keys_only_rotation](single, pos:7);
+#T[20,0](7)  : A[keys_only_rotation](single, pos:8);
+#T[20,0](8)  : A[keys_only_rotation](single, pos:9);
+#T[20,0](9)  : A[keys_only_rotation](single, pos:10);
+#T[20,0](10) : A[keys_only_rotation](single, pos:11);
+#
+#T[20,0](11) : A[keys_only_rotation](single, pos:12);
+#T[20,0](12) : A[keys_only_rotation](single, pos:13);
+#T[20,0](13) : A[keys_only_rotation](single, pos:14);
+#T[20,0](14) : A[keys_only_rotation](single, pos:15);
+#T[20,0](15) : A[keys_only_rotation](single, pos:16);
+#T[20,0](16) : A[keys_only_rotation](single, pos:17);
 
 
 
