@@ -1568,16 +1568,16 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     name,
                     aniframeid.index
                 )
-                for elem in aniframedata:
+                for elem in aniframedata[0]:
                     # TODO Determine widths (possibly do checks at an earlier stage to validate)
 
                     # Select pixel address type
                     self.fill_dict['AnimationFrames'] += "\n\t{0},".format(
-                        address_type[elem[0].uid.inferred_type()]
+                        address_type[elem.uid.inferred_type()]
                     )
 
                     # For each channel select a pixel address
-                    channels = elem[0].uid.uid_set()
+                    channels = elem.uid.uid_set()
                     channel_str = "/* UNKNOWN CHANNEL {0} */".format(len(channels))
                     if len(channels) == 1:
                         channel_str = " /*{0}*/{1},".format(
@@ -1613,7 +1613,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     self.fill_dict['AnimationFrames'] += channel_str
 
                     # For each channel, select an operator and value
-                    for pixelmod in elem[0].modifiers:
+                    for pixelmod in elem.modifiers:
                         # Set operator type
                         channel_str = " PixelChange_{0},".format(
                             pixelmod.operator_type()

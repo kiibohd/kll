@@ -24,7 +24,7 @@ Layer[2] : fade_layer_highlight(2);
 
 ### Default Animation ###
 
-A[default_animation] <= start;
+A[default_animation] <= start, loops:1;
 A[default_animation, 1] <= P[1-128](0,0,0);
 A[default_animation, 2] <= P[1-128](10,10,10);
 A[default_animation, 3] <= P[1-128](20,20,20);
@@ -332,4 +332,71 @@ A[scrolllock, 1] <= P[126](255,255,255);
 I"NumLock" : A[numlock]();
 I"CapsLock" : A[capslock]();
 I"ScrollLock" : A[scrolllock]();
+
+
+
+### Fade Configuration ###
+
+# Fade Period
+# .start and .end must be between 0 and 15
+# .start == (1 << start) - 1
+# .end   == (1 << end)
+# This means incrementing end will exponentially increase the time of the period.
+# .start = 0 and .end = 0 disables that time period
+# A non-zero start will prevent the LED from dimming to 0 for Off->On and On->Off
+# the subsequent Off state afterwards will use the previous start from On->Off for the display value.
+# Only 16 fade periods can be used.
+KLL_LED_FadePeriod => KLL_LED_FadePeriod_define;
+KLL_LED_FadePeriod[0] = "{ .start = 0, .end = 0 }";
+KLL_LED_FadePeriod[1] = "{ .start = 0, .end = 4 }";
+KLL_LED_FadePeriod[2] = "{ .start = 0, .end = 5 }";
+KLL_LED_FadePeriod[3] = "{ .start = 0, .end = 6 }";
+KLL_LED_FadePeriod[4] = "{ .start = 0, .end = 7 }";
+KLL_LED_FadePeriod[5] = "{ .start = 0, .end = 8 }";
+KLL_LED_FadePeriod[6] = "{ .start = 0, .end = 9 }";
+KLL_LED_FadePeriod[7] = "{ .start = 0, .end = 10 }";
+KLL_LED_FadePeriod[8] = "{ .start = 0, .end = 11 }";
+KLL_LED_FadePeriod[9] = "{ .start = 0, .end = 12 }";
+KLL_LED_FadePeriod[10] = "{ .start = 5, .end = 6 }";
+KLL_LED_FadePeriod[11] = "{ .start = 6, .end = 7 }";
+KLL_LED_FadePeriod[12] = "{ .start = 7, .end = 8 }";
+KLL_LED_FadePeriod[13] = "{ .start = 8, .end = 9 }";
+KLL_LED_FadePeriod[14] = "{ .start = 9, .end = 10 }";
+KLL_LED_FadePeriod[15] = "{ .start = 10, .end = 11 }";
+
+# Fade Default Configuration
+# There are 4 fade profiles
+# 0) Keys
+# 1) Underlighting
+# 2) Indicators
+# 3) Active Layer (uses fade_layer_highlight to refresh)
+# Each fade profile has 4 fade period configurations (see above).
+# 0) Off to On
+# 1) On
+# 2) On to Off
+# 3) Off
+## Keys
+KLL_LED_FadeDefaultConfig0 => KLL_LED_FadeDefaultConfig0_define;
+KLL_LED_FadeDefaultConfig0[0] = 5;
+KLL_LED_FadeDefaultConfig0[1] = 5;
+KLL_LED_FadeDefaultConfig0[2] = 5;
+KLL_LED_FadeDefaultConfig0[3] = 5;
+## Underlighting
+KLL_LED_FadeDefaultConfig1 => KLL_LED_FadeDefaultConfig1_define;
+KLL_LED_FadeDefaultConfig1[0] = 5;
+KLL_LED_FadeDefaultConfig1[1] = 5;
+KLL_LED_FadeDefaultConfig1[2] = 5;
+KLL_LED_FadeDefaultConfig1[3] = 5;
+## Indicators
+KLL_LED_FadeDefaultConfig2 => KLL_LED_FadeDefaultConfig2_define;
+KLL_LED_FadeDefaultConfig2[0] = 0;
+KLL_LED_FadeDefaultConfig2[1] = 0;
+KLL_LED_FadeDefaultConfig2[2] = 0;
+KLL_LED_FadeDefaultConfig2[3] = 0;
+## Active Layer
+KLL_LED_FadeDefaultConfig3 => KLL_LED_FadeDefaultConfig3_define;
+KLL_LED_FadeDefaultConfig3[0] = 5;
+KLL_LED_FadeDefaultConfig3[1] = 5;
+KLL_LED_FadeDefaultConfig3[2] = 5;
+KLL_LED_FadeDefaultConfig3[3] = 5;
 

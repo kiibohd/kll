@@ -475,6 +475,14 @@ class Make:
         '''
         return int(token, 0)
 
+    def neg_number(dash, number):
+        '''
+        If a dash is provided, then the number is negative
+        '''
+        if dash is not None:
+            number = number * -1
+        return number
+
     def numberToken(token):
         '''
         Convert token value to Python integer
@@ -910,6 +918,7 @@ content = tokenType('VariableContents')
 dash = tokenType('Dash')
 name = tokenType('Name')
 number = tokenType('Number') >> Make.number
+neg_number = maybe(dash) + number >> unarg(Make.neg_number)
 numberToken = tokenTypeOnly('Number') >> Make.numberToken
 percent = tokenType('Percent') >> Make.percent
 plus = tokenType('Plus')
@@ -1025,8 +1034,8 @@ gtrigger_expanded = gtrigger_parts >> unarg(Make.genericTriggerIdent) >> unarg(M
 pixel_start = tokenType('PixelStart')
 pixel_range = (number) + skip(dash) + (number) >> unarg(Make.range) >> Make.pixel_address
 pixel_listElem = number >> listElem >> Make.pixel_address
-pixel_pos = (colRowOperator('c:') | colRowOperator('r:')) + (number | percent) >> Make.pixel_address
-pixel_posRel = (relCROperator('c:i+') | relCROperator('c:i-') | relCROperator('r:i+') | relCROperator('r:i-')) + (number | percent) >> Make.pixel_address
+pixel_pos = (colRowOperator('c:') | colRowOperator('r:')) + (neg_number | percent) >> Make.pixel_address
+pixel_posRel = (relCROperator('c:i+') | relCROperator('c:i-') | relCROperator('r:i+') | relCROperator('r:i-')) + (neg_number | percent) >> Make.pixel_address
 pixel_posRelHere = (relCROperator('c:i') | relCROperator('r:i')) >> Make.pixel_address
 pixel_posMerge = oneplus((pixel_pos | pixel_posRel | pixel_posRelHere) + skip(maybe(comma))) >> flatten >> Make.pixel_address_merge
 pixel_innerList = ((oneplus((pixel_range | pixel_listElem | pixel_posMerge) + skip(maybe(comma))) >> flatten) | (pixel_posMerge)) >> Make.pixel_list
