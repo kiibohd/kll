@@ -1568,8 +1568,15 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     name,
                     aniframeid.index
                 )
-                for elem in aniframedata[0]:
+
+                # XXX (HaaTa) This is a bug, but for now this is ok
+                if len(aniframedata) == 1 and isinstance(aniframedata[0], list):
+                    aniframedata = aniframedata[0]
+                for elem in aniframedata:
                     # TODO Determine widths (possibly do checks at an earlier stage to validate)
+
+                    if isinstance(elem, list):
+                        elem = elem[0]
 
                     # Select pixel address type
                     self.fill_dict['AnimationFrames'] += "\n\t{0},".format(
