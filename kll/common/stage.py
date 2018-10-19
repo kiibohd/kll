@@ -2523,11 +2523,11 @@ class DataAnalysisStage(Stage):
         Using the reduced contexts determine the uids of the rotation triggers used.
         And calculate the size of the rotation (so KLL knowns where the wrap-around occurs)
 
-        Currently only used for Generic Trigger 20
-        T[20,0](0) : <result>;
-        T[20,0](1) : <result>;
-        T[20,0](2) : <result>; # uid 0, range 0..2
-        T[20,3](6) : <result>; # uid 3, range 0..6
+        Currently only used for Generic Trigger 21
+        T[21,0](0) : <result>;
+        T[21,0](1) : <result>;
+        T[21,0](2) : <result>; # uid 0, range 0..2
+        T[21,3](6) : <result>; # uid 3, range 0..6
 
         We don't need to worry about capabilities doing triggers that don't exist.
         Those will be ignored at runtime.
@@ -2541,7 +2541,7 @@ class DataAnalysisStage(Stage):
                     # Get list of ids from expression
                     for identifier in sub_expr.trigger_id_list():
                         # Determine if GenericTrigger
-                        if identifier.type in ['GenericTrigger'] and identifier.idcode == 20:
+                        if identifier.type in ['GenericTrigger'] and identifier.idcode == 21:
                             # If uid not in rotation_map, add it
                             if identifier.uid not in self.rotation_map.keys():
                                 self.rotation_map[identifier.uid] = 0
@@ -2549,7 +2549,7 @@ class DataAnalysisStage(Stage):
                             # If there is no parameter raise an error
                             if len(identifier.parameters) != 1:
                                 self._status = 'Incomplete'
-                                print("{} Rotation trigger must have 1 parameter e.g. T[20,1](3): {}".format(
+                                print("{} Rotation trigger must have 1 parameter e.g. T[21,1](3): {}".format(
                                     ERROR,
                                     elem,
                                 ))

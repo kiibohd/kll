@@ -170,7 +170,7 @@ class HIDId(Id, Schedule):
             if len(schedule) > 0:
                 schedule = "({0})".format(schedule)
 
-            output = 'HID({},{})"{}"{}'.format(self.type, self.locale.name(), self.uid, name, schedule)
+            output = 'HID({},{})"{}"{}{}'.format(self.type, self.locale.name(), self.uid, name, schedule)
             return output
         except:
             print("{} '{}' is an invalid dictionary lookup.".format(

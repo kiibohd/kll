@@ -508,6 +508,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 uid = animation_uid_lookup[identifier.name]
 
                 # Retrieve state
+                # TODO (HaaTa) Cannot use set directly here if using Off state...
                 states = set(identifier.strSchedule())
 
                 # Default to either Repeat or Done
@@ -554,6 +555,20 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 if uid < 256:
                     trigger_type = "TriggerType_LED1"
 
+                    # Check if states are given
+                    states = identifier.strSchedule()
+                    if len(states) > 0:
+                        state_list = []
+                        if 'A' in states:
+                            state_list.append("ScheduleType_A")
+                        if 'On' in states:
+                            state_list.append("ScheduleType_On")
+                        if 'D' in states:
+                            state_list.append("ScheduleType_D")
+                        if 'Off' in states:
+                            state_list.append("ScheduleType_Off")
+                        state = " | ".join(state_list)
+
                 else:
                     no_error = False
 
@@ -587,12 +602,17 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     0x12: 'TriggerType_Resume1',
                     0x13: 'TriggerType_Inactive1',
                     0x14: 'TriggerType_Active1',
+                    0x15: 'TriggerType_Rotation1',
                     0xFF: 'TriggerType_Debug',
                 }
                 if trigger_type in lookup.keys():
                     trigger_type = lookup[trigger_type]
 
                 uid = identifier.uid
+
+                # Rotations use state differently
+                if trigger_type == 'TriggerType_Rotation1':
+                    state = identifier.parameters[0]
 
             # Unknown/Invalid Id
             else:
@@ -701,7 +721,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         # <index>        - Animation id (Animation__<name>)
         a_name = animation_name
         # <pos>          - Frame position
-        a_pos = self.animation_modifier_set(animation, 'frame')
+        a_pos = self.animation_modifier_set(animation, 'pos')
         # <subpos>       - Sub frame position
         a_subpos = 0
         # <loops>        - Number of loops, set to 0 for infinite

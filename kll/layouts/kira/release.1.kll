@@ -23,62 +23,65 @@ Layer[2] : fade_layer_highlight(2);
 
 
 ### Default Animation ###
-#A[default_animation] <= start, loops:1, pfunc:interp, replace:clear;
 A[default_animation] <= start, loops:1, pfunc:interp, replace:clear;
-A[default_animation, 51] <= P[1](0,0,0), P[128](0,0,0);
-A[default_animation, 52] <= P[1](10,10,10), P[128](10,10,10);
-A[default_animation, 53] <= P[1](20,20,20), P[128](20,20,20);
-A[default_animation, 54] <= P[1](30,30,30), P[128](30,30,30);
-A[default_animation, 55] <= P[1](40,40,40), P[128](40,40,40);
-A[default_animation, 56] <= P[1](50,50,50), P[128](50,50,50);
-A[default_animation, 57] <= P[1](60,60,60), P[128](60,60,60);
-A[default_animation, 58] <= P[1](70,70,70), P[128](70,70,70);
-A[default_animation, 59] <= P[1](80,80,80), P[128](80,80,80);
-A[default_animation, 60] <= P[1](90,90,90), P[128](90,90,90);
-A[default_animation, 61] <= P[1](100,100,100), P[128](100,100,100);
-A[default_animation, 62] <= P[1](110,110,110), P[128](110,110,110);
-A[default_animation, 63] <= P[1](120,120,120), P[128](120,120,120);
-A[default_animation, 64] <= P[1](130,130,130), P[128](130,130,130);
-A[default_animation, 65] <= P[1](140,140,140), P[128](140,140,140);
-A[default_animation, 66] <= P[1](150,150,150), P[128](150,150,150);
-A[default_animation, 67] <= P[1](160,160,160), P[128](160,160,160);
-A[default_animation, 68] <= P[1](170,170,170), P[128](170,170,170);
-A[default_animation, 69] <= P[1](180,180,180), P[128](180,180,180);
-A[default_animation, 70] <= P[1](190,190,190), P[128](190,190,190);
-A[default_animation, 71] <= P[1](200,200,200), P[128](200,200,200);
-A[default_animation, 72] <= P[1](210,210,210), P[128](210,210,210);
-A[default_animation, 73] <= P[1](220,220,220), P[128](220,220,220);
-A[default_animation, 74] <= P[1](230,230,230), P[128](230,230,230);
-A[default_animation, 75] <= P[1](240,240,240), P[128](240,240,240);
-A[default_animation, 76] <= P[1](250,250,250), P[128](250,250,250);
-A[default_animation, 77] <= P[1](255,255,255), P[128](255,255,255);
-A[default_animation, 78] <= P[1](255,250,250), P[128](255,250,250);
-A[default_animation, 79] <= P[1](255,240,240), P[128](255,240,240);
-A[default_animation, 80] <= P[1](255,230,230), P[128](255,230,230);
-A[default_animation, 81] <= P[1](255,220,220), P[128](255,220,220);
-A[default_animation, 82] <= P[1](255,210,210), P[128](255,210,210);
-A[default_animation, 83] <= P[1](255,200,200), P[128](255,200,200);
-A[default_animation, 84] <= P[1](255,190,190), P[128](255,190,190);
-A[default_animation, 85] <= P[1](255,180,180), P[128](255,180,180);
-A[default_animation, 86] <= P[1](255,170,170), P[128](255,170,170);
-A[default_animation, 87] <= P[1](255,160,160), P[128](255,160,160);
-A[default_animation, 88] <= P[1](255,150,150), P[128](255,150,150);
-A[default_animation, 89] <= P[1](255,140,140), P[128](255,140,140);
-A[default_animation, 90] <= P[1](255,130,130), P[128](255,130,130);
-A[default_animation, 91] <= P[1](255,120,120), P[128](255,120,120);
-A[default_animation, 92] <= P[1](255,110,110), P[128](255,110,110);
-A[default_animation, 93] <= P[1](255,100,100), P[128](255,100,100);
-A[default_animation, 94] <= P[1](255,90,90), P[128](255,90,90);
-A[default_animation, 95] <= P[1](255,88,80), P[128](255,88,80);
-A[default_animation, 96] <= P[1](255,88,70), P[128](255,88,70);
-A[default_animation, 97] <= P[1](255,88,60), P[128](255,88,60);
-A[default_animation, 98] <= P[1](255,88,50), P[128](255,88,50);
-A[default_animation, 99] <= P[1](255,88,40), P[128](255,88,40);
-A[default_animation, 100] <= P[1](255,88,30), P[128](255,88,30);
-A[default_animation, 101] <= P[1](255,88,20), P[128](255,88,20);
-A[default_animation, 102] <= P[1](255,88,10), P[128](255,88,10);
-A[default_animation, 103] <= P[1](255,88,0), P[128](255,88,0);
-A[default_animation, 103] <= P[126-128](0,0,0); # Indicators
+A[default_animation, 1] <= P[1](0,0,0), P[128](0,0,0);
+A[default_animation, 2] <= P[1](10,10,10), P[128](10,10,10);
+A[default_animation, 3] <= P[1](20,20,20), P[128](20,20,20);
+A[default_animation, 4] <= P[1](30,30,30), P[128](30,30,30);
+A[default_animation, 5] <= P[1](40,40,40), P[128](40,40,40);
+A[default_animation, 6] <= P[1](50,50,50), P[128](50,50,50);
+A[default_animation, 7] <= P[1](60,60,60), P[128](60,60,60);
+A[default_animation, 8] <= P[1](70,70,70), P[128](70,70,70);
+A[default_animation, 9] <= P[1](80,80,80), P[128](80,80,80);
+A[default_animation, 10] <= P[1](90,90,90), P[128](90,90,90);
+A[default_animation, 11] <= P[1](100,100,100), P[128](100,100,100);
+A[default_animation, 12] <= P[1](110,110,110), P[128](110,110,110);
+A[default_animation, 13] <= P[1](120,120,120), P[128](120,120,120);
+A[default_animation, 14] <= P[1](130,130,130), P[128](130,130,130);
+A[default_animation, 15] <= P[1](140,140,140), P[128](140,140,140);
+A[default_animation, 16] <= P[1](150,150,150), P[128](150,150,150);
+A[default_animation, 17] <= P[1](160,160,160), P[128](160,160,160);
+A[default_animation, 18] <= P[1](170,170,170), P[128](170,170,170);
+A[default_animation, 19] <= P[1](180,180,180), P[128](180,180,180);
+A[default_animation, 20] <= P[1](190,190,190), P[128](190,190,190);
+A[default_animation, 21] <= P[1](200,200,200), P[128](200,200,200);
+A[default_animation, 22] <= P[1](210,210,210), P[128](210,210,210);
+A[default_animation, 23] <= P[1](220,220,220), P[128](220,220,220);
+A[default_animation, 24] <= P[1](230,230,230), P[128](230,230,230);
+A[default_animation, 25] <= P[1](240,240,240), P[128](240,240,240);
+A[default_animation, 26] <= P[1](250,250,250), P[128](250,250,250);
+A[default_animation, 27] <= P[1](255,255,255), P[128](255,255,255);
+A[default_animation, 28] <= P[1](255,250,250), P[128](255,250,250);
+A[default_animation, 29] <= P[1](255,240,240), P[128](255,240,240);
+A[default_animation, 30] <= P[1](255,230,230), P[128](255,230,230);
+A[default_animation, 31] <= P[1](255,220,220), P[128](255,220,220);
+A[default_animation, 32] <= P[1](255,210,210), P[128](255,210,210);
+A[default_animation, 33] <= P[1](255,200,200), P[128](255,200,200);
+A[default_animation, 34] <= P[1](255,190,190), P[128](255,190,190);
+A[default_animation, 35] <= P[1](255,180,180), P[128](255,180,180);
+A[default_animation, 36] <= P[1](255,170,170), P[128](255,170,170);
+A[default_animation, 37] <= P[1](255,160,160), P[128](255,160,160);
+A[default_animation, 38] <= P[1](255,150,150), P[128](255,150,150);
+A[default_animation, 39] <= P[1](255,140,140), P[128](255,140,140);
+A[default_animation, 40] <= P[1](255,130,130), P[128](255,130,130);
+A[default_animation, 41] <= P[1](255,120,120), P[128](255,120,120);
+A[default_animation, 42] <= P[1](255,110,110), P[128](255,110,110);
+A[default_animation, 43] <= P[1](255,100,100), P[128](255,100,100);
+A[default_animation, 44] <= P[1](255,90,90), P[128](255,90,90);
+A[default_animation, 45] <= P[1](255,88,80), P[128](255,88,80);
+A[default_animation, 46] <= P[1](255,88,70), P[128](255,88,70);
+A[default_animation, 47] <= P[1](255,88,60), P[128](255,88,60);
+A[default_animation, 48] <= P[1](255,88,50), P[128](255,88,50);
+A[default_animation, 49] <= P[1](255,88,40), P[128](255,88,40);
+A[default_animation, 50] <= P[1](255,88,30), P[128](255,88,30);
+A[default_animation, 51] <= P[1](255,88,20), P[128](255,88,20);
+A[default_animation, 52] <= P[1](255,88,10), P[128](255,88,10);
+A[default_animation, 53] <= P[1](255,88,0), P[128](255,88,0);
+A[default_animation, 53] <= P[126-128](0,0,0); # Indicators
+
+# Test Color (All-White)
+A[all_white] <= loops:1, replace:clear, pfunc:interp;
+A[all_white, 1] <= P[1](255,255,255), P[128](255,255,255);
 
 
 
@@ -360,7 +363,7 @@ A[kira_wave, 65] <= P[c:-3%] (255,80,0), P[c:30%](239,10,129),   P[c:64%](129,10
 
 ### Color-Select Keys ###
 
-A[keys_only_rotation] <= pfunc:interp, replace:all;
+A[keys_only_rotation] <= pfunc:interp, replace:clear;
 A[keys_only_rotation, 1]  <= S1(0xC1, 0x2D, 0x1D), S114(0xC1, 0x2D, 0x1D);
 A[keys_only_rotation, 2]  <= S1(0xEE, 0x6D, 0x28), S114(0xEE, 0x6D, 0x28);
 A[keys_only_rotation, 3]  <= S1(0xE0, 0x9E, 0x3B), S114(0xE0, 0x9E, 0x3B);
@@ -389,7 +392,7 @@ A[keys_only_rotation, 20] <= S1(10,60,255), S114(10,60,255);
 
 ### Color-Select Underglow ###
 
-A[underlighting_only_rotation] <= replace:all;
+A[underlighting_only_rotation] <= replace:clear;
 A[underlighting_only_rotation, 1]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xC1, 0x2D, 0x1D);
 A[underlighting_only_rotation, 2]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xEE, 0x6D, 0x28);
 A[underlighting_only_rotation, 3]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xE0, 0x9E, 0x3B);
@@ -419,16 +422,27 @@ A[underlighting_only_rotation, 20] <= P[18,21,24,27,30,115,118,120,122,113,33,10
 
 ### Indicator Mode ###
 
-A[numlock] <= ;
-A[numlock, 1] <= P[126](255,255,255);
-A[capslock] <= ;
-A[capslock, 1] <= P[126](255,255,255);
-A[scrolllock] <= ;
-A[scrolllock, 1] <= P[126](255,255,255);
+#A[numlock_on] <= loops:1, replace:all;
+#A[numlock_on, 1] <= P[126](155,155,155);
+#A[capslock_on] <= loops:1, replace:all;
+#A[capslock_on, 1] <= P[127](155,155,155);
+#A[scrolllock_on] <= loops:1, replace:all;
+#A[scrolllock_on, 1] <= P[128](155,155,155);
 
-I"NumLock" : A[numlock]();
-I"CapsLock" : A[capslock]();
-I"ScrollLock" : A[scrolllock]();
+#A[numlock_off] <= loops:1, replace:all;
+#A[numlock_off, 1] <= P[126](0,0,0);
+#A[capslock_off] <= loops:1, replace:all;
+#A[capslock_off, 1] <= P[127](0,0,0);
+#A[scrolllock_off] <= loops:1, replace:all;
+#A[scrolllock_off, 1] <= P[128](0,0,0);
+
+#I"NumLock"(On) : A[numlock_on](start);
+#I"CapsLock"(On) : A[capslock_on](start);
+#I"ScrollLock"(On) : A[scrolllock_on](start);
+
+#I"NumLock"(D) : A[numlock_off](start);
+#I"CapsLock"(D) : A[capslock_off](start);
+#I"ScrollLock"(D) : A[scrolllock_off](start);
 
 
 
@@ -492,8 +506,8 @@ KLL_LED_FadeDefaultConfig2[2] = 0;
 KLL_LED_FadeDefaultConfig2[3] = 0;
 ## Active Layer
 KLL_LED_FadeDefaultConfig3 => KLL_LED_FadeDefaultConfig3_define;
-KLL_LED_FadeDefaultConfig3[0] = 5;
-KLL_LED_FadeDefaultConfig3[1] = 5;
-KLL_LED_FadeDefaultConfig3[2] = 5;
-KLL_LED_FadeDefaultConfig3[3] = 5;
+KLL_LED_FadeDefaultConfig3[0] = 4;
+KLL_LED_FadeDefaultConfig3[1] = 4;
+KLL_LED_FadeDefaultConfig3[2] = 4;
+KLL_LED_FadeDefaultConfig3[3] = 4;
 
