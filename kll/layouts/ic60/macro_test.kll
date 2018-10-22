@@ -1,0 +1,11 @@
+# Macro Test
+Name = macro_test;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2018";
+KLL = 0.5;
+
+# Modified Date
+Date = 2018-10-21;
+
+U"LCtrl" + U"LAlt" : Layer[1];
+
