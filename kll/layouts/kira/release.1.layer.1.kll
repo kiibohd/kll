@@ -1,6 +1,6 @@
 # Kira Layer 1 - Control Layer
 Name = "Kira Control Layer";
-Version = 0.1;
+Version = 0.2;
 Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
@@ -23,11 +23,11 @@ U"F12" : storage_control(1); # Save
 # Media Keys
 U"Home"      : U"Volume Down" + CONS"Volume Down"; # Volume Down Key
 U"End"       : U"Volume Up"   + CONS"Volume Up";   # Volume Up Key
-U"Page Up"   : U"Mute"        + CONS"Mute";        # Mute Key
-U"Page Down" :                  CONS"Pause Play";  # Play Key
+U"Page Up"   :                  CONS"Pause Play";  # Play Key
+U"Page Down" : U"Mute"        + CONS"Mute";        # Mute Key
 
-U"NumLock"         : CONS"Scan Next Track";
-U"Keypad Slash"    : CONS"Scan Previous Track";
+U"NumLock"         : CONS"Scan Previous Track";
+U"Keypad Slash"    : CONS"Scan Next Track";
 U"Keypad Asterisk" : CONS"Rewind";
 U"Keypad Minus"    : CONS"Fast Forward";
 
