@@ -361,6 +361,7 @@ class TriggerId(Id, Schedule):
         '''
         output = Id.json(self)
         output.update(Schedule.json(self))
+        output['idcode'] = self.idcode
         return output
 
     def kllify(self):
