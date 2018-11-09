@@ -9,7 +9,8 @@ Date = 2018-10-13;
 
 
 
-# Mapping
+### Mapping ###
+
 U"Esc" : flashMode();
 U"F1"  : toggleKbdProtocol(); # 6KRO/NKRO
 U"F2"  : kbdProtocolBoot();   # 6KRO

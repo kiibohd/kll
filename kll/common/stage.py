@@ -2340,6 +2340,15 @@ class DataAnalysisStage(Stage):
             if self.data_analysis_debug:
                 print(layer.organization.mapping_data)
 
+    def generate_unique_schedules(self):
+        '''
+        For each trigger and result of each reduced expression
+        build a list of unique schedules.
+        This is used to build a unique list of schedules that can be reused by firmware
+        rather than storing schedule duplicates.
+        '''
+        pass
+
     def generate_mapping_indices(self):
         '''
         For each trigger:result pair generate a unique index

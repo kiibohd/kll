@@ -433,7 +433,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             # TODO Add support for non-press states
             uid = identifier.get_uid()
             trigger_type = "/* XXX INVALID TYPE XXX */"
-            state = "ScheduleType_P"
+            state = "ScheduleType_Gen"
             no_error = False
 
             # ScanCodeId
