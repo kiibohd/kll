@@ -12,10 +12,6 @@ I0x002 : testThreadSafe(); # I"CapsLock" : testThreadSafe(); # :0 HID(IndCode,de
 I0x003 : testThreadSafe(); # I"ScrollLock" : testThreadSafe(); # :0 HID(IndCode,default)"3"Scroll Lock[0]
 I0x004 : testThreadSafe(); # I"Compose" : testThreadSafe(); # :0 HID(IndCode,default)"4"Compose[0]
 I0x005 : testThreadSafe(); # I"Kana" : testThreadSafe(); # :0 HID(IndCode,default)"5"Kana[0]
-LayerLatch[1] : testThreadSafe(); # LayerLatch[1] : testThreadSafe(); # :0 LayerLatch[1][0]
-LayerLock[1] : testThreadSafe(); # LayerLock[1] : testThreadSafe(); # :0 LayerLock[1][0]
-LayerShift[1] : testThreadUnsafe(); # LayerShift[1] : testThreadUnsafe(); # :0 LayerShift[1][0]
-Layer[1] : testThreadSafe(); # Layer[1] : testThreadSafe(); # :0 Layer[1][0]
 U0x004 + U0x005 : U0x006; # U"A" + U"B" : U"C"; # :0 HID(USBCode,default)"4"A + 0 HID(USBCode,default)"5"B[0]
 U0x006, U0x004, U0x005 : U0x007; # 'cab' : U"D"; # :0 HID(USBCode,default)"6"C, 0 HID(USBCode,default)"4"A, 0 HID(USBCode,default)"5"B[0]
 U0x008, U0x009 : U0x00a; # U"E", U"F" : U"G"; # :0 HID(USBCode,default)"8"E, 0 HID(USBCode,default)"9"F[0]
@@ -46,5 +42,5 @@ Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"
 Date = 2018-04-21; # Date = 2018-04-21; # Date
 KLL = 0.5; # KLL = 0.5; # KLL
 Name = klltest; # Name = klltest; # Name
-Version = 0.3; # Version = 0.3; # Version
+Version = 0.4; # Version = 0.4; # Version
 

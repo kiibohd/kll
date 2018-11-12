@@ -28,6 +28,7 @@ test_files = [
     'kll/examples/state_scheduling.kll',
     'kll/layouts/mouseTest.kll',
     'kll/layouts/klltest.kll',
+    'kll/layouts/klltest_default.kll',
     'kll/examples/triggers.kll',
 ]
 

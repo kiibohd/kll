@@ -1,0 +1,26 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+
+# DefineData
+
+# MappingData
+LayerLatch[1] : testThreadSafe(); # LayerLatch[1] : testThreadSafe(); # :0 LayerLatch[1][0]
+LayerLock[1] : testThreadSafe(); # LayerLock[1] : testThreadSafe(); # :0 LayerLock[1][0]
+LayerShift[1] : testThreadUnsafe(); # LayerShift[1] : testThreadUnsafe(); # :0 LayerShift[1][0]
+Layer[1] : testThreadSafe(); # Layer[1] : testThreadSafe(); # :0 Layer[1][0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"; # Author
+KLL = 0.5; # KLL = 0.5; # KLL
+Name = klltest_default; # Name = klltest_default; # Name
+Version = 0.4; # Version = 0.4; # Version
+
