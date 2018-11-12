@@ -1,7 +1,6 @@
 # travis-ci integration for the kll compiler
 
-sudo:
-  - false
+dist: xenial
 
 os:
   - linux
