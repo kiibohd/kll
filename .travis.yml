@@ -12,7 +12,8 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-  - "3.7-dev"
+  - "3.7"
+  - "3.8-dev"
   - "nightly"
 
 env:
@@ -22,7 +23,7 @@ env:
 # Exclusions
 matrix:
   allow_failures:
-    - python: "3.7-dev"
+    - python: "3.8-dev"
     - python: "nightly"
 
 # System setup
@@ -31,8 +32,9 @@ install:
   - uname -a
 
   # Prepare pipenv
-  - pip install --upgrade pip
-  - pip install pipenv flit
+  # XXX (pip and pipenv pinning will have to be removed to support Python 3.8)
+  - pip install --upgrade pip==18.0
+  - pip install pipenv==2018.10.9 flit pip==18.0
   - pipenv install -d
 
 # Run test script(s)
