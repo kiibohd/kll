@@ -55,8 +55,8 @@ U"T" : U"LANG4"; # Hiragana
 U"Y" : U"LANG5"; # Zenkaku Hankaku
 U"U" : U"LANG6"; # LANG6
 U"O" : U"LANG7"; # LANG7
-U"P" : U"LANG8"; # LANG8
-U"Left Bracket" : U"LANG9"; # LANG9
+U"Left Bracket" : U"LANG8"; # LANG8
+U"Right Bracket" : U"LANG9"; # LANG9
 
 # Other Keys
 U"A" : U"App";

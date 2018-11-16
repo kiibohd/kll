@@ -1,19 +1,19 @@
 # Gemini Dusk Dawn Layer 2 - Animation Layer
 Name = "Gemini Dusk Dawn Control Layer";
-Version = 0.1;
+Version = 0.2;
 Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2018-11-07;
+Date = 2018-11-16;
 
 
 
 ### General Animation Control ###
 
 U"Esc"       : animation_control(4); # Animations reset
-U"Equals"    : ledControl(0, 15); # Increase brightness
-U"Minus"     : ledControl(1, 15); # Decrease brightness
+U"Equals"    : ledControl(1, 15); # Increase brightness
+U"Minus"     : ledControl(0, 15); # Decrease brightness
 U"Insert"    : ledControl(4, 255); # Turn on animations (LEDs)
 U"Delete"    : ledControl(3, 255); # Turn off animations (LEDs)
 U"Home"      : animation_control(2); # Animation start (Forward)
@@ -21,7 +21,7 @@ U"End"       : animation_control(3); # Animation stop
 U"Page Up"   : ledControl(7, 1); # Animation Speed Increase (overall)
 U"Page Down" : ledControl(8, 1); # Animation Speed Decrease (overall)
 
-U"Backspace" : A[test_animation](start);
+U"Backspace" : A[test_animation]();
 
 
 
@@ -89,42 +89,31 @@ T[21,1](20) : A[underlighting_only_rotation](single, pos:20);
 
 # Keys
 U"F3" : rotate(2, 1);
-T[21,2](0) : fade_set(0, 0, 0) + fade_set(0, 1, 0) + fade_set(0, 2, 0) + fade_set(0, 3, 0);
-T[21,2](1) : fade_set(0, 0, 7) + fade_set(0, 1, 5) + fade_set(0, 2, 7) + fade_set(0, 3, 0);
-T[21,2](2) : fade_set(0, 0, 13) + fade_set(0, 1, 5) + fade_set(0, 2, 13) + fade_set(0, 3, 0);
-T[21,2](3) : fade_set(0, 0, 12) + fade_set(0, 1, 5) + fade_set(0, 2, 12) + fade_set(0, 3, 0);
-T[21,2](4) : fade_set(0, 0, 11) + fade_set(0, 1, 4) + fade_set(0, 2, 11) + fade_set(0, 3, 0);
-T[21,2](5) : fade_set(0, 0, 10) + fade_set(0, 1, 3) + fade_set(0, 2, 10) + fade_set(0, 3, 0);
-T[21,2](6) : fade_set(0, 0, 5) + fade_set(0, 1, 0) + fade_set(0, 2, 7) + fade_set(0, 3, 0);
-T[21,2](7) : fade_set(0, 0, 4) + fade_set(0, 1, 0) + fade_set(0, 2, 6) + fade_set(0, 3, 0);
-T[21,2](8) : fade_set(0, 0, 3) + fade_set(0, 1, 0) + fade_set(0, 2, 3) + fade_set(0, 3, 0);
-T[21,2](9) : fade_set(0, 0, 2) + fade_set(0, 1, 0) + fade_set(0, 2, 2) + fade_set(0, 3, 0);
-T[21,2](10) : fade_set(0, 0, 1) + fade_set(0, 1, 0) + fade_set(0, 2, 1) + fade_set(0, 3, 0);
+T[21,2](0) : fade_set(0, 0, 7) + fade_set(0, 1, 5) + fade_set(0, 2, 7) + fade_set(0, 3, 0);
+T[21,2](1) : fade_set(0, 0, 13) + fade_set(0, 1, 5) + fade_set(0, 2, 13) + fade_set(0, 3, 0);
+T[21,2](2) : fade_set(0, 0, 12) + fade_set(0, 1, 5) + fade_set(0, 2, 12) + fade_set(0, 3, 0);
+T[21,2](3) : fade_set(0, 0, 11) + fade_set(0, 1, 4) + fade_set(0, 2, 11) + fade_set(0, 3, 0);
+T[21,2](4) : fade_set(0, 0, 10) + fade_set(0, 1, 3) + fade_set(0, 2, 10) + fade_set(0, 3, 0);
+T[21,2](5) : fade_set(0, 0, 5) + fade_set(0, 1, 0) + fade_set(0, 2, 7) + fade_set(0, 3, 0);
+T[21,2](6) : fade_set(0, 0, 4) + fade_set(0, 1, 0) + fade_set(0, 2, 6) + fade_set(0, 3, 0);
+T[21,2](7) : fade_set(0, 0, 3) + fade_set(0, 1, 0) + fade_set(0, 2, 3) + fade_set(0, 3, 0);
+T[21,2](8) : fade_set(0, 0, 2) + fade_set(0, 1, 0) + fade_set(0, 2, 2) + fade_set(0, 3, 0);
+T[21,2](9) : fade_set(0, 0, 1) + fade_set(0, 1, 0) + fade_set(0, 2, 1) + fade_set(0, 3, 0);
+T[21,2](10) : fade_set(0, 0, 0) + fade_set(0, 1, 0) + fade_set(0, 2, 0) + fade_set(0, 3, 0);
 
 # Underlighting
 U"F4" : rotate(3, 1);
-T[21,3](0)  : fade_set(1, 0, 0)  + fade_set(1, 1, 0) + fade_set(1, 2, 0)  + fade_set(1, 3, 0);
-T[21,3](1)  : fade_set(1, 0, 7)  + fade_set(1, 1, 5) + fade_set(1, 2, 7)  + fade_set(1, 3, 0);
-T[21,3](2)  : fade_set(1, 0, 13) + fade_set(1, 1, 5) + fade_set(1, 2, 13) + fade_set(1, 3, 0);
-T[21,3](3)  : fade_set(1, 0, 12) + fade_set(1, 1, 5) + fade_set(1, 2, 12) + fade_set(1, 3, 0);
-T[21,3](4)  : fade_set(1, 0, 11) + fade_set(1, 1, 4) + fade_set(1, 2, 11) + fade_set(1, 3, 0);
-T[21,3](5)  : fade_set(1, 0, 10) + fade_set(1, 1, 3) + fade_set(1, 2, 10) + fade_set(1, 3, 0);
-T[21,3](6)  : fade_set(1, 0, 5)  + fade_set(1, 1, 0) + fade_set(1, 2, 7)  + fade_set(1, 3, 0);
-T[21,3](7)  : fade_set(1, 0, 4)  + fade_set(1, 1, 0) + fade_set(1, 2, 6)  + fade_set(1, 3, 0);
-T[21,3](8)  : fade_set(1, 0, 3)  + fade_set(1, 1, 0) + fade_set(1, 2, 3)  + fade_set(1, 3, 0);
-T[21,3](9)  : fade_set(1, 0, 2)  + fade_set(1, 1, 0) + fade_set(1, 2, 2)  + fade_set(1, 3, 0);
-T[21,3](10) : fade_set(1, 0, 1)  + fade_set(1, 1, 0) + fade_set(1, 2, 1)  + fade_set(1, 3, 0);
-
-# Indicators
-U"F5" : rotate(4, 1);
-T[21,4](0) : fade_set(2, 0, 4) + fade_set(2, 1, 2) + fade_set(2, 2, 4) + fade_set(2, 3, 0);
-T[21,4](1) : fade_set(2, 0, 0) + fade_set(2, 1, 0) + fade_set(2, 2, 0) + fade_set(2, 3, 0);
-T[21,4](2) : fade_set(2, 0, 5) + fade_set(2, 1, 3) + fade_set(2, 2, 5) + fade_set(2, 3, 0);
-T[21,4](3) : fade_set(2, 0, 6) + fade_set(2, 1, 4) + fade_set(2, 2, 6) + fade_set(2, 3, 0);
-T[21,4](4) : fade_set(2, 0, 7) + fade_set(2, 1, 5) + fade_set(2, 2, 7) + fade_set(2, 3, 0);
-T[21,4](5) : fade_set(2, 0, 11) + fade_set(2, 1, 0) + fade_set(2, 2, 11) + fade_set(2, 3, 0);
-T[21,4](6) : fade_set(2, 0, 3) + fade_set(2, 1, 0) + fade_set(2, 2, 6) + fade_set(2, 3, 0);
-T[21,4](7) : fade_set(2, 0, 5) + fade_set(2, 1, 0) + fade_set(2, 2, 7) + fade_set(2, 3, 0);
+T[21,3](0)  : fade_set(1, 0, 7)  + fade_set(1, 1, 5) + fade_set(1, 2, 7)  + fade_set(1, 3, 0);
+T[21,3](1)  : fade_set(1, 0, 13) + fade_set(1, 1, 5) + fade_set(1, 2, 13) + fade_set(1, 3, 0);
+T[21,3](2)  : fade_set(1, 0, 12) + fade_set(1, 1, 5) + fade_set(1, 2, 12) + fade_set(1, 3, 0);
+T[21,3](3)  : fade_set(1, 0, 11) + fade_set(1, 1, 4) + fade_set(1, 2, 11) + fade_set(1, 3, 0);
+T[21,3](4)  : fade_set(1, 0, 10) + fade_set(1, 1, 3) + fade_set(1, 2, 10) + fade_set(1, 3, 0);
+T[21,3](5)  : fade_set(1, 0, 5)  + fade_set(1, 1, 0) + fade_set(1, 2, 7)  + fade_set(1, 3, 0);
+T[21,3](6)  : fade_set(1, 0, 4)  + fade_set(1, 1, 0) + fade_set(1, 2, 6)  + fade_set(1, 3, 0);
+T[21,3](7)  : fade_set(1, 0, 3)  + fade_set(1, 1, 0) + fade_set(1, 2, 3)  + fade_set(1, 3, 0);
+T[21,3](8)  : fade_set(1, 0, 2)  + fade_set(1, 1, 0) + fade_set(1, 2, 2)  + fade_set(1, 3, 0);
+T[21,3](9)  : fade_set(1, 0, 1)  + fade_set(1, 1, 0) + fade_set(1, 2, 1)  + fade_set(1, 3, 0);
+T[21,3](10) : fade_set(1, 0, 0)  + fade_set(1, 1, 0) + fade_set(1, 2, 0)  + fade_set(1, 3, 0);
 
 # Layer
 U"F6" : rotate(5, 1);

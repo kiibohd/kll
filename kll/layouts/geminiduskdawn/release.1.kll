@@ -485,15 +485,15 @@ KLL_LED_FadePeriod[15] = "{ .start = 10, .end = 11 }";
 # 3) Off
 ## Keys
 KLL_LED_FadeDefaultConfig0 => KLL_LED_FadeDefaultConfig0_define;
-KLL_LED_FadeDefaultConfig0[0] = 7;
-KLL_LED_FadeDefaultConfig0[1] = 5;
-KLL_LED_FadeDefaultConfig0[2] = 7;
+KLL_LED_FadeDefaultConfig0[0] = 0;
+KLL_LED_FadeDefaultConfig0[1] = 0;
+KLL_LED_FadeDefaultConfig0[2] = 0;
 KLL_LED_FadeDefaultConfig0[3] = 0;
 ## Underlighting
 KLL_LED_FadeDefaultConfig1 => KLL_LED_FadeDefaultConfig1_define;
-KLL_LED_FadeDefaultConfig1[0] = 7;
-KLL_LED_FadeDefaultConfig1[1] = 5;
-KLL_LED_FadeDefaultConfig1[2] = 7;
+KLL_LED_FadeDefaultConfig1[0] = 0;
+KLL_LED_FadeDefaultConfig1[1] = 0;
+KLL_LED_FadeDefaultConfig1[2] = 0;
 KLL_LED_FadeDefaultConfig1[3] = 0;
 ## Indicators
 KLL_LED_FadeDefaultConfig2 => KLL_LED_FadeDefaultConfig2_define;
