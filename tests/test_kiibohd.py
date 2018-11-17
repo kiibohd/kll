@@ -29,7 +29,7 @@ def test_kiibohd_simple(kiibohd_controller_repo):
     # Run test
     args = [
         '--config',
-        os.path.join(controller, 'Scan/Devices/MatrixARM/capabilities.kll'),
+        os.path.join(controller, 'Scan/Devices/MatrixARMPeriodic/capabilities.kll'),
         os.path.join(controller, 'Macro/PartialMap/capabilities.kll'),
         os.path.join(controller, 'Output/USB/capabilities.kll'),
         '--base',
@@ -64,7 +64,7 @@ def test_kiibohd_func1(kiibohd_controller_repo):
     args = [
         '--config',
         os.path.join(controller, 'Scan/Devices/ISSILed/capabilities.kll'),
-        os.path.join(controller, 'Scan/Devices/MatrixARM/capabilities.kll'),
+        os.path.join(controller, 'Scan/Devices/MatrixARMPeriodic/capabilities.kll'),
         os.path.join(controller, 'Macro/PartialMap/capabilities.kll'),
         os.path.join(controller, 'Macro/PixelMap/capabilities.kll'),
         os.path.join(controller, 'Output/HID-IO/capabilities.kll'),
@@ -105,7 +105,7 @@ def test_kiibohd_add(kiibohd_controller_repo):
     args = [
         '--config',
         os.path.join(controller, 'Scan/Devices/ISSILed/capabilities.kll'),
-        os.path.join(controller, 'Scan/Devices/MatrixARM/capabilities.kll'),
+        os.path.join(controller, 'Scan/Devices/MatrixARMPeriodic/capabilities.kll'),
         os.path.join(controller, 'Scan/Devices/PortSwap/capabilities.kll'),
         os.path.join(controller, 'Scan/Devices/UARTConnect/capabilities.kll'),
         os.path.join(controller, 'Macro/PartialMap/capabilities.kll'),
@@ -151,7 +151,7 @@ def test_kiibohd_interconnect(kiibohd_controller_repo):
     args = [
         '--config',
         os.path.join(controller, 'Scan/Devices/ISSILed/capabilities.kll'),
-        os.path.join(controller, 'Scan/Devices/MatrixARM/capabilities.kll'),
+        os.path.join(controller, 'Scan/Devices/MatrixARMPeriodic/capabilities.kll'),
         os.path.join(controller, 'Scan/Devices/STLcd/capabilities.kll'),
         os.path.join(controller, 'Scan/Devices/UARTConnect/capabilities.kll'),
         os.path.join(controller, 'Macro/PartialMap/capabilities.kll'),
@@ -199,7 +199,7 @@ def test_kiibohd_klltest1(kiibohd_controller_repo):
     # Run test
     args = [
         '--config',
-        os.path.join(controller, 'Scan/Devices/MatrixARM/capabilities.kll'),
+        os.path.join(controller, 'Scan/Devices/MatrixARMPeriodic/capabilities.kll'),
         os.path.join(controller, 'Macro/PartialMap/capabilities.kll'),
         os.path.join(controller, 'Output/USB/capabilities.kll'),
         '--base',
@@ -228,7 +228,7 @@ def test_kiibohd_klltest2(kiibohd_controller_repo):
     # Run test
     args = [
         '--config',
-        os.path.join(controller, 'Scan/Devices/MatrixARM/capabilities.kll'),
+        os.path.join(controller, 'Scan/Devices/MatrixARMPeriodic/capabilities.kll'),
         os.path.join(controller, 'Macro/PartialMap/capabilities.kll'),
         os.path.join(controller, 'Output/USB/capabilities.kll'),
         '--base',
