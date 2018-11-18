@@ -1,11 +1,11 @@
 # Kira Release Animations and Default Map
 Name = Kira;
-Version = 0.2;
+Version = 0.3;
 Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2018-10-13;
+Date = 2018-11-18;
 
 
 
@@ -79,9 +79,12 @@ A[default_animation, 52] <= P[1](255,88,10), P[128](255,88,10);
 A[default_animation, 53] <= P[1](255,88,0), P[128](255,88,0);
 A[default_animation, 53] <= P[126-128](0,0,0); # Indicators
 
-# Test Color (All-White)
-A[all_white] <= loops:1, replace:clear, pfunc:interp;
-A[all_white, 1] <= P[1](255,255,255), P[128](255,255,255);
+# Test animation (White, Red, Green, Blue)
+A[test_animation] <= loop, replace:clear, pfunc:interp, framedelay:255;
+A[test_animation, 1] <= P[1](255,255,255), P[128](255,255,255);
+A[test_animation, 2] <= P[1](255,0,0), P[128](255,0,0);
+A[test_animation, 3] <= P[1](0,255,0), P[128](0,255,0);
+A[test_animation, 4] <= P[1](0,0,255), P[128](0,0,255);
 
 
 

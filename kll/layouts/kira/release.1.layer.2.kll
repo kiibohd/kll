@@ -1,11 +1,11 @@
 # Kira Layer 2 - Animation Layer
 Name = "Kira Control Layer";
-Version = 0.1;
+Version = 0.2;
 Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2018-11-08;
+Date = 2018-11-18;
 
 
 
@@ -21,7 +21,7 @@ U"End"       : animation_control(3); # Animation stop
 U"Page Up"   : ledControl(7, 1); # Animation Speed Increase (overall)
 U"Page Down" : ledControl(8, 1); # Animation Speed Decrease (overall)
 
-U"Keypad Enter" : A[all_white](single);
+U"Keypad Enter" : A[test_animation](single);
 
 
 
