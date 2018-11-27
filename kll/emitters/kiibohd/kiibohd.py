@@ -1264,11 +1264,20 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         if rotation_map.keys():
             max_rotations = max(rotation_map.keys())
         self.fill_dict['RotationParameters'] = 'const uint8_t Rotation_MaxParameter[] = {\n'
+        cur_rotation = 0
         for key, entry in sorted(rotation_map.items()):
+            # Make sure that we also fill in 0 for any non-existent rotations
+            while cur_rotation != key:
+                self.fill_dict['RotationParameters'] += '\t{}, // {}\n'.format(
+                    0,
+                    cur_rotation,
+                )
+                cur_rotation += 1
             self.fill_dict['RotationParameters'] += '\t{}, // {}\n'.format(
                 entry,
                 key,
             )
+            cur_rotation += 1
         self.fill_dict['RotationParameters'] += '};'
 
         ## Pixel Buffer Setup ##
