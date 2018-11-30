@@ -1,11 +1,11 @@
 # Gemini Dusk Dawn Layer 2 - Animation Layer
 Name = "Gemini Dusk Dawn Control Layer";
-Version = 0.2;
+Version = 0.3;
 Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2018-11-16;
+Date = 2018-11-29;
 
 
 
@@ -16,8 +16,8 @@ U"Equals"    : ledControl(1, 15); # Increase brightness
 U"Minus"     : ledControl(0, 15); # Decrease brightness
 U"Insert"    : ledControl(4, 255); # Turn on animations (LEDs)
 U"Delete"    : ledControl(3, 255); # Turn off animations (LEDs)
-U"Home"      : animation_control(2); # Animation start (Forward)
-U"End"       : animation_control(3); # Animation stop
+U"Home"      : animation_control(2); # Animation play (Forward)
+U"End"       : animation_control(6); # Animation pause
 U"Page Up"   : ledControl(7, 1); # Animation Speed Increase (overall)
 U"Page Down" : ledControl(8, 1); # Animation Speed Decrease (overall)
 
