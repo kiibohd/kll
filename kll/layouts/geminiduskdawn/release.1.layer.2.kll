@@ -21,7 +21,7 @@ U"End"       : animation_control(6); # Animation pause
 U"Page Up"   : ledControl(7, 1); # Animation Speed Increase (overall)
 U"Page Down" : ledControl(8, 1); # Animation Speed Decrease (overall)
 
-U"Backspace" : A[test_animation]();
+U"Backspace" : A[test_animation](start);
 
 
 
