@@ -22,6 +22,7 @@ KLL Kiibohd .h/.c File Emitter
 
 import os
 import sys
+import math
 
 from datetime import date
 
@@ -783,6 +784,11 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             a_state,
         )
 
+    def generateGammaTable(self, gamma=2.2):
+        max_in = 255
+        max_out = 255
+        return [round(math.pow(i/max_in, gamma) * max_out) for i in range(0,max_in+1) ]
+
     def process(self):
         '''
         Emitter Processing
@@ -1475,6 +1481,11 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 self.fill_dict['PixelDisplayMapping'] += \
                         ",".join("{0: >3}".format(x) for x in y_list) + ",\n"
             self.fill_dict['PixelDisplayMapping'] += "};"
+
+            gamma = float(variables.data['LEDGamma'].value) if 'LEDGamma' in variables.data else 1.0
+            self.fill_dict['GammaTable'] = "const uint8_t gamma_table[] = {\n" \
+                                            + ", ".join([str(i) for i in self.generateGammaTable(gamma)]) \
+                                            + "\n}; "
 
             ## Animations ##
             # TODO - Use reduced_contexts and generate per-layer (naming gets tricky)

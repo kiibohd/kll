@@ -29,6 +29,9 @@
 #include <pixel.h>
 
 
+// Gamma Correction Table
+<|GammaTable|>
+
 
 // LED Buffer Struct
 <|LEDBufferStruct|>
