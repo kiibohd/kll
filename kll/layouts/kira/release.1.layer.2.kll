@@ -20,6 +20,7 @@ U"Home"      : animation_control(2); # Animation play (Forward)
 U"End"       : animation_control(6); # Animation pause
 U"Page Up"   : ledControl(7, 1); # Animation Speed Increase (overall)
 U"Page Down" : ledControl(8, 1); # Animation Speed Decrease (overall)
+U"NumLock"   : gamma(2) # Toggle gamma correction
 
 U"Keypad Enter" : A[test_animation](start);
 
