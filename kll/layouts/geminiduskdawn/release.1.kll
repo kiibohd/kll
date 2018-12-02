@@ -360,7 +360,7 @@ A[kira_wave, 65] <= P[c:-3%] (255,80,0), P[c:30%](239,10,129),   P[c:64%](129,10
 
 ### Color-Select Keys ###
 
-A[keys_only_rotation] <= pfunc:interp, replace:clear;
+A[keys_only_rotation] <= pfunc:interp, replace:clear, single;
 A[keys_only_rotation, 1]  <= S1(0xC1, 0x2D, 0x1D), S114(0xC1, 0x2D, 0x1D);
 A[keys_only_rotation, 2]  <= S1(0xEE, 0x6D, 0x28), S114(0xEE, 0x6D, 0x28);
 A[keys_only_rotation, 3]  <= S1(0xE0, 0x9E, 0x3B), S114(0xE0, 0x9E, 0x3B);
@@ -389,7 +389,7 @@ A[keys_only_rotation, 20] <= S1(10,60,255), S114(10,60,255);
 
 ### Color-Select Underglow ###
 
-A[underlighting_only_rotation] <= replace:clear;
+A[underlighting_only_rotation] <= replace:clear, single;
 A[underlighting_only_rotation, 1]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xC1, 0x2D, 0x1D);
 A[underlighting_only_rotation, 2]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xEE, 0x6D, 0x28);
 A[underlighting_only_rotation, 3]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xE0, 0x9E, 0x3B);

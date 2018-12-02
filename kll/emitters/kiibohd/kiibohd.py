@@ -785,6 +785,13 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         )
 
     def generateGammaTable(self, gamma=2.2):
+        '''
+        Generate an 8-bit gamma table
+
+        Based off of a suggestion: https://github.com/kiibohd/controller/issues/255
+
+        TODO (HaaTa): Handle non-8bit as well
+        '''
         max_in = 255
         max_out = 255
         return [round(math.pow(i/max_in, gamma) * max_out) for i in range(0,max_in+1) ]
@@ -1482,10 +1489,11 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                         ",".join("{0: >3}".format(x) for x in y_list) + ",\n"
             self.fill_dict['PixelDisplayMapping'] += "};"
 
+            ## Gamma Table Generation ##
             gamma = float(variables.data['LEDGamma'].value) if 'LEDGamma' in variables.data else 1.0
             self.fill_dict['GammaTable'] = "const uint8_t gamma_table[] = {\n" \
                                             + ", ".join([str(i) for i in self.generateGammaTable(gamma)]) \
-                                            + "\n}; "
+                                            + "\n};"
 
             ## Animations ##
             # TODO - Use reduced_contexts and generate per-layer (naming gets tricky)
