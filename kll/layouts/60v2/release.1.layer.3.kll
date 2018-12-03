@@ -1,0 +1,48 @@
+# 60v2 Layer 3 - Animation Layer
+Name = "60v2 Control Layer";
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2018";
+KLL = 0.5;
+
+# Modified Date
+Date = 2018-12-02;
+
+
+
+# International Keys
+U"1" : U"International1"; # Kanji1
+U"2" : U"International2"; # Kana
+U"3" : U"International3"; # Yen
+U"4" : U"International4"; # Henkan
+U"5" : U"International5"; # Muhenkan
+U"6" : U"International6"; # Kanji6
+U"7" : U"International7"; # Byte Toggle
+U"8" : U"International8"; # Kanji8
+U"9" : U"International9"; # Kanji9
+
+U"Q" : U"LANG1"; # Hangul / English
+U"W" : U"LANG2"; # Hanja, Eisu
+U"R" : U"LANG3"; # Katakana
+U"T" : U"LANG4"; # Hiragana
+U"Y" : U"LANG5"; # Zenkaku Hankaku
+U"U" : U"LANG6"; # LANG6
+U"O" : U"LANG7"; # LANG7
+U"Left Bracket" : U"LANG8"; # LANG8
+U"Right Bracket" : U"LANG9"; # LANG9
+
+# Non-volatile control
+U"J" : storage_control(2); # Defaults
+U"K" : storage_control(0); # Load
+U"L" : storage_control(1); # Save
+
+# Other Keys
+U"A" : U"App";
+U"C" : CONS"Calculator";
+U"E" : CONS"Eject";
+U"F" : CONS"File Browser";
+U"I" : CONS"Internet Browser";
+U"M" : U"Menu";
+U"P" : U"Pause";
+U"S" : U"ScrollLock";
+U"Z" : U"ISO Slash";
+

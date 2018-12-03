@@ -1,0 +1,118 @@
+# 60v2 Release Animations and Default Map
+Name = 60v2;
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2014-2018";
+KLL = 0.5;
+
+# Modified Date
+Date = 2018-12-02;
+
+
+
+### Layer Fade Updates ###
+
+Layer[1] : fade_layer_highlight(1);
+Layer[2] : fade_layer_highlight(2);
+Layer[3] : fade_layer_highlight(3);
+
+
+### Default Animation ###
+
+A[all_on] <= start, loops:1, pfunc:interp, replace:clear;
+A[all_on, 1] <= P[1](255), P[70](255);
+
+# Test animation (On)
+A[test_animation] <= loop, replace:clear, pfunc:interp, framedelay:255;
+A[test_animation, 1] <= P[1](255,255,255), P[70](255,255,255);
+
+
+
+### Wave Animations ###
+
+# Wave
+A[wave] <= framedelay:3, framestretch, loop, replace:clear, pfunc:interp;
+# On, Off, On, Off
+A[wave, 1]  <=                       P[c:0%] (255),   P[c:33%](0), P[c:66%](255),   P[c:100%](0);
+A[wave, 2]  <= P[c:-31%](0), P[c:2%] (255),   P[c:36%](0), P[c:68%](255),   P[c:102%](0);
+A[wave, 3]  <= P[c:-29%](0), P[c:4%] (255),   P[c:38%](0), P[c:70%](255),   P[c:104%](0);
+A[wave, 4]  <= P[c:-27%](0), P[c:6%] (255),   P[c:40%](0), P[c:72%](255),   P[c:106%](0);
+A[wave, 5]  <= P[c:-25%](0), P[c:8%] (255),   P[c:42%](0), P[c:74%](255),   P[c:108%](0);
+A[wave, 6]  <= P[c:-23%](0), P[c:10%](255),   P[c:44%](0), P[c:76%](255),   P[c:110%](0);
+A[wave, 7]  <= P[c:-21%](0), P[c:12%](255),   P[c:46%](0), P[c:78%](255),   P[c:112%](0);
+A[wave, 8]  <= P[c:-19%](0), P[c:14%](255),   P[c:48%](0), P[c:80%](255),   P[c:114%](0);
+A[wave, 9]  <= P[c:-17%](0), P[c:16%](255),   P[c:50%](0), P[c:82%](255),   P[c:116%](0);
+A[wave, 10] <= P[c:-15%](0), P[c:18%](255),   P[c:52%](0), P[c:84%](255),   P[c:118%](0);
+A[wave, 11] <= P[c:-13%](0), P[c:20%](255),   P[c:54%](0), P[c:86%](255),   P[c:120%](0);
+A[wave, 12] <= P[c:-11%](0), P[c:22%](255),   P[c:56%](0), P[c:88%](255),   P[c:122%](0);
+A[wave, 13] <= P[c:-9%] (0), P[c:24%](255),   P[c:58%](0), P[c:90%](255),   P[c:124%](0);
+A[wave, 14] <= P[c:-7%] (0), P[c:26%](255),   P[c:60%](0), P[c:92%](255),   P[c:126%](0);
+A[wave, 15] <= P[c:-5%] (0), P[c:28%](255),   P[c:62%](0), P[c:94%](255),   P[c:128%](0);
+A[wave, 16] <= P[c:-3%] (0), P[c:30%](255),   P[c:64%](0), P[c:96%](255),   P[c:130%](0);
+
+
+
+### Fade Configuration ###
+
+# Fade Period
+# .start and .end must be between 0 and 15
+# .start == (1 << start) - 1
+# .end   == (1 << end)
+# This means incrementing end will exponentially increase the time of the period.
+# .start = 0 and .end = 0 disables that time period
+# A non-zero start will prevent the LED from dimming to 0 for Off->On and On->Off
+# the subsequent Off state afterwards will use the previous start from On->Off for the display value.
+# Only 16 fade periods can be used.
+KLL_LED_FadePeriod => KLL_LED_FadePeriod_define;
+KLL_LED_FadePeriod[0] = "{ .start = 0, .end = 0 }";
+KLL_LED_FadePeriod[1] = "{ .start = 0, .end = 4 }";
+KLL_LED_FadePeriod[2] = "{ .start = 0, .end = 5 }";
+KLL_LED_FadePeriod[3] = "{ .start = 0, .end = 6 }";
+KLL_LED_FadePeriod[4] = "{ .start = 0, .end = 7 }";
+KLL_LED_FadePeriod[5] = "{ .start = 0, .end = 8 }";
+KLL_LED_FadePeriod[6] = "{ .start = 0, .end = 9 }";
+KLL_LED_FadePeriod[7] = "{ .start = 0, .end = 10 }";
+KLL_LED_FadePeriod[8] = "{ .start = 0, .end = 11 }";
+KLL_LED_FadePeriod[9] = "{ .start = 0, .end = 12 }";
+KLL_LED_FadePeriod[10] = "{ .start = 5, .end = 6 }";
+KLL_LED_FadePeriod[11] = "{ .start = 6, .end = 7 }";
+KLL_LED_FadePeriod[12] = "{ .start = 7, .end = 8 }";
+KLL_LED_FadePeriod[13] = "{ .start = 8, .end = 9 }";
+KLL_LED_FadePeriod[14] = "{ .start = 9, .end = 10 }";
+KLL_LED_FadePeriod[15] = "{ .start = 10, .end = 11 }";
+
+# Fade Default Configuration
+# There are 4 fade profiles
+# 0) Keys
+# 1) Underlighting
+# 2) Indicators
+# 3) Active Layer (uses fade_layer_highlight to refresh)
+# Each fade profile has 4 fade period configurations (see above).
+# 0) Off to On
+# 1) On
+# 2) On to Off
+# 3) Off
+## Keys
+KLL_LED_FadeDefaultConfig0 => KLL_LED_FadeDefaultConfig0_define;
+KLL_LED_FadeDefaultConfig0[0] = 0;
+KLL_LED_FadeDefaultConfig0[1] = 0;
+KLL_LED_FadeDefaultConfig0[2] = 0;
+KLL_LED_FadeDefaultConfig0[3] = 0;
+## Underlighting
+KLL_LED_FadeDefaultConfig1 => KLL_LED_FadeDefaultConfig1_define;
+KLL_LED_FadeDefaultConfig1[0] = 0;
+KLL_LED_FadeDefaultConfig1[1] = 0;
+KLL_LED_FadeDefaultConfig1[2] = 0;
+KLL_LED_FadeDefaultConfig1[3] = 0;
+## Indicators
+KLL_LED_FadeDefaultConfig2 => KLL_LED_FadeDefaultConfig2_define;
+KLL_LED_FadeDefaultConfig2[0] = 0;
+KLL_LED_FadeDefaultConfig2[1] = 0;
+KLL_LED_FadeDefaultConfig2[2] = 0;
+KLL_LED_FadeDefaultConfig2[3] = 0;
+## Active Layer
+KLL_LED_FadeDefaultConfig3 => KLL_LED_FadeDefaultConfig3_define;
+KLL_LED_FadeDefaultConfig3[0] = 4;
+KLL_LED_FadeDefaultConfig3[1] = 4;
+KLL_LED_FadeDefaultConfig3[2] = 4;
+KLL_LED_FadeDefaultConfig3[3] = 4;
+

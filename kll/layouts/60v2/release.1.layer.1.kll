@@ -1,0 +1,65 @@
+# 60v2 Layer 1 - Control Layer
+Name = "60v2 Control Layer";
+Version = 0.1;
+Author = "HaaTa (Jacob Alexander) 2018";
+KLL = 0.5;
+
+# Modified Date
+Date = 2018-12-02;
+
+
+# Number Row
+U"Esc" : flashMode();
+U"1" : U"F1";
+U"2" : U"F2";
+U"3" : U"F3";
+U"4" : U"F4";
+U"5" : U"F5";
+U"6" : U"F6";
+U"7" : U"F7";
+U"8" : U"F8";
+U"9" : U"F9";
+U"0" : U"F10";
+U"-" : U"F11";
+U"=" : U"F12";
+U"Backslash" : U"Insert";
+U"Backtick" : U"Delete";
+
+# Top Row
+U"Tab" : U"Capslock";
+U"Q" : CONS"Scan Previous Track";
+U"W" : CONS"Pause Play"; # Play Key
+U"E" : CONS"Scan Next Track";
+U"R" : CONS"Rewind";
+U"T" : CONS"Fast Forward";
+U"I" : U"PrintScreen";
+U"O" : U"ScrollLock";
+U"P" : U"Pause";
+U"[" : U"Up";
+
+# Middle Row
+U"A" : U"Volume Down" + CONS"Volume Down"; # Volume Down Key
+U"S" : U"Volume Up"   + CONS"Volume Up";   # Volume Up Key
+U"D" : U"Mute"        + CONS"Mute";        # Mute Key
+U"F" : CONS"Eject";
+U"G" : toggleKbdProtocol(); # 6KRO/NKRO
+U"H" : U"Keypad Asterisk";
+U"J" : U"Keypad Slash";
+U"K" : U"Home";
+U"L" : U"PageUp";
+U";" : U"Left";
+U"Quote" : U"Right";
+
+# Bottom Row
+U"Z" : U"ISO Slash";
+U"C" : SYS"Sleep";
+U"V" : SYS"Wake Up";
+U"N" : U"Keypad Plus";
+U"M" : U"Keypad Minus";
+U"Comma" : U"End";
+U"Period" : U"PageDown";
+U"Slash" : U"Down";
+
+# Space Row
+# N/A
+
