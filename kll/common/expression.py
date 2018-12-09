@@ -466,7 +466,10 @@ class DataAssociationExpression(Expression):
             for index, association in enumerate(self.value):
                 if index > 0:
                     output += ", "
-                output += "{0}".format(association[0].kllify())
+                for sub_index, sub_association in enumerate(association):
+                    if sub_index > 0:
+                        output += ", "
+                    output += "{0}".format(sub_association.kllify())
             return "{0};".format(output)
 
         return "{0} <= {1};".format(

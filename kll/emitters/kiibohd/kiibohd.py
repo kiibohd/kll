@@ -1617,68 +1617,67 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     aniframeid.index
                 )
 
-                # XXX (HaaTa) This is a bug, but for now this is ok
-                if len(aniframedata) == 1 and isinstance(aniframedata[0], list):
-                    aniframedata = aniframedata[0]
-                for elem in aniframedata:
-                    # TODO Determine widths (possibly do checks at an earlier stage to validate)
+                # There may be multiple Ids per frame actions (must be expanded)
+                for sub_aniframedata in aniframedata:
+                    for elem in sub_aniframedata:
+                        # TODO Determine widths (possibly do checks at an earlier stage to validate)
 
-                    if isinstance(elem, list):
-                        elem = elem[0]
+                        if isinstance(elem, list):
+                            elem = elem[0]
 
-                    # Select pixel address type
-                    self.fill_dict['AnimationFrames'] += "\n\t{0},".format(
-                        address_type[elem.uid.inferred_type()]
-                    )
-
-                    # For each channel select a pixel address
-                    channels = elem.uid.uid_set()
-                    channel_str = "/* UNKNOWN CHANNEL {0} */".format(len(channels))
-                    if len(channels) == 1:
-                        channel_str = " /*{0}*/{1},".format(
-                            channels[0],
-                            ",".join(self.byte_split(channels[0], 4))
+                        # Select pixel address type
+                        self.fill_dict['AnimationFrames'] += "\n\t{0},".format(
+                            address_type[elem.uid.inferred_type()]
                         )
-                    elif len(channels) == 2:
-                        channel_str = ""
-                        for index, ch in enumerate(channels):
-                            value = 0
 
-                            # Convert to pixelmap position as we defined a percentage
-                            if isinstance(ch, float):
-                                # Calculate percentage of displaymap
-                                if index == 0:
-                                    value = (pixel_display_params['Columns'] - 1) * ch
-                                elif index == 1:
-                                    value = (pixel_display_params['Rows'] - 1) * ch
-
-                                value = int(round(value))
-
-                            # No value, set to 0
-                            elif ch is None:
+                        # For each channel select a pixel address
+                        channels = elem.uid.uid_set()
+                        channel_str = "/* UNKNOWN CHANNEL {0} */".format(len(channels))
+                        if len(channels) == 1:
+                            channel_str = " /*{0}*/{1},".format(
+                                channels[0],
+                                ",".join(self.byte_split(channels[0], 4))
+                            )
+                        elif len(channels) == 2:
+                            channel_str = ""
+                            for index, ch in enumerate(channels):
                                 value = 0
 
-                            # Otherwise it's an integer
-                            else:
-                                value = int(ch)
+                                # Convert to pixelmap position as we defined a percentage
+                                if isinstance(ch, float):
+                                    # Calculate percentage of displaymap
+                                    if index == 0:
+                                        value = (pixel_display_params['Columns'] - 1) * ch
+                                    elif index == 1:
+                                        value = (pixel_display_params['Rows'] - 1) * ch
 
-                            channel_str += " /*{0}*/{1},".format(
-                                ch, ",".join(self.byte_split(value, 2)),
-                            )
-                    self.fill_dict['AnimationFrames'] += channel_str
+                                    value = int(round(value))
 
-                    # For each channel, select an operator and value
-                    for pixelmod in elem.modifiers:
-                        # Set operator type
-                        channel_str = " PixelChange_{0},".format(
-                            pixelmod.operator_type()
-                        )
+                                # No value, set to 0
+                                elif ch is None:
+                                    value = 0
 
-                        # Set channel value
-                        # TODO Support non-8bit values
-                        channel_str += " {0},".format(pixelmod.value)
+                                # Otherwise it's an integer
+                                else:
+                                    value = int(ch)
 
+                                channel_str += " /*{0}*/{1},".format(
+                                    ch, ",".join(self.byte_split(value, 2)),
+                                )
                         self.fill_dict['AnimationFrames'] += channel_str
+
+                        # For each channel, select an operator and value
+                        for pixelmod in elem.modifiers:
+                            # Set operator type
+                            channel_str = " PixelChange_{0},".format(
+                                pixelmod.operator_type()
+                            )
+
+                            # Set channel value
+                            # TODO Support non-8bit values
+                            channel_str += " {0},".format(pixelmod.value)
+
+                            self.fill_dict['AnimationFrames'] += channel_str
                 self.fill_dict['AnimationFrames'] += "\n\tPixelAddressType_End\n};\n\n"
 
                 # Set frame number, for next frame evaluation

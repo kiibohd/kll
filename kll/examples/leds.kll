@@ -65,6 +65,9 @@ A[RainbowFillInterp] <= start, pfunc:interp;
 A[RainbowFillInterp, 1] <= P[c:20%](255,255,0), P[c:40%](255,0,0), P[c:60%](127,0,255), P[c:80%](0,0,255);
 A[RainbowFillInterp, 2] <= P[c:0%](0,255,0), P[c:20%](255,255,0), P[c:40%](255,0,0), P[c:60%](127,0,255), P[c:80%](0,0,255);
 
+A[tatejima] <= loops:1;
+A[tatejima, 1] <= P[21,22,30,31](255),P[7,14,20,29,38](0);
+
 # Animation Triggers
 myCapability  => myFunc( myArg1 : 1, myArg2 : 4 );
 # XXX (HaaTa) Frame triggers no longer supported
