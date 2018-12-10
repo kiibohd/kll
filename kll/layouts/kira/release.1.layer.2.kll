@@ -142,11 +142,11 @@ T[21,5](7) : fade_set(3, 0, 5) + fade_set(3, 1, 0) + fade_set(3, 2, 7) + fade_se
 
 ### General Animations ###
 
-# Waves + Start Animation
+# Animation selector
 U"F7" : rotate(6, 1);
 T[21,6](0) : A[miami_wave](start, replace:clear); # Miami
 T[21,6](1) : A[rainbow_wave](start, replace:clear); # Rainbow
 T[21,6](2) : A[pastel_wave](start, replace:clear); # Pastel Rainbow
 T[21,6](3) : A[kira_wave](start, replace:clear); # Kira Wave
-T[21,6](4) : A[default_animation](start, replace:clear); # Default animation
+T[21,6](4) : A[orange_fade_in](start, replace:clear); # Orange fade animation
 

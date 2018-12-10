@@ -1394,29 +1394,13 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 )
 
             ## Pixel Mapping ##
-            ## ScanCode to Pixel Mapping ##
             pixel_indices = full_context.query('MapExpression', 'PixelChannel')
 
             self.fill_dict['PixelMapping'] = "const PixelElement Pixel_Mapping[] = {\n"
-            self.fill_dict['ScanCodeToPixelMapping'] = "const uint16_t Pixel_ScanCodeToPixel[] = {\n"
-            self.fill_dict['ScanCodeToDisplayMapping'] = "const uint16_t Pixel_ScanCodeToDisplay[] = {\n"
-
-            # Add row, column of Pixel to json (mirror lookup to Scan Code Positions as well)
-            for y, elem in enumerate(pixel_display_mapping):
-                for x, pixelid in enumerate(elem):
-                    entry = {'Row': y, 'Col': x}
-                    pixel_uid = pixelid + 1
-                    pixel_id_json.setdefault(pixel_uid, dict()).update(entry)
-
-                    if 'ScanCode' in pixel_id_json[pixel_uid].keys():
-                        scancode_uid = pixel_id_json[pixel_uid]['ScanCode']
-                        scancode_json[scancode_uid].update(entry)
 
             last_uid = 0
-            last_scancode = 0
             for key, item in sorted(pixel_indices.data.items(), key=lambda x: x[1].pixel.uid.index):
                 last_uid += 1
-                last_scancode += 1
                 # If last_uid isn't directly before, insert placeholder(s)
                 while last_uid != item.pixel.uid.index:
                     self.fill_dict['PixelMapping'] += "\tPixel_Blank(), // {0}\n".format(last_uid)
@@ -1435,9 +1419,29 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     self.fill_dict['PixelMapping'] += "{0}".format(item.pixel.channels[ch].uid)
                 self.fill_dict['PixelMapping'] += "}} }}, // {0}\n".format(key)
 
-                # Skip if not mapped to a scancode
-                if isinstance(item.position, list):
-                    continue
+            totalpixels = last_uid
+            self.fill_dict['PixelMapping'] += "};"
+
+            ## ScanCode to Pixel Mapping ##
+            self.fill_dict['ScanCodeToPixelMapping'] = "const uint16_t Pixel_ScanCodeToPixel[] = {\n"
+            self.fill_dict['ScanCodeToDisplayMapping'] = "const uint16_t Pixel_ScanCodeToDisplay[] = {\n"
+
+            # Add row, column of Pixel to json (mirror lookup to Scan Code Positions as well)
+            for y, elem in enumerate(pixel_display_mapping):
+                for x, pixelid in enumerate(elem):
+                    entry = {'Row': y, 'Col': x}
+                    pixel_uid = pixelid + 1
+                    pixel_id_json.setdefault(pixel_uid, dict()).update(entry)
+
+                    if 'ScanCode' in pixel_id_json[pixel_uid].keys():
+                        scancode_uid = pixel_id_json[pixel_uid]['ScanCode']
+                        scancode_json[scancode_uid].update(entry)
+
+            # Only deal with pixels mapped to ScanCodes
+            last_scancode = 0
+            pixel_items = {key:elem for key, elem in pixel_indices.data.items() if not isinstance(elem.position, list)}
+            for key, item in sorted(pixel_items.items(), key=lambda x: x[1].position.uid):
+                last_scancode += 1
 
                 # Add ScanCodeToPixelMapping entry
                 # Add ScanCodeToDisplayMapping entry
@@ -1477,8 +1481,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     offset_col,
                     offset_row,
                 )
-            totalpixels = last_uid
-            self.fill_dict['PixelMapping'] += "};"
             self.fill_dict['ScanCodeToPixelMapping'] += "};"
             self.fill_dict['ScanCodeToDisplayMapping'] += "};"
 

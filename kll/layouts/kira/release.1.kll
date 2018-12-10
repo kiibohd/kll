@@ -1,11 +1,11 @@
 # Kira Release Animations and Default Map
 Name = Kira;
-Version = 0.3;
+Version = 0.4;
 Author = "HaaTa (Jacob Alexander) 2018";
 KLL = 0.5;
 
 # Modified Date
-Date = 2018-11-18;
+Date = 2018-12-09;
 
 
 
@@ -22,62 +22,62 @@ Layer[1] : fade_layer_highlight(1);
 Layer[2] : fade_layer_highlight(2);
 
 
-### Default Animation ###
-A[default_animation] <= start, loops:1, pfunc:interp, replace:clear;
-A[default_animation, 1] <= P[1](0,0,0), P[128](0,0,0);
-A[default_animation, 2] <= P[1](10,10,10), P[128](10,10,10);
-A[default_animation, 3] <= P[1](20,20,20), P[128](20,20,20);
-A[default_animation, 4] <= P[1](30,30,30), P[128](30,30,30);
-A[default_animation, 5] <= P[1](40,40,40), P[128](40,40,40);
-A[default_animation, 6] <= P[1](50,50,50), P[128](50,50,50);
-A[default_animation, 7] <= P[1](60,60,60), P[128](60,60,60);
-A[default_animation, 8] <= P[1](70,70,70), P[128](70,70,70);
-A[default_animation, 9] <= P[1](80,80,80), P[128](80,80,80);
-A[default_animation, 10] <= P[1](90,90,90), P[128](90,90,90);
-A[default_animation, 11] <= P[1](100,100,100), P[128](100,100,100);
-A[default_animation, 12] <= P[1](110,110,110), P[128](110,110,110);
-A[default_animation, 13] <= P[1](120,120,120), P[128](120,120,120);
-A[default_animation, 14] <= P[1](130,130,130), P[128](130,130,130);
-A[default_animation, 15] <= P[1](140,140,140), P[128](140,140,140);
-A[default_animation, 16] <= P[1](150,150,150), P[128](150,150,150);
-A[default_animation, 17] <= P[1](160,160,160), P[128](160,160,160);
-A[default_animation, 18] <= P[1](170,170,170), P[128](170,170,170);
-A[default_animation, 19] <= P[1](180,180,180), P[128](180,180,180);
-A[default_animation, 20] <= P[1](190,190,190), P[128](190,190,190);
-A[default_animation, 21] <= P[1](200,200,200), P[128](200,200,200);
-A[default_animation, 22] <= P[1](210,210,210), P[128](210,210,210);
-A[default_animation, 23] <= P[1](220,220,220), P[128](220,220,220);
-A[default_animation, 24] <= P[1](230,230,230), P[128](230,230,230);
-A[default_animation, 25] <= P[1](240,240,240), P[128](240,240,240);
-A[default_animation, 26] <= P[1](250,250,250), P[128](250,250,250);
-A[default_animation, 27] <= P[1](255,255,255), P[128](255,255,255);
-A[default_animation, 28] <= P[1](255,250,250), P[128](255,250,250);
-A[default_animation, 29] <= P[1](255,240,240), P[128](255,240,240);
-A[default_animation, 30] <= P[1](255,230,230), P[128](255,230,230);
-A[default_animation, 31] <= P[1](255,220,220), P[128](255,220,220);
-A[default_animation, 32] <= P[1](255,210,210), P[128](255,210,210);
-A[default_animation, 33] <= P[1](255,200,200), P[128](255,200,200);
-A[default_animation, 34] <= P[1](255,190,190), P[128](255,190,190);
-A[default_animation, 35] <= P[1](255,180,180), P[128](255,180,180);
-A[default_animation, 36] <= P[1](255,170,170), P[128](255,170,170);
-A[default_animation, 37] <= P[1](255,160,160), P[128](255,160,160);
-A[default_animation, 38] <= P[1](255,150,150), P[128](255,150,150);
-A[default_animation, 39] <= P[1](255,140,140), P[128](255,140,140);
-A[default_animation, 40] <= P[1](255,130,130), P[128](255,130,130);
-A[default_animation, 41] <= P[1](255,120,120), P[128](255,120,120);
-A[default_animation, 42] <= P[1](255,110,110), P[128](255,110,110);
-A[default_animation, 43] <= P[1](255,100,100), P[128](255,100,100);
-A[default_animation, 44] <= P[1](255,90,90), P[128](255,90,90);
-A[default_animation, 45] <= P[1](255,88,80), P[128](255,88,80);
-A[default_animation, 46] <= P[1](255,88,70), P[128](255,88,70);
-A[default_animation, 47] <= P[1](255,88,60), P[128](255,88,60);
-A[default_animation, 48] <= P[1](255,88,50), P[128](255,88,50);
-A[default_animation, 49] <= P[1](255,88,40), P[128](255,88,40);
-A[default_animation, 50] <= P[1](255,88,30), P[128](255,88,30);
-A[default_animation, 51] <= P[1](255,88,20), P[128](255,88,20);
-A[default_animation, 52] <= P[1](255,88,10), P[128](255,88,10);
-A[default_animation, 53] <= P[1](255,88,0), P[128](255,88,0);
-A[default_animation, 53] <= P[126-128](0,0,0); # Indicators
+### Orange Fade In Animation ###
+A[orange_fade_in] <= loops:1, pfunc:interp, replace:clear;
+A[orange_fade_in, 1] <= P[1](0,0,0), P[128](0,0,0);
+A[orange_fade_in, 2] <= P[1](10,10,10), P[128](10,10,10);
+A[orange_fade_in, 3] <= P[1](20,20,20), P[128](20,20,20);
+A[orange_fade_in, 4] <= P[1](30,30,30), P[128](30,30,30);
+A[orange_fade_in, 5] <= P[1](40,40,40), P[128](40,40,40);
+A[orange_fade_in, 6] <= P[1](50,50,50), P[128](50,50,50);
+A[orange_fade_in, 7] <= P[1](60,60,60), P[128](60,60,60);
+A[orange_fade_in, 8] <= P[1](70,70,70), P[128](70,70,70);
+A[orange_fade_in, 9] <= P[1](80,80,80), P[128](80,80,80);
+A[orange_fade_in, 10] <= P[1](90,90,90), P[128](90,90,90);
+A[orange_fade_in, 11] <= P[1](100,100,100), P[128](100,100,100);
+A[orange_fade_in, 12] <= P[1](110,110,110), P[128](110,110,110);
+A[orange_fade_in, 13] <= P[1](120,120,120), P[128](120,120,120);
+A[orange_fade_in, 14] <= P[1](130,130,130), P[128](130,130,130);
+A[orange_fade_in, 15] <= P[1](140,140,140), P[128](140,140,140);
+A[orange_fade_in, 16] <= P[1](150,150,150), P[128](150,150,150);
+A[orange_fade_in, 17] <= P[1](160,160,160), P[128](160,160,160);
+A[orange_fade_in, 18] <= P[1](170,170,170), P[128](170,170,170);
+A[orange_fade_in, 19] <= P[1](180,180,180), P[128](180,180,180);
+A[orange_fade_in, 20] <= P[1](190,190,190), P[128](190,190,190);
+A[orange_fade_in, 21] <= P[1](200,200,200), P[128](200,200,200);
+A[orange_fade_in, 22] <= P[1](210,210,210), P[128](210,210,210);
+A[orange_fade_in, 23] <= P[1](220,220,220), P[128](220,220,220);
+A[orange_fade_in, 24] <= P[1](230,230,230), P[128](230,230,230);
+A[orange_fade_in, 25] <= P[1](240,240,240), P[128](240,240,240);
+A[orange_fade_in, 26] <= P[1](250,250,250), P[128](250,250,250);
+A[orange_fade_in, 27] <= P[1](255,255,255), P[128](255,255,255);
+A[orange_fade_in, 28] <= P[1](255,250,250), P[128](255,250,250);
+A[orange_fade_in, 29] <= P[1](255,240,240), P[128](255,240,240);
+A[orange_fade_in, 30] <= P[1](255,230,230), P[128](255,230,230);
+A[orange_fade_in, 31] <= P[1](255,220,220), P[128](255,220,220);
+A[orange_fade_in, 32] <= P[1](255,210,210), P[128](255,210,210);
+A[orange_fade_in, 33] <= P[1](255,200,200), P[128](255,200,200);
+A[orange_fade_in, 34] <= P[1](255,190,190), P[128](255,190,190);
+A[orange_fade_in, 35] <= P[1](255,180,180), P[128](255,180,180);
+A[orange_fade_in, 36] <= P[1](255,170,170), P[128](255,170,170);
+A[orange_fade_in, 37] <= P[1](255,160,160), P[128](255,160,160);
+A[orange_fade_in, 38] <= P[1](255,150,150), P[128](255,150,150);
+A[orange_fade_in, 39] <= P[1](255,140,140), P[128](255,140,140);
+A[orange_fade_in, 40] <= P[1](255,130,130), P[128](255,130,130);
+A[orange_fade_in, 41] <= P[1](255,120,120), P[128](255,120,120);
+A[orange_fade_in, 42] <= P[1](255,110,110), P[128](255,110,110);
+A[orange_fade_in, 43] <= P[1](255,100,100), P[128](255,100,100);
+A[orange_fade_in, 44] <= P[1](255,90,90), P[128](255,90,90);
+A[orange_fade_in, 45] <= P[1](255,88,80), P[128](255,88,80);
+A[orange_fade_in, 46] <= P[1](255,88,70), P[128](255,88,70);
+A[orange_fade_in, 47] <= P[1](255,88,60), P[128](255,88,60);
+A[orange_fade_in, 48] <= P[1](255,88,50), P[128](255,88,50);
+A[orange_fade_in, 49] <= P[1](255,88,40), P[128](255,88,40);
+A[orange_fade_in, 50] <= P[1](255,88,30), P[128](255,88,30);
+A[orange_fade_in, 51] <= P[1](255,88,20), P[128](255,88,20);
+A[orange_fade_in, 52] <= P[1](255,88,10), P[128](255,88,10);
+A[orange_fade_in, 53] <= P[1](255,88,0), P[128](255,88,0);
+A[orange_fade_in, 53] <= P[126-128](0,0,0); # Indicators
 
 # Test animation (White, Red, Green, Blue)
 A[test_animation] <= loop, replace:clear, pfunc:interp, framedelay:255;
@@ -295,7 +295,7 @@ A[pastel_wave, 65] <= P[c:-4%] (40,255,40),   P[c:22%](255,255,40), P[c:47%](255
 A[pastel_wave, 66] <= P[c:-2%] (40,255,40),   P[c:24%](255,255,40), P[c:49%](255,40,40),   P[c:74%](127,40,255), P[c:99%](40,40,255),   P[c:124%](40,255,40);
 
 # Kira Wave
-A[kira_wave] <= framedelay:3, framestretch, loop, replace:clear, pfunc:interp;
+A[kira_wave] <= start, framedelay:3, framestretch, loop, replace:clear, pfunc:interp;
 # Orange, Magneta, Purple, Blue
 A[kira_wave, 1]  <=                       P[c:0%] (255,80,0),   P[c:33%](239,10,129), P[c:66%](129,10,239),   P[c:100%](10,60,255);
 A[kira_wave, 2]  <= P[c:-31%](10,60,255), P[c:2%] (255,80,0),   P[c:36%](239,10,129), P[c:68%](129,10,239),   P[c:102%](10,60,255);
@@ -491,15 +491,15 @@ KLL_LED_FadePeriod[15] = "{ .start = 10, .end = 11 }";
 # 3) Off
 ## Keys
 KLL_LED_FadeDefaultConfig0 => KLL_LED_FadeDefaultConfig0_define;
-KLL_LED_FadeDefaultConfig0[0] = 7;
-KLL_LED_FadeDefaultConfig0[1] = 5;
-KLL_LED_FadeDefaultConfig0[2] = 7;
+KLL_LED_FadeDefaultConfig0[0] = 0;
+KLL_LED_FadeDefaultConfig0[1] = 0;
+KLL_LED_FadeDefaultConfig0[2] = 0;
 KLL_LED_FadeDefaultConfig0[3] = 0;
 ## Underlighting
 KLL_LED_FadeDefaultConfig1 => KLL_LED_FadeDefaultConfig1_define;
-KLL_LED_FadeDefaultConfig1[0] = 7;
-KLL_LED_FadeDefaultConfig1[1] = 5;
-KLL_LED_FadeDefaultConfig1[2] = 7;
+KLL_LED_FadeDefaultConfig1[0] = 0;
+KLL_LED_FadeDefaultConfig1[1] = 0;
+KLL_LED_FadeDefaultConfig1[2] = 0;
 KLL_LED_FadeDefaultConfig1[3] = 0;
 ## Indicators
 KLL_LED_FadeDefaultConfig2 => KLL_LED_FadeDefaultConfig2_define;
@@ -509,8 +509,8 @@ KLL_LED_FadeDefaultConfig2[2] = 0;
 KLL_LED_FadeDefaultConfig2[3] = 0;
 ## Active Layer
 KLL_LED_FadeDefaultConfig3 => KLL_LED_FadeDefaultConfig3_define;
-KLL_LED_FadeDefaultConfig3[0] = 4;
-KLL_LED_FadeDefaultConfig3[1] = 4;
-KLL_LED_FadeDefaultConfig3[2] = 4;
-KLL_LED_FadeDefaultConfig3[3] = 4;
+KLL_LED_FadeDefaultConfig3[0] = 1;
+KLL_LED_FadeDefaultConfig3[1] = 1;
+KLL_LED_FadeDefaultConfig3[2] = 1;
+KLL_LED_FadeDefaultConfig3[3] = 1;
 
