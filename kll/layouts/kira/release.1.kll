@@ -367,30 +367,30 @@ A[kira_wave, 65] <= P[c:-3%] (255,80,0), P[c:30%](239,10,129),   P[c:64%](129,10
 ### Color-Select Keys ###
 
 A[keys_only_rotation] <= pfunc:interp, replace:clear, single;
-A[keys_only_rotation, 1]  <= S1(0xC1, 0x2D, 0x1D), S114(0xC1, 0x2D, 0x1D);
-A[keys_only_rotation, 2]  <= S1(0xEE, 0x6D, 0x28), S114(0xEE, 0x6D, 0x28);
-A[keys_only_rotation, 3]  <= S1(0xE0, 0x9E, 0x3B), S114(0xE0, 0x9E, 0x3B);
-A[keys_only_rotation, 4]  <= S1(0xE5, 0xC9, 0x43), S114(0xE5, 0xC9, 0x43);
-A[keys_only_rotation, 5]  <= S1(0x1E, 0xB8, 0x6D), S114(0x1E, 0xB8, 0x6D);
-A[keys_only_rotation, 6]  <= S1(0x00, 0xB3, 0xA6), S114(0x00, 0xB3, 0xA6);
-A[keys_only_rotation, 7]  <= S1(0x20, 0x82, 0xC6), S114(0x20, 0x82, 0xC6);
-A[keys_only_rotation, 8]  <= S1(0x43, 0x54, 0xC1), S114(0x43, 0x54, 0xC1);
-A[keys_only_rotation, 9]  <= S1(0x71, 0x1C, 0x9E), S114(0x71, 0x1C, 0x9E);
-A[keys_only_rotation, 10] <= S1(0xCD, 0x3B, 0x70), S114(0xCD, 0x3B, 0x70);
-A[keys_only_rotation, 11] <= S1(0xB8, 0x34, 0x3E), S114(0xB8, 0x34, 0x3E);
+A[keys_only_rotation, 1]  <= S1(0xC1, 0x2D, 0x1D), S99(0xC1, 0x2D, 0x1D);
+A[keys_only_rotation, 2]  <= S1(0xEE, 0x6D, 0x28), S99(0xEE, 0x6D, 0x28);
+A[keys_only_rotation, 3]  <= S1(0xE0, 0x9E, 0x3B), S99(0xE0, 0x9E, 0x3B);
+A[keys_only_rotation, 4]  <= S1(0xE5, 0xC9, 0x43), S99(0xE5, 0xC9, 0x43);
+A[keys_only_rotation, 5]  <= S1(0x1E, 0xB8, 0x6D), S99(0x1E, 0xB8, 0x6D);
+A[keys_only_rotation, 6]  <= S1(0x00, 0xB3, 0xA6), S99(0x00, 0xB3, 0xA6);
+A[keys_only_rotation, 7]  <= S1(0x20, 0x82, 0xC6), S99(0x20, 0x82, 0xC6);
+A[keys_only_rotation, 8]  <= S1(0x43, 0x54, 0xC1), S99(0x43, 0x54, 0xC1);
+A[keys_only_rotation, 9]  <= S1(0x71, 0x1C, 0x9E), S99(0x71, 0x1C, 0x9E);
+A[keys_only_rotation, 10] <= S1(0xCD, 0x3B, 0x70), S99(0xCD, 0x3B, 0x70);
+A[keys_only_rotation, 11] <= S1(0xB8, 0x34, 0x3E), S99(0xB8, 0x34, 0x3E);
 
 # Pastel Rainbow
-A[keys_only_rotation, 12] <= S1(40,255,40), S114(40,255,40);
-A[keys_only_rotation, 13] <= S1(255,255,40), S114(255,255,40);
-A[keys_only_rotation, 14] <= S1(255,40,40), S114(255,40,40);
-A[keys_only_rotation, 15] <= S1(127,40,255), S114(127,40,255);
-A[keys_only_rotation, 16] <= S1(40,40,255), S114(40,40,255);
+A[keys_only_rotation, 12] <= S1(40,255,40), S99(40,255,40);
+A[keys_only_rotation, 13] <= S1(255,255,40), S99(255,255,40);
+A[keys_only_rotation, 14] <= S1(255,40,40), S99(255,40,40);
+A[keys_only_rotation, 15] <= S1(127,40,255), S99(127,40,255);
+A[keys_only_rotation, 16] <= S1(40,40,255), S99(40,40,255);
 
 # Kira Colors
-A[keys_only_rotation, 17] <= S1(255,80,0), S114(255,80,0);
-A[keys_only_rotation, 18] <= S1(239,10,129), S114(239,10,129);
-A[keys_only_rotation, 19] <= S1(129,10,239), S114(129,10,239);
-A[keys_only_rotation, 20] <= S1(10,60,255), S114(10,60,255);
+A[keys_only_rotation, 17] <= S1(255,80,0), S99(255,80,0);
+A[keys_only_rotation, 18] <= S1(239,10,129), S99(239,10,129);
+A[keys_only_rotation, 19] <= S1(129,10,239), S99(129,10,239);
+A[keys_only_rotation, 20] <= S1(10,60,255), S99(10,60,255);
 
 
 ### Color-Select Underglow ###
