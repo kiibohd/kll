@@ -449,7 +449,60 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
         return output
 
-    def trigger_combo_conversion(self, combo):
+    def layer_type_lookup(self, layer_type):
+        '''
+        Lookup enumeration name for layer type
+
+        Returns an empty string if unknown
+
+        @param layer_type: Type of layer
+        @return: Enum name for layer type
+        '''
+        output = ""
+        if layer_type == 'LayerShift':
+            output = " | ScheduleType_Shift"
+        elif layer_type == 'LayerLatch':
+            output = " | ScheduleType_Latch"
+        elif layer_type == 'LayerLock':
+            output = " | ScheduleType_Lock"
+
+        return output
+
+    def schedule_param_lookup(self, param, freq, parent):
+        '''
+        Convert schedule to schedule lookup id
+
+        .time = <time>, .state = <schedule>
+        .time = <time>, .analog = <level>
+        .time = <time>, .index = <index>
+        @param param:  Schedule element to do lookup on
+        @param freq:   CPU frequency to calculate ticks at
+        @param parent: Parent element, used to determine if this is a Layer event
+        '''
+        output = ""
+
+        # If state is set, add parameter
+        if param.state is not None:
+            # TODO Handle Analog
+            # TODO Handle index
+            output += ".state = "
+            output += "ScheduleType_{}".format(param.scheduleLookup()[1])
+            output += self.layer_type_lookup(parent.type)
+            output += ", "
+        # If state is not set, set as a generic
+        else:
+            output += ".state = ScheduleType_Gen, "
+
+        # Ignore unused param
+        if param.timing is not None:
+            ms, ticks = param.timing.to_ms_ticks(freq)
+            time = "{{ {}, {} }}".format(int(ms), int(ticks))
+
+            output += ".time = {}, ".format(time)
+
+        return output
+
+    def trigger_combo_conversion(self, schedule_list, combo):
         '''
         Converts a trigger combo (list of Ids) to the C array string format
 
@@ -469,9 +522,15 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             # TODO Add support for non-press states
             uid = identifier.get_uid()
             trigger_type = "/* XXX INVALID TYPE XXX */"
-            state = "ScheduleType_Gen"
-            no_error = False
 
+            schedule_key = identifier.strSchedule()
+            state = "/* XXX INVALID STATE INDEX */"
+            for index, key in enumerate(sorted(schedule_list.keys())):
+                if key == schedule_key:
+                    state = index
+                    break
+
+            no_error = False
             # ScanCodeId
             if isinstance(identifier, ScanCodeId):
                 no_error = True
@@ -518,23 +577,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 else:
                     no_error = False
 
-                # Determine additional state information to encode
-                # OR additional information onto trigger state
-                if identifier.type == 'LayerShift':
-                    state += " | ScheduleType_Shift"
-
-                elif identifier.type == 'Layer':
-                    pass
-
-                elif identifier.type == 'LayerLatch':
-                    state += " | ScheduleType_Latch"
-
-                elif identifier.type == 'LayerLock':
-                    state += " | ScheduleType_Lock"
-
-                else:
-                    no_error = False
-
             # AnimationId
             elif isinstance(identifier, AnimationId):
                 no_error = True
@@ -542,27 +584,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 # Retrieve uid of animation
                 animation_uid_lookup = self.control.stage('DataAnalysisStage').animation_uid_lookup
                 uid = animation_uid_lookup[identifier.name]
-
-                # Retrieve state
-                # TODO (HaaTa) Cannot use set directly here if using Off state...
-                states = set(identifier.strSchedule())
-
-                # Default to either Repeat or Done
-                state = ""
-                if states == set(['R', 'D']) or len(states) == 0:
-                    state = "ScheduleType_Repeat | ScheduleType_Done"
-
-                # Repeat
-                elif 'R' in states:
-                    state = "ScheduleType_Repeat"
-
-                # Done
-                elif 'D' in states:
-                    state = "ScheduleType_Done"
-
-                # Invalid
-                else:
-                    no_error = False
 
                 # Determine the type and adjust uid
                 if uid < 256:
@@ -590,20 +611,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 # Determine the type and adjust uid
                 if uid < 256:
                     trigger_type = "TriggerType_LED1"
-
-                    # Check if states are given
-                    states = identifier.strSchedule()
-                    if len(states) > 0:
-                        state_list = []
-                        if 'A' in states:
-                            state_list.append("ScheduleType_A")
-                        if 'On' in states:
-                            state_list.append("ScheduleType_On")
-                        if 'D' in states:
-                            state_list.append("ScheduleType_D")
-                        if 'Off' in states:
-                            state_list.append("ScheduleType_Off")
-                        state = " | ".join(state_list)
 
                 else:
                     no_error = False
@@ -645,10 +652,6 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     trigger_type = lookup[trigger_type]
 
                 uid = identifier.uid
-
-                # Rotations use state differently
-                if trigger_type == 'TriggerType_Rotation1':
-                    state = identifier.parameters[0]
 
             # Unknown/Invalid Id
             else:
@@ -863,6 +866,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         interconnect_pixel_offsets = self.control.stage('DataAnalysisStage').interconnect_pixel_offsets
 
         rotation_map = self.control.stage('DataAnalysisStage').rotation_map
+        schedule_list = self.control.stage('DataAnalysisStage').schedule_list
 
         scancode_positions = self.control.stage('DataAnalysisStage').scancode_positions
         pixel_positions = self.control.stage('DataAnalysisStage').pixel_positions
@@ -1005,6 +1009,49 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             else:
                 print("{0} '{1}' not defined...".format(WARNING, dvalue.name))
 
+        ## Schedules ##
+        # Make sure CPU_Frequency variable is set
+        cpu_freq = 0
+        cpu_freq = int(variables.data['CPU_Frequency'].value) if 'CPU_Frequency' in variables.data else 0
+        if 'CPU_Frequency' not in variables.data:
+            print("{} 'CPU_Frequency' should be set, and should be the same value as F_CPU".format(WARNING))
+
+        self.fill_dict['StateScheduleParams'] = ""
+        self.fill_dict['StateSchedules'] = "const ScheduleLookup ScheduleLookupTable = {\n"
+        self.fill_dict['StateSchedules'] += "\t.count = {},\n".format(len(schedule_list))
+        self.fill_dict['StateSchedules'] += "\t.schedule = {\n"
+        schedule_index = 0
+        for key, value in sorted(schedule_list.items()):
+            # Build schedule parameter list
+            self.fill_dict['StateScheduleParams'] += "const ScheduleParam schedule{}_elems[] = {{ ".format(
+                schedule_index
+            )
+            num_schedules = 0
+            if value.parameters is not None:
+                for elem in value.parameters:
+                    self.fill_dict['StateScheduleParams'] += "{{ {}}}, ".format(self.schedule_param_lookup(elem, cpu_freq, value))
+                num_schedules = len(value.parameters)
+            # Generic trigger
+            else:
+                output_schedule = "ScheduleType_Gen{}".format(self.layer_type_lookup(value.type))
+                self.fill_dict['StateScheduleParams'] += "{{ .state = {}, }}, ".format(output_schedule)
+                num_schedules = 1
+            self.fill_dict['StateScheduleParams'] += "};\n"
+
+            # Build schedule
+            self.fill_dict['StateSchedules'] += "\t\t{{ (ScheduleParam*)schedule{0}_elems, {1} }}, // {2}\n".format(
+                schedule_index,
+                num_schedules,
+                key == "" and "Generic" or key
+            )
+
+            schedule_index += 1
+        self.fill_dict['StateSchedules'] += "\t}\n};\n"
+        if len(schedule_list) > 255:
+            print("{} KLL compiler does not yet support more than 255 different state schedules, please file a bug!".format(
+                ERROR
+            ))
+
         ## Capabilities ##
         self.fill_dict['CapabilitiesFuncDecl'] = ""
         self.fill_dict['CapabilitiesList'] = "const Capability CapabilitiesList[] = {\n"
@@ -1137,11 +1184,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             for seq_index, sequence in enumerate(trigger[0].triggers):
 
                 # Iterate over each combo (element of the sequence)
-                # For each combo, add the length, key type, key state and scan code
                 for com_index, combo in enumerate(sequence):
                     # Convert each combo into an array of bytes
                     self.fill_dict['TriggerMacros'] += "{0}, ".format(
-                        self.trigger_combo_conversion(combo)
+                        self.trigger_combo_conversion(schedule_list, combo)
                     )
 
             # Add list ending 0 and end of list
@@ -1801,6 +1847,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.fill_dict['KLLDefines'] += "#define MaxScanCode_KLL {0}\n".format(max(max_scan_code))
         self.fill_dict['KLLDefines'] += "#define RotationNum_KLL {0}\n".format(max_rotations)
         self.fill_dict['KLLDefines'] += "#define UTF8StringsNum_KLL {0}\n".format(len(utf8_strings))
+        self.fill_dict['KLLDefines'] += "#define ScheduleNum_KLL {0}\n".format(len(schedule_list))
 
         # Only add defines if Pixel Buffer is defined
         if self.use_pixel_map:

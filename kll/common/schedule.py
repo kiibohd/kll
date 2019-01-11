@@ -38,13 +38,58 @@ class Time:
     '''
     Time parameter
     '''
+    multipliers = {
+        's' : 1,
+        'ms' : 10 ** 3,
+        'us' : 10 ** 6,
+        'ns' : 10 ** 9,
+    }
 
     def __init__(self, time, unit):
         self.time = time
         self.unit = unit
 
+    def to_ms(self):
+        '''
+        Convert time to ms
+
+        @returns: <ms>
+        '''
+        seconds = self.time / self.multipliers[self.unit]
+        return seconds * self.multipliers['ms']
+
+    def to_ms_ticks(self, frequency):
+        '''
+        Convert time to ms and ticks
+
+        @param frequency: CPU frequency to convert to ticks (in Hz)
+        @returns: (<ms>, <ticks>)
+        '''
+        seconds = self.time / self.multipliers[self.unit]
+
+        # Calculate ms and remainder (for ticks)
+        ms_full = seconds * self.multipliers['ms']
+        ms = int(ms_full)
+        ms_remainder = ms_full - ms
+
+        # Calculate ticks
+        seconds_remainder = ms_remainder / self.multipliers['ms']
+        ticks = seconds_remainder * frequency
+
+        return (ms, ticks)
+
     def __repr__(self):
         return "{0}{1}".format(self.time, self.unit)
+
+    def json(self):
+        '''
+        JSON representation of Time
+        '''
+        output = {
+            'time' : self.time,
+            'unit' : self.unit,
+        }
+        return output
 
 
 class Schedule:
@@ -116,6 +161,25 @@ class ScheduleParam:
 
     In the case of a Timing parameter, the base type is unknown and must be inferred later
     '''
+    button_schedule_lookup = {
+        'P': ('Press', 'P'),
+        'H': ('Hold', 'H'),
+        'R': ('Release', 'R'),
+        'O': ('Off', 'O'),
+        'UP': ('Unique Press', 'UP'),
+        'UR': ('Unique Release', 'UR'),
+    }
+    indicator_schedule_lookup = {
+        'A': ('Activate', 'A'),
+        'On': ('On', 'On'),
+        'D': ('Deactivate', 'D'),
+        'Off': ('Off', 'Off'),
+    }
+
+    animation_schedule_lookup = {
+        'D': ('Done', 'Done'),
+        'R': ('Repeat', 'Repeat'),
+    }
 
     def __init__(self, state, timing=None):
         '''
@@ -125,6 +189,21 @@ class ScheduleParam:
         self.state = state
         self.timing = timing
         self.parent = None
+
+    def scheduleLookup(self):
+        '''
+        Using the class name determine which state to lookup
+        '''
+        if self.__class__ == IndicatorScheduleParam:
+            return self.indicator_schedule_lookup[self.state]
+        elif self.__class__ == AnalogScheduleParam:
+            return None
+        elif self.__class__ == ButtonScheduleParam:
+            return self.button_schedule_lookup[self.state]
+        elif self.__class__ == AnimationScheduleParam:
+            return self.animation_schedule_lookup[self.state]
+
+        return None
 
     def setType(self, parent):
         '''
@@ -183,7 +262,8 @@ class ScheduleParam:
         '''
         output = dict()
         output['state'] = self.state
-        output['timing'] = self.timing
+        if self.timing is not None:
+            output['timing'] = self.timing.json()
         return output
 
     def kllify(self):
