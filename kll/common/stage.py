@@ -2309,6 +2309,9 @@ class DataAnalysisStage(Stage):
 
         self.rotation_map = dict()
 
+        self.schedule_list = dict()
+        self.schedule_parameters_list = dict()
+
         self.interconnect_scancode_offsets = []
         self.interconnect_pixel_offsets = []
 
@@ -2618,6 +2621,59 @@ class DataAnalysisStage(Stage):
                             # Set the maximum rotation value
                             if identifier.parameters[0].state > self.rotation_map[identifier.uid]:
                                 self.rotation_map[identifier.uid] = identifier.parameters[0].state
+
+    def generate_schedule_list(self):
+        '''
+        Generate Schedule List
+
+        Builds a list of unique schedules using all possible triggers and results.
+        Used as an index to lookup the current schedule being used for a trigger or result.
+
+        Same schedule example
+        U"A"(P,H,R) : <result>;
+        <trigger> : U"B"(P,H,R);
+
+        Different schedule
+        U"A"(100ms) : <result>;
+        <trigger> : U"B"(R:100ms);
+        '''
+        # Iterate over each layer
+        for layer in self.reduced_contexts:
+            # Iterate over each expression
+            for key, elem in layer.organization.mapping_data.data.items():
+                # Each trigger, may have multiple results
+                for sub_expr in elem:
+                    # Get list of ids from expression
+                    for identifier in sub_expr.trigger_id_list():
+                        # Add key:value to list if it's not there
+                        key = identifier.strSchedule()
+
+                        # If this is a specialized layer action, it needs to be taken into account
+                        # in the schedule
+                        if identifier.type in ['LayerLatch', 'LayerLock', 'LayerShift']:
+                            if key != "":
+                                key += ":"
+                            key += "{}".format(identifier.type)
+                        if key not in self.schedule_list.keys():
+                            self.schedule_list[key] = identifier
+                            self.schedule_parameters_list[key] = dict()
+
+                        # Check each of the parameters to see if they've been added to the parameters list
+                        if identifier.parameters is None:
+                            continue
+                        for param in identifier.parameters:
+                            p_key = (param.__class__.__name__, str(param.state), str(param.timing))
+                            if p_key not in self.schedule_parameters_list[key].keys():
+                                self.schedule_parameters_list[key][p_key] = param
+
+        # Debug info
+        if self.data_analysis_debug:
+            print("--- \033[1mSchedule List\033[0m ---")
+            for key, value in self.schedule_list.items():
+                print(key, "->", value)
+            print("--- \033[1mSchedule Parameters\033[0m ---")
+            for key, value in self.schedule_parameters_list.items():
+                print(key)
 
     def generate_pixel_display_mapping(self):
         '''
@@ -2938,6 +2994,9 @@ class DataAnalysisStage(Stage):
 
         # Generate UTF-8 string list
         self.generate_utf8_string_lookup()
+
+        # Generate Unique Schedule List
+        self.generate_schedule_list()
 
     def process(self):
         '''

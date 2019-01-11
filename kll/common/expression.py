@@ -622,11 +622,12 @@ class MapExpression(Expression):
             nsequence.append(ncombo)
         return nsequence
 
-    def sequencesOfCombosOfIds(self, expression_param):
+    def sequencesOfCombosOfIds(self, expression_param, exclude_schedule=False):
         '''
         Prettified Sequence of Combos of Identifiers
 
         @param expression_param: Trigger or Result parameter of an expression
+        @param exclude_schedule: Do not include schedule in string
 
         Scan Code Example
         [[[S10, S16], [S42]], [[S11, S16], [S42]]] -> (S10 + S16, S42)|(S11 + S16, S42)
@@ -653,7 +654,11 @@ class MapExpression(Expression):
                 for index, identifier in enumerate(combo):
                     if index > 0:
                         output += " + "
-                    output += "{0}".format(identifier)
+                    # Check if we don't want to include the schedule
+                    if exclude_schedule:
+                        output += "{0}".format(identifier.str_repr(exclude_schedule))
+                    else:
+                        output += "{0}".format(identifier)
 
             output += ")"
 
@@ -799,30 +804,34 @@ class MapExpression(Expression):
 
         return tuple(elems)
 
-    def trigger_str(self):
+    def trigger_str(self, exclude_schedule=False):
         '''
         String version of the trigger
         Used for sorting
+
+        @param exclude_schedule: Do not include schedule in string
         '''
         # Pixel Channel Mapping doesn't follow the same pattern
         if self.type == 'PixelChannel':
             return "{0}".format(self.pixel)
 
         return "{0}".format(
-            self.sequencesOfCombosOfIds(self.triggers),
+            self.sequencesOfCombosOfIds(self.triggers, exclude_schedule),
         )
 
-    def result_str(self):
+    def result_str(self, exclude_schedule=False):
         '''
         String version of the result
         Used for sorting
+
+        @param exclude_schedule: Do not include schedule in string
         '''
         # Pixel Channel Mapping doesn't follow the same pattern
         if self.type == 'PixelChannel':
             return "{0}".format(self.position)
 
         return "{0}".format(
-            self.sequencesOfCombosOfIds(self.results),
+            self.sequencesOfCombosOfIds(self.results, exclude_schedule),
         )
 
     def __repr__(self):

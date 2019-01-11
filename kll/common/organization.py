@@ -25,7 +25,7 @@ import re
 
 import kll.common.expression as expression
 
-from kll.common.id import PixelAddressId
+from kll.common.id import PixelAddressId, ScanCodeId
 
 
 ### Decorators ###
@@ -609,6 +609,19 @@ class MappingData(Data):
                 output = "\t\033[1;32mKEEP\033[0m {0}".format(self.data[key][0])
                 print(debug[1] and output or ansi_escape.sub('', output))
 
+    def check_state_scheduling(self, expression_param):
+        '''
+        Determine if any of the given elements contain State Scheduling parameters
+
+        @param expression_param: triggers or results
+        '''
+        for sequence in expression_param:
+            for combo in sequence:
+                for identifier in combo:
+                    if identifier.parameters is not None and len(identifier.parameters) > 0:
+                        return True
+        return False
+
     def reduction(self, debug=False):
         '''
         Simplifies datastructure
@@ -644,14 +657,22 @@ class MappingData(Data):
             expr = self.data[key]
 
             for sub_expr in expr:
+                # Check for any state scheduling
+                state_scheduling_detected = self.check_state_scheduling(sub_expr.triggers)
+
                 # 1) Single USB Codes trigger results will replace the original ScanCode result
-                if sub_expr.elems()[0] == 1 and sub_expr.triggers[0][0][0].type in ['USBCode', 'SysCode', 'ConsCode']:
+                if (
+                    sub_expr.elems()[0] == 1 and
+                    sub_expr.triggers[0][0][0].type in ['USBCode', 'SysCode', 'ConsCode'] and
+                    not state_scheduling_detected
+                ):
                     # Debug info
                     if debug:
                         print("\033[1mSingle\033[0m", key, expr)
 
                     # Lookup trigger to see if it exists
                     trigger_str = sub_expr.trigger_str()
+                    trigger_str_no_schedule = sub_expr.trigger_str(exclude_schedule=True)
                     if trigger_str in result_code_lookup.keys():
                         # Calculate new key
                         new_expr = result_code_lookup[trigger_str][0]
@@ -729,7 +750,9 @@ class MappingData(Data):
                             del self.data[key]
 
                 # 2) Complex triggers are processed to replace out any USB Codes with Scan Codes
-                elif sub_expr.elems()[0] > 1:
+                #    Or
+                #    This is a State Scheduling expression, in which case also replace USB Codes -> Scan Codes
+                elif sub_expr.elems()[0] > 1 or state_scheduling_detected:
                     # Debug info
                     if debug:
                         print("\033[1;4mMulti\033[0m ", key, expr)
@@ -743,11 +766,17 @@ class MappingData(Data):
                         for com_in, combo in enumerate(sequence):
                             for ident_in, identifier in enumerate(combo):
                                 ident_str = "({0})".format(identifier)
+                                if state_scheduling_detected:
+                                    ident_str = "({0})".format(identifier.str_repr(exclude_schedule=True))
 
                                 # Replace identifier
                                 if ident_str in result_code_lookup.keys():
                                     match_expr = result_code_lookup[ident_str]
-                                    sub_expr.triggers[seq_in][com_in][ident_in] = match_expr[0].triggers[0][0][0]
+                                    new_id = ScanCodeId(match_expr[0].triggers[0][0][0].uid)
+                                    # Only use schedule if found
+                                    if state_scheduling_detected:
+                                        new_id.parameters = sub_expr.triggers[seq_in][com_in][ident_in].parameters
+                                    sub_expr.triggers[seq_in][com_in][ident_in] = new_id
                                     replace = True
 
                                 # Ignore non-USB triggers

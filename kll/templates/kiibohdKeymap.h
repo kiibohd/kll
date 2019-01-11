@@ -26,6 +26,16 @@
 
 
 
+// ----- Schedules -----
+
+// State Schedule Parameters
+<|StateScheduleParams|>
+
+
+// State Schedules
+<|StateSchedules|>
+
+
 // ----- Capabilities -----
 
 // Capability function declarations

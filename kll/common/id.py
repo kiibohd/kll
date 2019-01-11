@@ -160,15 +160,20 @@ class HIDId(Id, Schedule):
         '''
         return self.type_width[self.type]
 
-    def __repr__(self):
+    def str_repr(self, exclude_schedule=False):
         '''
-        Use string name instead of integer, easier to debug
+        Returns the string representation of the HIDId
+
+        @param exclude_schedule: If True, ignores the schedule when generating the string
         '''
         try:
             name = self.locale.json()[self.locale_type][self.hex_str()]
-            schedule = self.strSchedule()
-            if len(schedule) > 0:
-                schedule = "({0})".format(schedule)
+            if exclude_schedule:
+                schedule = ""
+            else:
+                schedule = self.strSchedule()
+                if len(schedule) > 0:
+                    schedule = "({0})".format(schedule)
 
             output = 'HID({},{})"{}"{}{}'.format(self.type, self.locale.name(), self.uid, name, schedule)
             return output
@@ -178,6 +183,12 @@ class HIDId(Id, Schedule):
                 (self.second_type, self.uid),
             ))
             return "<INVALID>"
+
+    def __repr__(self):
+        '''
+        Use string name instead of integer, easier to debug
+        '''
+        return self.str_repr()
 
     def json(self):
         '''
