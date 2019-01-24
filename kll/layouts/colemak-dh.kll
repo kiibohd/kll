@@ -1,0 +1,34 @@
+Name = colemakDH;
+Version = 0.1;
+Author = "Smasher816 (Rowan Decker) 2019";
+KLL = 0.3;
+
+# Modified Date
+Date = 2019-01-23;
+
+# Top Row
+'e' : 'f';
+'r' : 'p';
+'t' : 'b';
+'y' : 'j';
+'u' : 'l';
+'i' : 'u';
+'o' : 'y';
+'p' : ';';
+
+# Middle Row
+'s' : 'r';
+'d' : 's';
+'f' : 't';
+'h' : 'k';
+'j' : 'n';
+'k' : 'e';
+'l' : 'i';
+';' : 'o';
+
+# Bottom Row
+'v' : 'd';
+'b' : 'v';
+'n' : 'm';
+'m' : 'h';
+
