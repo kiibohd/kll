@@ -31,7 +31,7 @@ import kll.common.stage as stage
 
 ## Variables
 
-__version__ = '0.5.7.3'
+__version__ = '0.5.7.4'
 kll_name = 'kll'
 
 
