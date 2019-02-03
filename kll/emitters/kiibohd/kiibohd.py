@@ -3,7 +3,7 @@
 KLL Kiibohd .h/.c File Emitter
 '''
 
-# Copyright (C) 2016-2018 by Jacob Alexander
+# Copyright (C) 2016-2019 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -695,6 +695,8 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 return 3
             if modifier.arg == 'clear':
                 return 4
+            if modifier.arg == 'clearactive':
+                return 5
             print("{0} '{1}:{2}' is unsupported".format(WARNING, name, modifier))
             return 0
 
