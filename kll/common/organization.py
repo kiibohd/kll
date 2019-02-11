@@ -238,7 +238,8 @@ class MappingData(Data):
         i:- Remove
         i:: Lazy Add/Modify
 
-        The i or isolation operators are stored separately from the main ones.
+        The i or isolation operators are stored in the same structures.
+        However these expressions are tagged uniquely so that the run-time can give them special consideration.
         Each key is pre-pended with an i
 
         The :: or lazy operators act just like : operators, except that they will be ignore if the evaluation

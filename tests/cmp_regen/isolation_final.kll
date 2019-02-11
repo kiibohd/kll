@@ -1,0 +1,28 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+
+# DefineData
+
+# MappingData
+U0x004 + U0x006 i: U0x007; # U"A" + U"C" i: U"D"; # i:0 HID(USBCode,default)"4"A + 0 HID(USBCode,default)"6"C[0]
+U0x004 : U0x005; # U"A"         : U"B"; # :0 HID(USBCode,default)"4"A[0]
+U0x007 : U0x008; # U"D"         : U"E"; # :0 HID(USBCode,default)"7"D[0]
+U0x007 i: U0x014; # U"D"        i: U"Q"; # i:0 HID(USBCode,default)"7"D[0]
+U0x009 : U0x01d; # U"F"         : U"Z"; # :0 HID(USBCode,default)"9"F[0]
+U0x009 i: U0x01a; # U"F"        i: U"W"; # i:0 HID(USBCode,default)"9"F[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2014; # Author = "HaaTa (Jacob Alexander) 2014"; # Author
+Date = 2019-02-11; # Date = 2019-02-11; # Date
+KLL = 0.5; # KLL = 0.5; # KLL
+Name = isolation; # Name = isolation; # Name
+

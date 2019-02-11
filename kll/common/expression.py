@@ -66,6 +66,9 @@ class Expression:
         # Default ConnectId
         self.connect_id = 0
 
+        # Isolated expression
+        self.isolated = False
+
         # Mutate class into the desired type
         self.__class__ = {
             '=>': NameAssociationExpression,
@@ -555,6 +558,8 @@ class MapExpression(Expression):
         self.results = results
 
         self.connect_id = 0
+        self.isolated = False
+        self.checkSetIsolation()
 
     ## Setters ##
     def triggerCode(self, triggers, operator, results):
@@ -573,6 +578,8 @@ class MapExpression(Expression):
         self.operator = operator
         self.results = results
 
+        self.checkSetIsolation()
+
         return True
 
     def pixelChannels(self, pixelmap, trigger):
@@ -586,6 +593,15 @@ class MapExpression(Expression):
         self.position = trigger
 
         return True
+
+    def checkSetIsolation(self):
+        '''
+        If the operator specifies an isolation expression
+        mark expression as isolated
+        '''
+        # Check if an isolated expression
+        if 'i' in self.operator:
+            self.isolated = True
 
     def triggersSequenceOfCombosOfIds(self, index=0):
         '''
@@ -705,7 +721,7 @@ class MapExpression(Expression):
         '''
         id_list = []
 
-        # Iterate over each trigger/result variants (expanded from ranges)
+        # Iterate over each trigger variants (expanded from ranges)
         for sequence in self.triggers:
             # Iterate over each combo (element of the sequence)
             for combo in sequence:

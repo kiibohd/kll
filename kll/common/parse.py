@@ -702,11 +702,13 @@ class Make:
             value *= -1
         return CapArgValue(value)
 
-    def capUsage(name, arguments):
+    def capUsage(name, arguments, schedule_params):
         '''
         Converts a capability tuple, argument list to a CapId Usage
         '''
-        return CapId(name, 'Capability', arguments)
+        cap = CapId(name, 'Capability', arguments)
+        cap.setSchedule(schedule_params)
+        return cap
 
     def codePoint(codepoint):
         '''
@@ -1115,7 +1117,7 @@ animation_capability = ((animation_def | animation_elem) + maybe(skip(parenthesi
 # Capabilities
 capFunc_argument = (maybe(dash) + number) >> Make.capArgValue  # TODO Allow for symbolic arguments, i.e. arrays and variables
 capFunc_arguments = many(capFunc_argument + skip(maybe(comma)))
-capFunc_elem = name + skip(parenthesis('(')) + capFunc_arguments + skip(parenthesis(')')) >> unarg(Make.capUsage) >> listElem
+capFunc_elem = name + skip(parenthesis('(')) + capFunc_arguments + skip(parenthesis(')')) + maybe(specifier_list) >> unarg(Make.capUsage) >> listElem
 capFunc_combo = oneplus((hidCode_elem | capFunc_elem | animation_capability | pixel_capability | layer_expanded | utf8_elem) + skip(maybe(plus))) >> listElem
 capFunc_sequence = oneplus((capFunc_combo | seqStringR) + skip(maybe(comma))) >> oneLayerFlatten
 

@@ -2644,9 +2644,12 @@ class DataAnalysisStage(Stage):
                 # Each trigger, may have multiple results
                 for sub_expr in elem:
                     # Get list of ids from expression
-                    for identifier in sub_expr.trigger_id_list():
+                    for identifier in sub_expr.trigger_id_list() + sub_expr.result_id_list():
                         # Add key:value to list if it's not there
-                        key = identifier.strSchedule()
+                        try:
+                            key = identifier.strSchedule()
+                        except AttributeError:
+                            continue
 
                         # If this is a specialized layer action, it needs to be taken into account
                         # in the schedule

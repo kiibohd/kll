@@ -1,0 +1,15 @@
+# Isolation Examples
+Name = isolation;
+Author = "HaaTa (Jacob Alexander) 2014";
+KLL = 0.5;
+
+# Modified Date
+Date = 2019-02-11;
+
+U"A"         : U"B";
+U"A" + U"C" i: U"D";
+U"D"         : U"E";
+U"D"        i: U"Q"; # D should now map to Q (and isolated)
+U"F"        i: U"W";
+U"F"         : U"Z"; # F should now map to Z (not isolated)
+

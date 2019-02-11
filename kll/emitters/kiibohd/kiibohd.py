@@ -296,17 +296,27 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         # Convert into a list of strings
         return ["{0}".format(int(byte)) for byte in byte_form]
 
-    def result_combo_conversion(self, combo=None):
+    def result_combo_conversion(self, schedule_list, combo=None):
         '''
         Converts a result combo (list of Ids) to the C array string format
 
         @param combo: List of Ids/capabilities
         @return: C array string format
         '''
+        # Lookup default_schedule
+        default_schedule = None
+        for index, key in enumerate(sorted(schedule_list.keys())):
+            if key == "":
+                default_schedule = index
+                break
+
         # If result_elem is None, assume 0-length USB code
         if combo is None:
-            # <single element>, <usbCodeSend capability>, <USB Code 0x00>
-            return "1, {0}, 0x00".format(self.capabilities_index[self.required_capabilities['USB']])
+            # <single element>, <usbCodeSend capability>, <schedule>, <USB Code 0x00>
+            return "1, {0}, {1}, 0x00".format(
+                self.capabilities_index[self.required_capabilities['USB']],
+                default_schedule,
+            )
 
         # Determine length of combo
         output = "{0}".format(len(combo))
@@ -315,6 +325,13 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         for index, identifier in enumerate(combo):
             # Lookup capability index
             cap = "/* XXX INVALID XXX */"
+            schedule = "/* XXX INVALID SCHEDULE XXX*/"
+
+            schedule_key = identifier.strSchedule()
+            for index, key in enumerate(sorted(schedule_list.keys())):
+                if key == schedule_key:
+                    schedule = index
+                    break
 
             # HIDId
             if isinstance(identifier, HIDId):
@@ -346,12 +363,15 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                         print("{0} {1} HID lookup kll bug...please report.".format(ERROR, err))
                         self.error_exit = True
 
-                cap = "{0}, {1}".format(cap_index, cap_arg)
+                cap = "{0}, {1}, {2}".format(cap_index, schedule, cap_arg)
 
             # None - Is instance of CapId, so has to be first
             elif isinstance(identifier, NoneId):
                 # <single element>, <usbCodeSend capability>, <USB Code 0x00>
-                return "1, {0}, 0x00".format(self.capabilities_index[self.required_capabilities['USB']])
+                return "1, {0}, {1}, 0x00".format(
+                    self.capabilities_index[self.required_capabilities['USB']],
+                    schedule,
+                )
 
             # Capability
             elif isinstance(identifier, CapId):
@@ -361,14 +381,20 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 # Check if we need to add arguments to capability
                 if identifier.total_arg_bytes(self.capabilities.data) > 0:
                     cap_lookup = self.capabilities.data[identifier.name].association
-                    cap = "{0}".format(cap_index)
+                    cap = "{0}, {1}".format(
+                        cap_index,
+                        schedule,
+                    )
                     for arg, lookup in zip(identifier.arg_list, cap_lookup.arg_list):
                         cap += ", "
                         cap += ", ".join(self.byte_split(arg.value, lookup.width))
 
                 # Otherwise, no arguments necessary
                 else:
-                    cap = "{0}".format(cap_index)
+                    cap = "{0}, {1}".format(
+                        cap_index,
+                        schedule,
+                    )
 
             # AnimationId
             elif isinstance(identifier, AnimationId):
@@ -392,7 +418,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                             self.byte_split(settings_index, identifier.width())
                     )
 
-                cap = "{0}, {1}".format(cap_index, cap_arg)
+                cap = "{0}, {1}, {2}".format(cap_index, schedule, cap_arg)
 
             # LayerId
             elif isinstance(identifier, LayerId):
@@ -407,7 +433,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                             self.byte_split(layer_number, identifier.width())
                     )
 
-                cap = "{0}, {1}".format(cap_index, cap_arg)
+                cap = "{0}, {1}, {2}".format(cap_index, schedule, cap_arg)
 
             # UTF8Id
             elif isinstance(identifier, UTF8Id):
@@ -482,12 +508,17 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         output = ""
 
         # If state is set, add parameter
-        if param.state is not None:
-            # TODO Handle Analog
-            # TODO Handle index
-            output += ".state = "
-            output += "ScheduleType_{}".format(param.scheduleLookup()[1])
-            output += self.layer_type_lookup(parent.type)
+        if param.state is not None or param == 0:
+            # Analog
+            if param.isAnalog():
+                output += ".analog = {}".format(param.scheduleLookup())
+            elif param.isIndex():
+                output += ".index = {}".format(param.scheduleLookup())
+            else:
+                output += ".state = "
+                output += "ScheduleType_{}".format(param.scheduleLookup()[1])
+                output += self.layer_type_lookup(parent.type)
+
             output += ", "
         # If state is not set, set as a generic
         else:
@@ -1141,18 +1172,18 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 # Needed for USB behaviour, otherwise, repeated keys will not work
                 if seq_index > 0:
                     # <single element>, <usbCodeSend capability>, <USB Code 0x00>
-                    self.fill_dict['ResultMacros'] += "{0}, ".format(self.result_combo_conversion())
+                    self.fill_dict['ResultMacros'] += "{0}, ".format(self.result_combo_conversion(schedule_list))
 
                 # Iterate over each combo (element of the sequence)
                 for com_index, combo in enumerate(sequence):
                     # Convert capability and arguments to output spring
-                    self.fill_dict['ResultMacros'] += "{0}, ".format(self.result_combo_conversion(combo))
+                    self.fill_dict['ResultMacros'] += "{0}, ".format(self.result_combo_conversion(schedule_list, combo))
 
             # If sequence is longer than 1, append a sequence spacer at the end of the sequence
             # Required by USB to end at sequence without holding the key down
             if len(result[0].results[0]) > 1:
                 # <single element>, <usbCodeSend capability>, <USB Code 0x00>
-                self.fill_dict['ResultMacros'] += "{0}, ".format(self.result_combo_conversion())
+                self.fill_dict['ResultMacros'] += "{0}, ".format(self.result_combo_conversion(schedule_list))
 
             # Add list ending 0 and end of list
             self.fill_dict['ResultMacros'] += "0 }}; // {0}\n".format(
@@ -1201,12 +1232,18 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
         # Iterate through each of the trigger macros
         for index, trigger in enumerate(trigger_index):
+            # Check if this is an isolated expression
+            macro_type = 'TriggerMacroType_Default'
+            if trigger[0].isolated:
+                macro_type = 'TriggerMacroType_Isolated'
+
             # Use TriggerMacro Index, and the corresponding ResultMacro Index, including debug string
-            self.fill_dict['TriggerMacroList'] += "\t/* {3} */ Define_TM( {0}, {1} ), // {2}\n".format(
+            self.fill_dict['TriggerMacroList'] += "\t/* {3} */ Define_TM( {0}, {1}, {4} ), // {2}\n".format(
                 trigger_index_reduced_lookup[trigger[0].sort_trigger()],
                 result_index_lookup[trigger[0].sort_result()],
                 trigger[0],
-                index
+                index,
+                macro_type,
             )
         self.fill_dict['TriggerMacroList'] += "};"
 
