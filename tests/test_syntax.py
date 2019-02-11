@@ -31,6 +31,7 @@ test_files = [
     'kll/layouts/klltest_default.kll',
     'kll/examples/triggers.kll',
     'kll/examples/utf8.kll',
+    'kll/examples/isolation.kll',
 ]
 
 

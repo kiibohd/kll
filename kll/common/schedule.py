@@ -3,7 +3,7 @@
 KLL Schedule Containers
 '''
 
-# Copyright (C) 2016-2018 by Jacob Alexander
+# Copyright (C) 2016-2019 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -197,13 +197,27 @@ class ScheduleParam:
         if self.__class__ == IndicatorScheduleParam:
             return self.indicator_schedule_lookup[self.state]
         elif self.__class__ == AnalogScheduleParam:
-            return None
+            return self.state
         elif self.__class__ == ButtonScheduleParam:
             return self.button_schedule_lookup[self.state]
         elif self.__class__ == AnimationScheduleParam:
             return self.animation_schedule_lookup[self.state]
+        elif self.__class__ == IndexScheduleParam:
+            return self.state
 
         return None
+
+    def isAnalog(self):
+        '''
+        @returns: True if an analog schedule parameter
+        '''
+        return self.__class__ == AnalogScheduleParam
+
+    def isIndex(self):
+        '''
+        @returns: True if an index schedule parameter
+        '''
+        return self.__class__ == IndexScheduleParam
 
     def setType(self, parent):
         '''
@@ -217,7 +231,9 @@ class ScheduleParam:
             self.__class__ = IndicatorScheduleParam
         elif self.parent.__class__.__name__ in ["LayerId"]:
             self.__class__ = IndicatorScheduleParam
-        elif self.parent.__class__.__name__ in ["HIDId", "ScanCodeId", "TriggerId"]:
+        elif self.parent.__class__.__name__ in ["TriggerId"] and isinstance(self.state, int):
+            self.__class__ = IndexScheduleParam
+        elif self.parent.__class__.__name__ in ["HIDId", "ScanCodeId", "TriggerId", "CapId"]:
             # Check if an analog
             if isinstance(self.state, numbers.Number):
                 self.__class__ = AnalogScheduleParam
@@ -241,7 +257,7 @@ class ScheduleParam:
             invalid_state = False
         elif self.state in ['D', 'R', 'O'] and self.__class__.__name__ == 'AnimationScheduleParam':
             invalid_state = False
-        elif isinstance(self.state, numbers.Number) and self.__class__.__name__ == 'AnalogScheduleParam':
+        elif isinstance(self.state, numbers.Number) and (self.__class__.__name__ == 'AnalogScheduleParam' or self.__class__.__name__ == 'IndexScheduleParam'):
             invalid_state = False
         elif self.state is None and self.timing is not None:
             invalid_state = False
@@ -326,6 +342,31 @@ class AnalogScheduleParam(ScheduleParam):
     Value from 0 to 100, indicating a percentage pressed
 
     XXX: Might be useful to accept decimal percentages
+    '''
+
+    def __repr__(self):
+        output = ""
+        if self.state is not None:
+            output += "{0}".format(self.state)
+        if self.state is not None and self.timing is not None:
+            output += ":"
+        if self.timing is not None:
+            output += "{0}".format(self.timing)
+        return output
+
+    def kllify(self):
+        '''
+        KLL representation of object
+        '''
+        return "{0}".format(self.state)
+
+
+class IndexScheduleParam(ScheduleParam):
+    '''
+    Index Schedule Parameter
+
+    Accepts:
+    Value from 0 to 255
     '''
 
     def __repr__(self):

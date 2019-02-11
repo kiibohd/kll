@@ -3,6 +3,7 @@
 # AnimationFrameData
 
 # CapabilityData
+usbKeyOut <= Output_usbCodeSend_capability(usbCode:1); # usbKeyOut   => Output_usbCodeSend_capability( usbCode : 1 ); # usbKeyOut
 
 # DefineData
 
@@ -62,8 +63,8 @@ S0x049(O) + S0x050 : U0x028; # S0x49(O) + S0x50 : U"Enter"; # :0 S073(O) + 0 S08
 S0x04e(30) : U0x00d, U0x012, U0x008, U0x000; # S[34-52(88), 78](30) : 'joe'; # :0 S078(30)[0]
 U0x004 + I0x001(Off) : U0x014; # U"a" + I"NumLock"(Off) : U"Q"; # :0 HID(USBCode,default)"4"A + 0 HID(IndCode,default)"1"Num Lock(Off)[0]
 U0x004 + I0x001(On) : U0x01a; # U"a" + I"NumLock"(On) : U"W"; # :0 HID(USBCode,default)"4"A + 0 HID(IndCode,default)"1"Num Lock(On)[0]
-U0x004 + U0x005(P:1.0s) : U0x016, U0x00f, U0x012, U0x01a, U0x000; # U"a" + U"b"(P:1s) : 'slow'; # :0 HID(USBCode,default)"4"A + 0 HID(USBCode,default)"5"B(P:1.0s)[0]
-U0x004 + U0x005(P:50.0ms,H:100.0ms,R:200.0ms) : U0x009, U0x004, U0x016, U0x017, U0x000; # U"a" + U"b"(P:50ms,H:100ms,R:200ms) : 'fast'; # :0 HID(USBCode,default)"4"A + 0 HID(USBCode,default)"5"B(P:50.0ms,H:100.0ms,R:200.0ms)[0]
+U0x004 + S0x02a(P:1.0s) : U0x016, U0x00f, U0x012, U0x01a, U0x000; # U"a" + U"b"(P:1s) : 'slow'; # :0 HID(USBCode,default)"4"A + 0 HID(USBCode,default)"5"B(P:1.0s)[0]
+U0x004 + S0x02a(P:50.0ms,H:100.0ms,R:200.0ms) : U0x009, U0x004, U0x016, U0x017, U0x000; # U"a" + U"b"(P:50ms,H:100ms,R:200ms) : 'fast'; # :0 HID(USBCode,default)"4"A + 0 HID(USBCode,default)"5"B(P:50.0ms,H:100.0ms,R:200.0ms)[0]
 U0x004(0) : U0x004; # U"A"(0)   : U"A"; # :0 HID(USBCode,default)"4"A(0)[0]
 U0x004(42) : U0x014; # U"A"(42)  : U"Q"; # :0 HID(USBCode,default)"4"A(42)[0]
 U0x00c(200) : U0x007, U0x018, U0x000, U0x018, U0x000, U0x018, U0x007, U0x008, U0x01e, U0x000; # U"i"(200) : 'duuude1'; # :0 HID(USBCode,default)"12"I(200)[0]
@@ -79,6 +80,7 @@ U0x020(42) : U0x010, U0x004, U0x006, U0x000; # U["1"-"5"(42), "Tab"](30) : 'mac'
 U0x021(42) : U0x010, U0x004, U0x006, U0x000; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :0 HID(USBCode,default)"33"4(42)[0]
 U0x022(42) : U0x010, U0x004, U0x006, U0x000; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :0 HID(USBCode,default)"34"5(42)[0]
 U0x02b(30) : U0x010, U0x004, U0x006, U0x000; # U["1"-"5"(42), "Tab"](30) : 'mac'; # :0 HID(USBCode,default)"43"Tab(30)[0]
+U0x077 : usbKeyOut(23)(P); # U0x77 : usbKeyOut(23)(P); # :0 HID(USBCode,default)"119"Select[0]
 
 # PixelChannelData
 

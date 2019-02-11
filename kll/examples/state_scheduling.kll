@@ -1,3 +1,4 @@
+# State Scheduling
 Name = "State Scheduling";
 Author = "HaaTa (Jacob Alexander) 2016";
 mydefine = "stuffs here";
@@ -49,4 +50,5 @@ I2 : U"G"; # CapsLock
 U"a" + I"NumLock"(Off) : U"Q";
 U"a" + I"NumLock"(On) : U"W";
 
-
+usbKeyOut   => Output_usbCodeSend_capability( usbCode : 1 );
+U0x77 : usbKeyOut(23)(P);

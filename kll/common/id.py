@@ -172,7 +172,7 @@ class HIDId(Id, Schedule):
                 schedule = ""
             else:
                 schedule = self.strSchedule()
-                if len(schedule) > 0:
+                if schedule:
                     schedule = "({0})".format(schedule)
 
             output = 'HID({},{})"{}"{}{}'.format(self.type, self.locale.name(), self.uid, name, schedule)
@@ -203,7 +203,7 @@ class HIDId(Id, Schedule):
         Returns KLL version of the Id
         '''
         schedule = self.strSchedule()
-        if len(schedule) > 0:
+        if schedule:
             schedule = "({0})".format(schedule)
 
         output = "{0}{1:#05x}{2}".format(self.kll_type, self.uid, schedule)
@@ -257,16 +257,24 @@ class ScanCodeId(Id, Schedule, Position):
         if self.positionSet():
             return "S{0:03d}".format(self.get_uid())
 
-    def __repr__(self):
+    def str_repr(self, exclude_schedule=False):
+        '''
+        Returns the string representation of the ScanCodeId
+
+        @param exclude_schedule: If True, ignores the schedule when generating the string
+        '''
         # Positions are a special case
         if self.positionSet():
             return "{0} <= {1}".format(self.unique_key(), self.strPosition())
 
         schedule = self.strSchedule()
-        if len(schedule) > 0:
+        if schedule and not exclude_schedule:
             return "S{0:03d}({1})".format(self.get_uid(), schedule)
         else:
             return "S{0:03d}".format(self.get_uid())
+
+    def __repr__(self):
+        return self.str_repr()
 
     def json(self):
         '''
@@ -282,7 +290,7 @@ class ScanCodeId(Id, Schedule, Position):
         Returns KLL version of the Id
         '''
         schedule = self.strSchedule()
-        if len(schedule) > 0:
+        if schedule:
             schedule = "({0})".format(schedule)
 
         output = "S{0:#05x}{1}".format(self.get_uid(), schedule)
@@ -304,19 +312,27 @@ class LayerId(Id, Schedule):
         self.type = type
         self.uid = layer
 
-    def __repr__(self):
+    def str_repr(self, exclude_schedule=False):
+        '''
+        Returns the string representation of the LayerId
+
+        @param exclude_schedule: If True, ignores the schedule when generating the string
+        '''
         schedule = self.strSchedule()
-        if len(schedule) > 0:
+        if schedule and not exclude_schedule:
             return "{0}[{1}]({2})".format(
                 self.type,
                 self.uid,
                 schedule,
             )
-        else:
-            return "{0}[{1}]".format(
-                self.type,
-                self.uid,
-            )
+
+        return "{0}[{1}]".format(
+            self.type,
+            self.uid,
+        )
+
+    def __repr__(self):
+        return self.str_repr()
 
     def width(self):
         '''
@@ -354,17 +370,28 @@ class TriggerId(Id, Schedule):
         self.uid = uid
         self.idcode = idcode
 
-    def __repr__(self):
-        schedule = self.strSchedule()
-        schedule_val = ""
-        if len(schedule) > 0:
-            schedule_val = "({})".format(schedule)
+    def str_repr(self, exclude_schedule=False):
+        '''
+        Returns the string representation of the TriggerId
+
+        @param exclude_schedule: If True, ignores the schedule when generating the string
+        '''
+        if exclude_schedule:
+            schedule_val = ""
+        else:
+            schedule = self.strSchedule()
+            schedule_val = ""
+            if schedule:
+                schedule_val = "({})".format(schedule)
 
         return "T[{0},{1}]{2}".format(
             self.idcode,
             self.uid,
             schedule_val,
         )
+
+    def __repr__(self):
+        return self.str_repr()
 
     def json(self):
         '''
@@ -398,16 +425,24 @@ class AnimationId(Id, Schedule, AnimationModifierList):
         self.second_type = 'A'
         self.state = state
 
-    def __repr__(self):
+    def str_repr(self, exclude_schedule=False):
+        '''
+        Returns the string representation of the AnimationId
+
+        @param exclude_schedule: If True, ignores the schedule when generating the string
+        '''
         state = ""
         if self.state is not None:
             state = ", {}".format(self.state)
         schedule = self.strSchedule()
-        if len(schedule) > 0:
+        if schedule and not exclude_schedule:
             return "A[{0}{1}]({2})".format(self.name, state, self.strSchedule())
-        if len(self.modifiers) > 0:
+        if self.modifiers:
             return "A[{0}{1}]({2})".format(self.name, state, self.strModifiers())
         return self.base_repr()
+
+    def __repr__(self):
+        return self.str_repr()
 
     def base_repr(self):
         '''
@@ -502,9 +537,9 @@ class PixelId(Id, Position, PixelModifierList, ChannelList):
             return "{0} <= {1}".format(self.unique_key(), self.strPosition())
 
         extra = ""
-        if len(self.modifiers) > 0:
+        if self.modifiers:
             extra += "({0})".format(self.strModifiers())
-        if len(self.channels) > 0:
+        if self.channels:
             extra += "({0})".format(self.strChannels())
         return "{0}{1}".format(self.unique_key(), extra)
 
@@ -517,9 +552,9 @@ class PixelId(Id, Position, PixelModifierList, ChannelList):
             return "{0} <= {1}".format(self.unique_key(kll=True), self.strPosition())
 
         extra = ""
-        if len(self.modifiers) > 0:
+        if self.modifiers:
             extra += "({0})".format(self.strModifiers())
-        if len(self.channels) > 0:
+        if self.channels:
             extra += "({0})".format(self.strChannels())
         return "{0}{1}".format(self.unique_key(kll=True), extra)
 
@@ -690,12 +725,12 @@ class PixelLayerId(Id, PixelModifierList):
         self.type = 'PixelLayer'
 
     def __repr__(self):
-        if len(self.modifiers) > 0:
+        if self.modifiers:
             return "PL{0}({1})".format(self.uid, self.strModifiers())
         return "PL{0}".format(self.uid)
 
 
-class CapId(Id):
+class CapId(Id, Schedule):
     '''
     Capability identifier
     '''
@@ -707,29 +742,48 @@ class CapId(Id):
         @param arg_list: List of CapArgIds, empty list if there are none
         '''
         Id.__init__(self)
+        Schedule.__init__(self)
         self.name = name
         self.type = type
         self.arg_list = arg_list
 
-    def __repr__(self):
+    def str_repr(self, exclude_schedule=False):
+        '''
+        Returns the string representation of the CapId
+
+        @param exclude_schedule: If True, ignores the schedule when generating the string
+        '''
         # Generate prettified argument list
         arg_string = ""
         for arg in self.arg_list:
             arg_string += "{0},".format(arg)
-        if len(arg_string) > 0:
+        if arg_string:
             arg_string = arg_string[:-1]
 
-        return "{0}({1})".format(self.name, arg_string)
+        if exclude_schedule:
+            schedule_val = ""
+        else:
+            schedule = self.strSchedule()
+            schedule_val = ""
+            if schedule:
+                schedule_val = "({})".format(schedule)
+
+        return "{0}({1}){2}".format(self.name, arg_string, schedule_val)
+
+    def __repr__(self):
+        return self.str_repr()
 
     def json(self):
         '''
         JSON representation of CapId
         '''
-        return {
+        output = {
             'type' : self.type,
             'name' : self.name,
             'args' : [arg.json() for arg in self.arg_list]
         }
+        output.update(Schedule.json(self))
+        return output
 
     def total_arg_bytes(self, capabilities_dict=None):
         '''

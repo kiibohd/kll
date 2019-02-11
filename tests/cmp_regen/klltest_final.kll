@@ -13,8 +13,12 @@ I0x003 : testThreadSafe(); # I"ScrollLock" : testThreadSafe(); # :0 HID(IndCode,
 I0x004 : testThreadSafe(); # I"Compose" : testThreadSafe(); # :0 HID(IndCode,default)"4"Compose[0]
 I0x005 : testThreadSafe(); # I"Kana" : testThreadSafe(); # :0 HID(IndCode,default)"5"Kana[0]
 U0x004 + U0x005 : U0x006; # U"A" + U"B" : U"C"; # :0 HID(USBCode,default)"4"A + 0 HID(USBCode,default)"5"B[0]
+U0x005(100.0ms) : U0x014; # U"B"(100ms) : U"Q"; # :0 HID(USBCode,default)"5"B(100.0ms)[0]
+U0x005(320.0ms) : U0x01c; # U"B"(320ms) : U"Y"; # :0 HID(USBCode,default)"5"B(320.0ms)[0]
 U0x006, U0x004, U0x005 : U0x007; # 'cab' : U"D"; # :0 HID(USBCode,default)"6"C, 0 HID(USBCode,default)"4"A, 0 HID(USBCode,default)"5"B[0]
+U0x008(P,H,R) : U0x004; # U"E"(P,H,R) : U"A"; # :0 HID(USBCode,default)"8"E(P,H,R)[0]
 U0x008, U0x009 : U0x00a; # U"E", U"F" : U"G"; # :0 HID(USBCode,default)"8"E, 0 HID(USBCode,default)"9"F[0]
+U0x009(P,P,P) : U0x005; # U"F"(P,P,P) : U"B"; # :0 HID(USBCode,default)"9"F(P,P,P)[0]
 U0x00a : U0x004 + U0x005; # U"G" : U"A" + U"B"; # :0 HID(USBCode,default)"10"G[0]
 U0x00b : U0x00c, U0x00d, U0x00e, U0x000; # U"H" : 'ijk'; # :0 HID(USBCode,default)"11"H[0]
 U0x00c : Layer[1]; # U"I" : Layer[1]; # :0 HID(USBCode,default)"12"I[0]
@@ -26,10 +30,13 @@ U0x011 : SYS0x082; # U"N" : SYS"Sleep"; # :0 HID(USBCode,default)"17"N[0]
 U0x012 : U0x00c, U0x012, U0x000, U0x012, U0x000; # U"O" : 'ioo'; # :0 HID(USBCode,default)"18"O[0]
 U0x013 : U0x014, U0x015; # U"P" : U"Q", U"R"; # :0 HID(USBCode,default)"19"P[0]
 U0x014 : A[testanimation](start); # U"Q" : A[testanimation](start); # :0 HID(USBCode,default)"20"Q[0]
+U0x014(P) : U0x017; # U"Q"(P) : U"T"; # :0 HID(USBCode,default)"20"Q(P)[0]
+U0x014(R) : U0x015; # U"Q"(R) : U"R"; # :0 HID(USBCode,default)"20"Q(R)[0]
 U0x014, U0x014 : U0x008; # 'qq' : U"E"; # :0 HID(USBCode,default)"20"Q, 0 HID(USBCode,default)"20"Q[0]
 U0x015 : A[blue_fill_interp](start); # U"R" : A[blue_fill_interp](start); # :0 HID(USBCode,default)"21"R[0]
 U0x016 : A[testanimation](start) + A[blue_fill_interp](start); # U"S" : A[testanimation](start) + A[blue_fill_interp](start); # :0 HID(USBCode,default)"22"S[0]
 U0x017 : LayerShift[1]; # U"T" : LayerShift[1]; # :0 HID(USBCode,default)"23"T[0]
+U0x01a(H) : U0x008; # U"W"(H) : U"E"; # :0 HID(USBCode,default)"26"W(H)[0]
 
 # PixelChannelData
 
@@ -39,7 +46,8 @@ U0x017 : LayerShift[1]; # U"T" : LayerShift[1]; # :0 HID(USBCode,default)"23"T[0
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"; # Author
-Date = 2018-04-21; # Date = 2018-04-21; # Date
+Date = 2018-12-16; # Date = 2018-12-16; # Date
+KLL = 0.5; # KLL = 0.5; # KLL
 Name = klltest; # Name = klltest; # Name
-Version = 0.4; # Version = 0.4; # Version
+Version = 0.5; # Version = 0.5; # Version
 
