@@ -422,6 +422,10 @@ class Make:
         else:
             sequence = locale.compose(token.value[1:-1], minimal_clears=True)
 
+            # If a single character sequence, this is a short macro, remove the final clear (not needed)
+            if len(token.value[1:-1]) == 1:
+                del sequence[1]
+
         # Convert each element in sequence of combos to HIDIds
         hid_ids = []
         for combo in sequence:
