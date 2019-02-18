@@ -1,17 +1,17 @@
 # Kira Layer 2 - Animation Layer
 Name = "Kira Control Layer";
-Version = 0.5;
+Version = 0.6;
 Author = "HaaTa (Jacob Alexander) 2018-2019";
 KLL = 0.5;
 
 # Modified Date
-Date = 2019-02-01;
+Date = 2019-02-17;
 
 
 
 ### General Animation Control ###
 
-U"Esc"       : animation_control(4); # Animations reset
+U"Esc"       : animation_control(4) + ledControl(9, 0); # Animations reset + Animation Speed Reset
 U"Equals"    : ledControl(1, 15); # Increase brightness
 U"Minus"     : ledControl(0, 15); # Decrease brightness
 U"Print"     : ledControl(4, 255); # Turn on animations (LEDs)
