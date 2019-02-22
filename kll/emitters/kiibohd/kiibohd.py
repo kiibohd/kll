@@ -1372,6 +1372,18 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     )
                 self.fill_dict['PixelFadeConfig'] += "};\n"
 
+                # Add profile brightnesses
+                self.fill_dict['PixelFadeConfig'] += "const uint8_t Pixel_LED_FadeBrightness[4] = {\n"
+                if 'KLL_LED_FadeBrightness' in variables.data.keys():
+                    fadebrightnesssize = len(variables.data[defines.data['KLL_LED_FadeBrightness'].name].value)
+                    for index in range(fadebrightnesssize):
+                        # Construct array
+                        self.fill_dict['PixelFadeConfig'] += "\t{}, // {}\n".format(
+                            variables.data[defines.data['KLL_LED_FadeBrightness'].name].value[index],
+                            index,
+                        )
+                self.fill_dict['PixelFadeConfig'] += "};\n"
+
                 def fade_default_config(name):
                     fadeconfigsize = len(variables.data[defines.data[name].name].value)
                     self.fill_dict['PixelFadeConfig'] += "\t{ "
