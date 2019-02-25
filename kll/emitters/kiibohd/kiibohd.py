@@ -34,7 +34,8 @@ from kll.common.id import (
     LayerId,
     NoneId,
     ScanCodeId,
-    TriggerId
+    TriggerId,
+    UTF8Id
 )
 
 from layouts.emitter import basic_c_defines
@@ -67,6 +68,13 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         'LayerShift': 'layerShift',
         'LayerLatch': 'layerLatch',
         'LayerLock': 'layerLock',
+    }
+
+    # List of optional capabilities
+    # If any of these are used, and not available, the compiler will fail
+    optional_capabilities = {
+        'UTF8State': 'unicode_state',
+        'UTF8Text': 'unicode_text',
     }
 
     # Code to capability mapping
@@ -134,6 +142,9 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         # USB Code Lookup for header emitter
         self.usb_code_lookup = None
         self.usb_c_defines = None
+
+        # UTF-8 String List
+        self.utf8_strings = dict()
 
     def command_line_args(self, args):
         '''
@@ -394,6 +405,30 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 if identifier.width() > 1:
                     cap_arg = ", ".join(
                             self.byte_split(layer_number, identifier.width())
+                    )
+
+                cap = "{0}, {1}".format(cap_index, cap_arg)
+
+            # UTF8Id
+            elif isinstance(identifier, UTF8Id):
+                # Lookup capabilityIndex
+                if self.optional_capabilities[identifier.type] not in self.capabilities_index.keys():
+                    self.error_exit = True
+                    print("{0} Optional capability '{1}' for '{2}' was used and is missing!".format(
+                        ERROR,
+                        identifier.type,
+                        'UTF8Id',
+                    ))
+                    return ""
+
+                cap_index = self.capabilities_index[self.optional_capabilities[identifier.type]]
+                cap_arg = ""
+                string_number = self.utf8_strings[identifier.uid]
+
+                # Check for a split argument (e.g. Consumer codes)
+                if identifier.width() > 1:
+                    cap_arg = ", ".join(
+                            self.byte_split(string_number, identifier.width())
                     )
 
                 cap = "{0}, {1}".format(cap_index, cap_arg)
@@ -834,6 +869,9 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         animation_settings_orig = self.control.stage('DataAnalysisStage').animation_settings_orig
         animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
         animation_uid_lookup = self.control.stage('DataAnalysisStage').animation_uid_lookup
+
+        utf8_strings = self.control.stage('DataAnalysisStage').utf8_strings
+        self.utf8_strings = utf8_strings
 
         # Build full list of C-Defines
         layout_mgr = self.control.stage('PreprocessorStage').layout_mgr
@@ -1741,6 +1779,14 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             )
         self.fill_dict['KeyPositions'] += "};"
 
+        ## UTF-8 ##
+        self.fill_dict['UTF8Data'] = "const char* UTF8_Strings[] = {\n"
+        for key, item in sorted(utf8_strings.items()):
+            # Remove surrounding b'mytext' -> mytext and encode into utf-8
+            output_str = '{}'.format(key.encode('utf-8'))[2:-1]
+            self.fill_dict['UTF8Data'] += '\t"{}",\n'.format(output_str)
+        self.fill_dict['UTF8Data'] += "};"
+
         ## KLL Defines ##
         self.fill_dict['KLLDefines'] = ""
         self.fill_dict['KLLDefines'] += "#define CapabilitiesNum_KLL {0}\n".format(len(self.capabilities_index))
@@ -1749,6 +1795,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.fill_dict['KLLDefines'] += "#define TriggerMacroNum_KLL {0}\n".format(len(trigger_index))
         self.fill_dict['KLLDefines'] += "#define MaxScanCode_KLL {0}\n".format(max(max_scan_code))
         self.fill_dict['KLLDefines'] += "#define RotationNum_KLL {0}\n".format(max_rotations)
+        self.fill_dict['KLLDefines'] += "#define UTF8StringsNum_KLL {0}\n".format(len(utf8_strings))
 
         # Only add defines if Pixel Buffer is defined
         if self.use_pixel_map:

@@ -10,7 +10,7 @@ REMEMBER: When editing parser BNF-like expressions, order matters. Specifically 
 # Parser doesn't play nice with linters, disable some checks
 # pylint: disable=no-self-argument, too-many-public-methods, no-self-use, bad-builtin
 
-# Copyright (C) 2016-2018 by Jacob Alexander
+# Copyright (C) 2016-2019 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,8 @@ from kll.common.id import (
     NoneId,
     PixelAddressId, PixelId, PixelLayerId,
     ScanCodeId,
-    TriggerId
+    TriggerId,
+    UTF8Id
 )
 from kll.common.modifier import AnimationModifierList
 from kll.common.schedule import AnalogScheduleParam, ScheduleParam, Time
@@ -707,6 +708,23 @@ class Make:
         '''
         return CapId(name, 'Capability', arguments)
 
+    def codePoint(codepoint):
+        '''
+        Converts a Unicode Code Point name to a UTF8Id
+
+        U+26C4 -> ⛄
+        '''
+        ustr = "{}".format(chr(int(codepoint[2:], 16)))
+        return UTF8Id(ustr)
+
+    def utf8str(ustr):
+        '''
+        Converts a KLL UTF-8 string into a UTF8Id
+
+        u'some text' -> some text
+        '''
+        return UTF8Id(ustr[2:-1])
+
     def debug(tokens):
         '''
         Just prints tokens
@@ -924,6 +942,9 @@ percent = tokenType('Percent') >> Make.percent
 plus = tokenType('Plus')
 timing = tokenType('Timing') >> Make.timing
 
+codePoint = tokenType('Unicode') >> Make.codePoint
+utf8str = tokenType('UnicodeString') >> Make.utf8str
+
 string = tokenType('String') >> Make.string
 unString = tokenTypeOnly('String')  # When the double quotes are still needed for internal processing
 seqStringL = tokenTypeOnly('SequenceStringL') >> Make.seqStringL >> optionCompression # lspec
@@ -1018,6 +1039,9 @@ usbCode_elem = usbCode + maybe(specifier_list) >> unarg(Make.specifierUnroll)
 # HID Codes
 hidCode_elem = usbCode_expanded | usbCode_elem | sysCode_expanded | sysCode_elem | consCode_expanded | consCode_elem | indCode_expanded | indCode_elem
 
+# UTF-8
+utf8_elem = (codePoint | utf8str) + maybe(specifier_list) >> unarg(Make.specifierUnroll)
+
 # Layers
 layer_start = tokenType('LayerStart')
 layer_range = (number) + skip(dash) + (number) >> unarg(Make.range)
@@ -1092,7 +1116,7 @@ animation_capability = ((animation_def | animation_elem) + maybe(skip(parenthesi
 capFunc_argument = (maybe(dash) + number) >> Make.capArgValue  # TODO Allow for symbolic arguments, i.e. arrays and variables
 capFunc_arguments = many(capFunc_argument + skip(maybe(comma)))
 capFunc_elem = name + skip(parenthesis('(')) + capFunc_arguments + skip(parenthesis(')')) >> unarg(Make.capUsage) >> listElem
-capFunc_combo = oneplus((hidCode_elem | capFunc_elem | animation_capability | pixel_capability | layer_expanded) + skip(maybe(plus))) >> listElem
+capFunc_combo = oneplus((hidCode_elem | capFunc_elem | animation_capability | pixel_capability | layer_expanded | utf8_elem) + skip(maybe(plus))) >> listElem
 capFunc_sequence = oneplus((capFunc_combo | seqStringR) + skip(maybe(comma))) >> oneLayerFlatten
 
 # Trigger / Result Codes

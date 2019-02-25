@@ -3,7 +3,7 @@
 KLL Id Containers
 '''
 
-# Copyright (C) 2016-2018 by Jacob Alexander
+# Copyright (C) 2016-2019 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -753,6 +753,69 @@ class CapId(Id):
                 total_bytes += arg.width
 
         return total_bytes
+
+
+class UTF8Id(Id, Schedule):
+    '''
+    Unicode/UTF-8 identifier container class
+
+    This Id handles UTF-8 strings differently depending on whether there is a single character string
+    or a multi character string.
+    Single character strings can be associated with Press/Hold/Release events.
+    Multi character strings are used more for single shot typing events.
+    '''
+    def __init__(self, ustr):
+        '''
+        @param ustr: UTF-8 string
+        '''
+        Id.__init__(self)
+        Schedule.__init__(self)
+
+        # Select the type based on the length of the UTF-8 string
+        if len(ustr) == 1:
+            # Single character
+            self.type = 'UTF8State'
+        else:
+            self.type = 'UTF8Text'
+        self.uid = ustr
+
+    def __repr__(self):
+        schedule = self.strSchedule()
+        if schedule:
+            return "u'{0}'({1})".format(self.uid, schedule)
+        return "u'{0}'".format(self.uid)
+
+    def width(self):
+        '''
+        Returns the bit width of the UTF8Id
+
+        This is currently 2 bytes.
+        '''
+        return 2
+
+    def json(self):
+        '''
+        JSON representation of UTF8Id
+        '''
+        output = Id.json(self)
+        output.update(Schedule.json(self))
+        return output
+
+    def kllify(self):
+        '''
+        Returns KLL version of the Id
+
+        For single characters, use code point format (U+123A)
+        For multiple characters, use a UTF-8 string
+        '''
+        unicode_output = "u'{}'".format(self.uid)
+        if len(self.uid) == 1:
+            unicode_output = "U+{:X}".format(ord(self.uid[0]))
+
+        schedule = self.strSchedule()
+        if schedule:
+            return "{0}({1})".format(unicode_output, schedule)
+        return "{0}".format(unicode_output)
 
 
 class NoneId(CapId):

@@ -3,7 +3,7 @@
 KLL Compiler Stage Definitions
 '''
 
-# Copyright (C) 2016-2018 by Jacob Alexander
+# Copyright (C) 2016-2019 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1323,8 +1323,10 @@ class OperationSpecificsStage(Stage):
             ('LayerStart', (r'Layer(|Shift|Latch|Lock)\[', )),
             ('CodeBegin', (r'\[', )),
             ('CodeEnd', (r'\]', )),
+            ('Unicode', (r'U\+[0-9a-fA-F]+', )),
 
             ('String', (r'"[^"]*"', )),
+            ('UnicodeString', (r"u'[^']*'", )),
             ('SequenceStringR', (r"'[^']*'", )),
 
             ('None', (r'None', )),
@@ -2273,6 +2275,8 @@ class DataAnalysisStage(Stage):
         self.animation_settings_list = []
         self.animation_uid_lookup = dict()
 
+        self.utf8_strings = dict()
+
         self.partial_contexts = None
         self.layer_contexts = None
         self.full_context = None
@@ -2810,6 +2814,30 @@ class DataAnalysisStage(Stage):
             self.animation_uid_lookup[animation.association.name] = count
             count += 1
 
+    def generate_utf8_string_lookup(self):
+        '''
+        Generate UTF-8 string lookup
+
+        Only a single copy of each UTF-8 string (or character) should be stored in order to save space
+        Sort all of the UTF-8 strings with a unique key (the string itself)
+        '''
+        # Iterate over each layer
+        for layer in self.reduced_contexts:
+            # Iterate over each expression
+            for key, elem in layer.organization.mapping_data.data.items():
+                # Each trigger, may have multiple results
+                for sub_expr in elem:
+                    # Get list of ids from expression
+                    for identifier in sub_expr.result_id_list():
+                        # Determine if UTF8Id
+                        if identifier.type in ['UTF8State', 'UTF8Text']:
+                            # Just overwrite as it will be the same value
+                            self.utf8_strings[identifier.uid] = identifier.uid
+
+        # Assign indices to each string
+        for index, key in enumerate(self.utf8_strings.keys()):
+            self.utf8_strings[key] = index
+
     def analyze(self):
         '''
         Analyze the set of configured contexts
@@ -2856,6 +2884,9 @@ class DataAnalysisStage(Stage):
 
         # Generate Rotation Ranges
         self.generate_rotation_ranges()
+
+        # Generate UTF-8 string list
+        self.generate_utf8_string_lookup()
 
     def process(self):
         '''

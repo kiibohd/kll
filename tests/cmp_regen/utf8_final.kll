@@ -1,0 +1,62 @@
+# AnimationData
+
+# AnimationFrameData
+
+# CapabilityData
+
+# DefineData
+
+# MappingData
+U0x004 : U+22A5; # U"A" : U+22A5; # :0 HID(USBCode,default)"4"A[0]
+U0x005 : U+2261; # U"B" : U+2261; # :0 HID(USBCode,default)"5"B[0]
+U0x006 : U+2260; # U"C" : U+2260; # :0 HID(USBCode,default)"6"C[0]
+U0x007 : U+22A2; # U"D" : U+22A2; # :0 HID(USBCode,default)"7"D[0]
+U0x008 : U+2229; # U"E" : U+2229; # :0 HID(USBCode,default)"8"E[0]
+U0x009 : U+22A3; # U"F" : U+22A3; # :0 HID(USBCode,default)"9"F[0]
+U0x00a : U+2191; # U"G" : U+2191; # :0 HID(USBCode,default)"10"G[0]
+U0x00b : U+2193; # U"H" : U+2193; # :0 HID(USBCode,default)"11"H[0]
+U0x00c : U+221E; # U"I" : U+221E; # :0 HID(USBCode,default)"12"I[0]
+U0x00d : U+2190; # U"J" : U+2190; # :0 HID(USBCode,default)"13"J[0]
+U0x00e : U+2192; # U"K" : U+2192; # :0 HID(USBCode,default)"14"K[0]
+U0x00f : U+2194; # U"L" : U+2194; # :0 HID(USBCode,default)"15"L[0]
+U0x010 : U+2265; # U"M" : U+2265; # :0 HID(USBCode,default)"16"M[0]
+U0x011 : U+2264; # U"N" : U+2264; # :0 HID(USBCode,default)"17"N[0]
+U0x012 : U+2203; # U"O" : U+2203; # :0 HID(USBCode,default)"18"O[0]
+U0x013 : U+2202; # U"P" : U+2202; # :0 HID(USBCode,default)"19"P[0]
+U0x014 : U+2227; # U"Q" : U+2227; # :0 HID(USBCode,default)"20"Q[0]
+U0x015 : U+222A; # U"R" : U+222A; # :0 HID(USBCode,default)"21"R[0]
+U0x016 : U+22A4; # U"S" : U+22A4; # :0 HID(USBCode,default)"22"S[0]
+U0x017 : U+2282; # U"T" : U+2282; # :0 HID(USBCode,default)"23"T[0]
+U0x018 : U+2200; # U"U" : U+2200; # :0 HID(USBCode,default)"24"U[0]
+U0x019 : U+2243; # U"V" : U+2243; # :0 HID(USBCode,default)"25"V[0]
+U0x01a : U+2228; # U"W" : U+2228; # :0 HID(USBCode,default)"26"W[0]
+U0x01b : U+2308; # U"X" : U+2308; # :0 HID(USBCode,default)"27"X[0]
+U0x01c : U+2283; # U"Y" : U+2283; # :0 HID(USBCode,default)"28"Y[0]
+U0x01d : U+230A; # U"Z" : U+230A; # :0 HID(USBCode,default)"29"Z[0]
+U0x01e : u'This string is unicode!'; # U"1" : u'This string is unicode!'; # :0 HID(USBCode,default)"30"1[0]
+U0x01f : U+2328; # U"2" : u'⌨'; # :0 HID(USBCode,default)"31"2[0]
+U0x020 : u'⌨🖮'; # U"3" : u'⌨🖮'; # :0 HID(USBCode,default)"32"3[0]
+U0x021 : u'キーボード'; # U"4" : u'キーボード'; # :0 HID(USBCode,default)"33"4[0]
+U0x022 : u'键盘'; # U"5" : u'键盘'; # :0 HID(USBCode,default)"34"5[0]
+U0x023 : u'키보드'; # U"6" : u'키보드'; # :0 HID(USBCode,default)"35"6[0]
+U0x03a : U+2160; # U"F1" : U+2160; # :0 HID(USBCode,default)"58"F1[0]
+U0x03b : U+2161; # U"F2" : U+2161; # :0 HID(USBCode,default)"59"F2[0]
+U0x03c : U+2162; # U"F3" : U+2162; # :0 HID(USBCode,default)"60"F3[0]
+U0x03d : U+2163; # U"F4" : U+2163; # :0 HID(USBCode,default)"61"F4[0]
+U0x04f : U+261E; # U"Right" : U+261E; # :0 HID(USBCode,default)"79"Right[0]
+U0x050 : U+261C; # U"Left" : U+261C; # :0 HID(USBCode,default)"80"Left[0]
+U0x051 : U+1F593; # U"Down" : U+1F593; # :0 HID(USBCode,default)"81"Down[0]
+U0x052 : U+1F592; # U"Up" : U+1F592; # :0 HID(USBCode,default)"82"Up[0]
+
+# PixelChannelData
+
+# PixelPositionData
+
+# ScanCodePositionData
+
+# VariableData
+Author = HaaTa (Jacob Alexander) 2019; # Author = "HaaTa (Jacob Alexander) 2019"; # Author
+Date = 2019-02-24; # Date = 2019-02-24; # Date
+KLL = 0.6; # KLL = 0.6; # KLL
+Name = utf8; # Name = utf8; # Name
+

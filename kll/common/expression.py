@@ -3,7 +3,7 @@
 KLL Expression Container
 '''
 
-# Copyright (C) 2016-2018 by Jacob Alexander
+# Copyright (C) 2016-2019 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -705,6 +705,23 @@ class MapExpression(Expression):
             # Iterate over each combo (element of the sequence)
             for combo in sequence:
                 # Iterate over each trigger identifier
+                for identifier in combo:
+                    id_list.append(identifier)
+
+        return id_list
+
+    def result_id_list(self):
+        '''
+        Returns a list of ids within the sequence of combos
+        May contain duplicates
+        '''
+        id_list = []
+
+        # Iterate over each result variants (expanded from ranges)
+        for sequence in self.results:
+            # Iterate over each combo (element of the sequence)
+            for combo in sequence:
+                # Iterate over each result identifier
                 for identifier in combo:
                     id_list.append(identifier)
 

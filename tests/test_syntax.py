@@ -30,6 +30,7 @@ test_files = [
     'kll/layouts/klltest.kll',
     'kll/layouts/klltest_default.kll',
     'kll/examples/triggers.kll',
+    'kll/examples/utf8.kll',
 ]
 
 

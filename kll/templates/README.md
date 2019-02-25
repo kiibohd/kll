@@ -10,4 +10,5 @@ Brief description of each of the files.
 * [kiibohdDefs.h](kiibohdDefs.h) - Used by [kiibohd emitter](../emitters/kiibohd) to generate `kll_defs.h`.
 * [kiibohdKeymap.h](kiibohdKeymap.h) - Used by [kiibohd emitter](../emitters/kiibohd) to generate `generatedKeymap.h`.
 * [kiibohdPixelmap.c](kiibohdPixelmap.c) - Used by [kiibohd emitter](../emitters/kiibohd) to generate `generatedPixelmap.c`.
+* [kiibohd_usb_hid.h](kiibohd_usb_hid.h) - Used by kll compiler to assign symbolic C defines for USB codes.
 
