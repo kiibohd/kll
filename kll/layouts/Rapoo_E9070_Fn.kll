@@ -1,7 +1,7 @@
 Name = "Rapoo E9070 Fn";
-Version = 0.1;
-Author = "nazar-pc (Nazar Mokrynskyi) 2017";
-KLL = 0.3d;
+Version = 0.2;
+Author = "nazar-pc (Nazar Mokrynskyi) 2017-2019";
+KLL = 0.5;
 
 # Modified Date
 Date = 2017-05-11;
@@ -9,8 +9,8 @@ Date = 2017-05-11;
 U"F1"  : CONS"Back";
 U"F2"  : CONS"Forward";
 U"F3"  : CONS"Home";
-U"F4"  : CONS"EmailReader";
-U"F5"  : CONS"ConsumerControlConfig";
+U"F4"  : CONS"Email Reader";
+U"F5"  : CONS"Consumer Control Config";
 U"F6"  : CONS"PausePlay";
 U"F7"  : CONS"Stop";
 U"F8"  : CONS"ScanPreviousTrack";
