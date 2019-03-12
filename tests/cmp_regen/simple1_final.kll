@@ -45,6 +45,5 @@ S0x046 : U0x001, U0x002 + U0x01f; # S0x46 : U0x01, U2+U["2"-"5"]; # :0 S070[0]
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2014; # Author = "HaaTa (Jacob Alexander) 2014"; # Author
-KLL = 0.3; # KLL = 0.3; # KLL
 Name = colemak; # Name = colemak; # Name
 

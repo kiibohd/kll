@@ -21,6 +21,7 @@ KLL Compiler Stage Definitions
 ### Imports ###
 
 from multiprocessing.dummy import Pool as ThreadPool
+from packaging import version
 
 import copy
 import io
@@ -34,6 +35,7 @@ import kll.common.context as context
 import kll.common.expression as expression
 import kll.common.file as file
 import kll.common.id as id
+import kll.common.suggestions as suggestions
 
 import kll.emitters.emitters as emitters
 
@@ -85,6 +87,8 @@ class ControlStage:
         self.git_rev = None
         self.git_changes = None
         self.version = None
+        self.short_version = None
+        self.last_compat_version = None
 
     def stage(self, context_str):
         '''
@@ -602,6 +606,34 @@ class PreprocessorStage(Stage):
                             assert (len(self.interconnect_scancode_offsets) > self.most_recent_connect_id)
 
                     if (
+                        l_element.value == "KLL"
+                            and
+                        mid_element.value == "="
+                    ):
+                        # Rebuild version number
+                        file_version = ".".join([token.value for token in tokens[2:]])
+
+                        # Compare version to last compatible version (not running version, this is different)
+                        if version.parse(file_version) < version.parse(self.control.last_compat_version):
+                            print(
+                                "{} {}".format(
+                                    ERROR,
+                                    kll_file.path,
+                                )
+                            )
+                            print("      Contains possibly incompatible KLL expressions from \033[1m{}\033[0m".format(
+                                    file_version,
+                                )
+                            )
+                            print("      Please your configuration to KLL {} compliant code".format(
+                                    self.control.last_compat_version
+                                )
+                            )
+                            info = suggestions.Suggestions(self.control.short_version, file_version)
+                            info.show()
+                            return False
+
+                    if (
                         l_element.type == "ScanCode"
                             and
                         mid_element.value == ":"
@@ -683,6 +715,8 @@ class PreprocessorStage(Stage):
             kll_file.data = new_data
             kll_file.lines = processed_lines
 
+        return True
+
     def determine_scancode_offsets(self):
         # Sanity check the min/max codes
         assert (len(self.min_scan_code) is len(self.max_scan_code))
@@ -741,8 +775,12 @@ class PreprocessorStage(Stage):
 
     def gather_scancode_offsets(self, kll_files):
         self.most_recent_connect_id = 0
+        success = True
         for kll_file in kll_files:
-            self.process_connect_ids(kll_file, apply_offsets=False)
+            if not self.process_connect_ids(kll_file, apply_offsets=False):
+                success = False
+
+        return success
 
     def apply_scancode_offsets(self, kll_files):
         self.most_recent_connect_id = 0
@@ -778,7 +816,7 @@ class PreprocessorStage(Stage):
         self.kll_files = self.control.stage('FileImportStage').kll_files
 
         self.import_data_from_disk(self.kll_files)
-        self.gather_scancode_offsets(self.kll_files)
+        assert(self.gather_scancode_offsets(self.kll_files))
         self.determine_scancode_offsets()
         #self.apply_scancode_offsets(self.kll_files) # XXX (HaaTa) not necessary anymore
         self.export_data_to_disk(self.kll_files)

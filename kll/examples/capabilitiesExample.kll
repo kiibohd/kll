@@ -1,6 +1,5 @@
 Name = ExampleModule;
 Author = "HaaTa (Jacob Alexander) 2014";
-KLL = 0.3;
 
 
 myCapability2 => myFunc2();

@@ -20,6 +20,5 @@ usbKeyOut <= Output_usbCodeSend_capability(usbCode:1); # usbKeyOut   => Output_u
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2014; # Author = "HaaTa (Jacob Alexander) 2014"; # Author
-KLL = 0.3; # KLL = 0.3; # KLL
 Name = ExampleModule; # Name = ExampleModule; # Name
 

@@ -2,7 +2,7 @@
 Name = "Kira Control Layer";
 Version = 0.6;
 Author = "HaaTa (Jacob Alexander) 2018-2019";
-KLL = 0.5;
+KLL = 0.5.7.8;
 
 # Modified Date
 Date = 2019-02-17;

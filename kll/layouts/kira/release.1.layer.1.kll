@@ -1,8 +1,8 @@
 # Kira Layer 1 - Control Layer
 Name = "Kira Control Layer";
 Version = 0.2;
-Author = "HaaTa (Jacob Alexander) 2018";
-KLL = 0.5;
+Author = "HaaTa (Jacob Alexander) 2018-2019";
+KLL = 0.5.7.8;
 
 # Modified Date
 Date = 2018-10-13;

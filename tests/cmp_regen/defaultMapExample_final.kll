@@ -79,7 +79,6 @@ S0x07f : U0x0e0; # S0x7F : U"LCtrl"; # :0 S127[0]
 # VariableData
 Author = HaaTa (Jacob Alexander) 2014; # Author = "HaaTa (Jacob Alexander) 2014"; # Author
 Date = 2014-06-12; # Date = 2014-06-12; # Date
-KLL = 0.2d; # KLL = 0.2d; # KLL
 Name = Kishsaver; # Name = Kishsaver; # Name
 Version = 0.1; # Version = 0.1; # Version
 

@@ -1,6 +1,5 @@
 Name = colemak;
 Author = "HaaTa (Jacob Alexander) 2014";
-KLL = 0.3;
 
 myCapability2 => myFunc2();
 myCapability3 => myFunc3( myArg1 : 2 );

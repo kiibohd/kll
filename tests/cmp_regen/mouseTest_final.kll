@@ -45,7 +45,6 @@ U0x052 : mouseOut(0,0,1); # U"Up" : mouseOut( 0, 0, 1 ); # :0 HID(USBCode,defaul
 # VariableData
 Author = HaaTa (Jacob Alexander) 2016-2018; # Author = "HaaTa (Jacob Alexander) 2016-2018"; # Author
 Date = 2018-04-08; # Date = 2018-04-08; # Date
-KLL = 0.5; # KLL = 0.5; # KLL
 Name = mouseTest; # Name = mouseTest; # Name
 Version = 0.3; # Version = 0.3; # Version
 

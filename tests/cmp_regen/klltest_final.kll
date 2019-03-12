@@ -40,7 +40,6 @@ U0x017 : LayerShift[1]; # U"T" : LayerShift[1]; # :0 HID(USBCode,default)"23"T[0
 # VariableData
 Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"; # Author
 Date = 2018-04-21; # Date = 2018-04-21; # Date
-KLL = 0.5; # KLL = 0.5; # KLL
 Name = klltest; # Name = klltest; # Name
 Version = 0.4; # Version = 0.4; # Version
 

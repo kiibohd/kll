@@ -88,7 +88,6 @@ U0x02b(30) : U0x010, U0x004, U0x006, U0x000; # U["1"-"5"(42), "Tab"](30) : 'mac'
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2016; # Author = "HaaTa (Jacob Alexander) 2016"; # Author
-KLL = 0.4; # KLL = 0.4; # KLL
 Name = State Scheduling; # Name = "State Scheduling"; # Name
 mydefine = stuffs here; # mydefine = "stuffs here"; # mydefine
 mydefine2 = "stuffs here"; # mydefine2 = '"stuffs here"'; # mydefine2

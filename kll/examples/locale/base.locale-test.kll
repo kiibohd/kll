@@ -2,7 +2,6 @@
 Name = base.locale-test;
 Version = 0.1;
 Author = "HaaTa (Jacob Alexander) 2018";
-KLL = 0.5;
 HIDMapping = default;
 
 # Modified Date`

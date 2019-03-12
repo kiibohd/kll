@@ -2,7 +2,7 @@
 Name = all-leds;
 Version = 0.1;
 Author = "HaaTa (Jacob Alexander) 2017";
-KLL = 0.5;
+KLL = 0.5.7.8;
 
 # Modified Date
 Date = 2017-10-31;

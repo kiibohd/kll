@@ -56,6 +56,5 @@ U0x01d : U0x005; # U"Z" : U"B"; # :0 HID(USBCode,default)"29"Z[0]
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2018; # Author = "HaaTa (Jacob Alexander) 2018"; # Author
-KLL = 0.5; # KLL = 0.5; # KLL
 Name = triggers; # Name = triggers; # Name
 
