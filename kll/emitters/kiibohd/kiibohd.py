@@ -784,10 +784,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             a_state = "AnimationPlayState_Pause"
         elif a_stop == 1:
             a_state = "AnimationPlayState_Stop"
-        elif a_start == 1:
-            a_state = "AnimationPlayState_Start"
         elif a_single == 1:
             a_state = "AnimationPlayState_Single"
+        elif a_start == 1:
+            a_state = "AnimationPlayState_Start"
         else:
             a_state = "AnimationPlayState_Pause"
 
@@ -803,6 +803,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         a_initial = 1
         if additional:
             a_initial = 0
+
+        # Add autostart flag if this animation has the start flag and is an initial animation
+        if a_initial == 1 and a_start == 1:
+            a_state += " | AnimationPlayState_AutoStart"
 
         return "\n\t{{ (TriggerMacro*){2}, {3}, /*{0} {1}*/\n\t\t{4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}}},".format(
             count,
