@@ -1,5 +1,5 @@
-# Gemini Dusk Dawn Layer 2 - Animation Layer
-Name = "Gemini Dusk Dawn Control Layer";
+# KType Layer 2 - Animation Layer
+Name = "KType Control Layer";
 Version = 0.4;
 Author = "HaaTa (Jacob Alexander) 2018-2019";
 KLL = 0.5.7.8;

@@ -1,11 +1,11 @@
-# Gemini Dusk Dawn Layer 1 - Control Layer
-Name = "Gemini Dusk Dawn Control Layer";
+# KType Layer 1 - Control Layer
+Name = "KType Control Layer";
 Version = 0.1;
-Author = "HaaTa (Jacob Alexander) 2018";
+Author = "HaaTa (Jacob Alexander) 2018-2019";
 KLL = 0.5.7.8;
 
 # Modified Date
-Date = 2018-11-07;
+Date = 2019-03-14;
 
 
 # Animation Layer
@@ -17,20 +17,13 @@ U"F1"  : toggleKbdProtocol(); # 6KRO/NKRO
 U"F2"  : kbdProtocolBoot();   # 6KRO
 U"F3"  : kbdProtocolNKRO();   # NKRO
 
-# Non-volatile control
-U"F10" : storage_control(2); # Defaults
-U"F11" : storage_control(0); # Load
-U"F12" : storage_control(1); # Save
-
-# Old keys
-U"Delete" : U"ScrollLock";
-U"End"    : U"Pause";
-
 # Media Keys
 U"Print"       : CONS"Scan Previous Track";
-U"Volume Up"   : CONS"Scan Next Track";
-U"Volume Down" : CONS"Pause Play"; # Play Key
+U"ScrollLock"  : CONS"Scan Next Track";
+U"Pause"       : CONS"Pause Play"; # Play Key
 U"Insert"      : U"Mute"        + CONS"Mute";        # Mute Key
+U"Home"        : U"Volume Up" + CONS"Volume Up";
+U"End"         : U"Volume Down" + CONS"Volume Down";
 
 U"Page Up"   : CONS"Rewind";
 U"Page Down" : CONS"Fast Forward";
