@@ -2,7 +2,7 @@
 Name = KType;
 Version = 0.2;
 Author = "HaaTa (Jacob Alexander) 2018-2019";
-KLL = 0.5.7.8;
+KLL = 0.5.7.9;
 
 # Modified Date
 Date = 2019-03-14;

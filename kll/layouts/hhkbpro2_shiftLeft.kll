@@ -1,7 +1,7 @@
 Name = hhkbpro2_shiftLeft;
 Version = 0.1;
 Author = "HaaTa (Jacob Alexander) 2014";
-KLL = 0.5.7.8;
+KLL = 0.5.7.9;
 
 # Same has hhkbpro2 but accomodates a right FN key that is further to the left
 # This means that all the keys meant to be pressed together with FN (same hand) are shifted left 1 key

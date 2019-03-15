@@ -10,6 +10,12 @@ if [ "$#" -lt 2 ]; then
 	exit 1
 fi
 
+# Try gnu sed first (for macOS)
+SED=gsed
+if [ $? -eq 1 ]; then
+	SED=sed
+fi
+
 version=$1
 shift
 
@@ -18,7 +24,7 @@ for file in $@; do
 	printf "${file} "
 	grep '^KLL = .*;$' $file
 	if [ $? -eq 0 ]; then
-		sed -i "s/^KLL = .*;$/KLL = ${version};/g" $file
+		$SED -i "s/^KLL = .*;$/KLL = ${version};/g" $file
 	fi
 done
 
