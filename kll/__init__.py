@@ -31,7 +31,7 @@ import kll.common.stage as stage
 
 ## Variables
 
-__version__ = '0.5.7.9'
+__version__ = '0.5.7.10'
 kll_name = 'kll'
 
 # This is updated whenever there is a KLL language breaking behaviour
