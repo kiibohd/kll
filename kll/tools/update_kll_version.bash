@@ -12,6 +12,7 @@ fi
 
 # Try gnu sed first (for macOS)
 SED=gsed
+which $SED &> /dev/null
 if [ $? -eq 1 ]; then
 	SED=sed
 fi

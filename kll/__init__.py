@@ -31,12 +31,12 @@ import kll.common.stage as stage
 
 ## Variables
 
-__version__ = '0.5.7.10'
+__version__ = '0.5.7.11'
 kll_name = 'kll'
 
 # This is updated whenever there is a KLL language breaking behaviour
 # The intent here is force users to update their (showing examples) rather than failing later (or succeeding incorrectly)
-__last_compat_version__ = '0.5.7.8'
+__last_compat_version__ = '0.5.7.11'
 
 
 

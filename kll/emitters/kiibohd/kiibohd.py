@@ -1537,6 +1537,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     offset_col,
                     offset_row,
                 )
+            max_pixel_to_scancode = last_scancode
             self.fill_dict['ScanCodeToPixelMapping'] += "};"
             self.fill_dict['ScanCodeToDisplayMapping'] += "};"
 
@@ -1816,6 +1817,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 len(animation_settings_list)
             )
             self.fill_dict['KLLDefines'] += "#define AnimationNum_KLL {0}\n".format(len(animations.data))
+            self.fill_dict['KLLDefines'] += "#define MaxPixelToScanCode_KLL {0}\n".format(max_pixel_to_scancode)
         else:
             self.fill_dict['KLLDefines'] += "#define AnimationNum_KLL 0\n"
 

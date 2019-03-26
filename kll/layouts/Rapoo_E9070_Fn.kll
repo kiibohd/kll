@@ -1,7 +1,7 @@
 Name = "Rapoo E9070 Fn";
 Version = 0.1;
 Author = "nazar-pc (Nazar Mokrynskyi) 2017";
-KLL = 0.5.7.9;
+KLL = 0.5.7.11;
 
 # Modified Date
 Date = 2017-05-11;

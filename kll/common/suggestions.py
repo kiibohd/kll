@@ -31,9 +31,23 @@ from packaging import version
 ### Database ###
 
 suggestions = {
+    '0.5.7.11': [
+        "KLL now supports inverting the Layer Fade profile.",
+        "This means when a layer is active, only the keys in that layer will show the active animation.",
+        "It is used by default on Gemini Dusk and Dawn.",
+        "",
+        "To use, add the following to your KLL file:",
+        "KLL_LED_FadeActiveLayerInvert = 1;",
+        "KLL_LED_FadeBrightness[0] = 255;",
+        "KLL_LED_FadeBrightness[1] = 255;",
+        "KLL_LED_FadeBrightness[2] = 255;",
+        "KLL_LED_FadeBrightness[3] = 0; # Sets unused LEDs to off",
+        "Layer[1] : fade_layer_highlight(1); # Activates layer fade when layer is triggered",
+        "Layer[2] : fade_layer_highlight(2); # Activates layer fade when layer is triggered",
+    ],
     '0.5.7.8': [
-        "KLL now supports fade profile brightness settings."
-        "A fade profile is a selection of LEDs associated to one of 4 groups:"
+        "KLL now supports fade profile brightness settings.",
+        "A fade profile is a selection of LEDs associated to one of 4 groups:",
         " - Keys",
         " - Underglow",
         " - Indicators",
