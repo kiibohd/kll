@@ -874,7 +874,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
         animation_uid_lookup = self.control.stage('DataAnalysisStage').animation_uid_lookup
 
-        utf8_strings = self.control.stage('DataAnalysisStage').utf8_strings
+        utf8_strings = sorted(self.control.stage('DataAnalysisStage').utf8_strings)
         self.utf8_strings = utf8_strings
 
         # Build full list of C-Defines
@@ -1786,7 +1786,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
         ## UTF-8 ##
         self.fill_dict['UTF8Data'] = "const char* UTF8_Strings[] = {\n"
-        for key, item in sorted(utf8_strings.items()):
+        for key, item in utf8_strings.items():
             # Remove surrounding b'mytext' -> mytext and encode into utf-8
             output_str = '{}'.format(key.encode('utf-8'))[2:-1]
             self.fill_dict['UTF8Data'] += '\t"{}",\n'.format(output_str)
