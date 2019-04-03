@@ -445,6 +445,7 @@ class PreprocessorStage(Stage):
         super().__init__(control)
 
         self.preprocessor_debug = False
+        self.version_check = False # XXX (HaaTa): Currently ignoring by default
 
         self.max_scan_code = [0]
         self.min_scan_code = [0]
@@ -465,6 +466,7 @@ class PreprocessorStage(Stage):
         '''
         self.preprocessor_debug = args.preprocessor_debug
         self.processed_save_path = args.preprocessor_tmp_path
+        self.version_check = args.version_check
 
     def command_line_flags(self, parser):
         '''
@@ -482,6 +484,10 @@ class PreprocessorStage(Stage):
         )
         group.add_argument('--preprocessor-debug', action='store_true', default=self.preprocessor_debug,
             help="Enable debug output in the preprocessor."
+        )
+        group.add_argument('--version-check', type=bool, default=self.version_check,
+            help="Sets whether or not to fail compilation on version comparison failure."
+            "\033[1mDefault\033[0m: {0}\n".format(self.version_check)
         )
 
     def seed_context(self, kll_file):
@@ -631,7 +637,10 @@ class PreprocessorStage(Stage):
                             )
                             info = suggestions.Suggestions(self.control.short_version, file_version)
                             info.show()
-                            return False
+
+                            # Do not error out if version check is disabled (still show messages)
+                            if self.version_check:
+                                return False
 
                     if (
                         l_element.type == "ScanCode"
@@ -2859,6 +2868,7 @@ class DataAnalysisStage(Stage):
         Only a single copy of each UTF-8 string (or character) should be stored in order to save space
         Sort all of the UTF-8 strings with a unique key (the string itself)
         '''
+        sorting_list = []
         # Iterate over each layer
         for layer in self.reduced_contexts:
             # Iterate over each expression
@@ -2870,11 +2880,14 @@ class DataAnalysisStage(Stage):
                         # Determine if UTF8Id
                         if identifier.type in ['UTF8State', 'UTF8Text']:
                             # Just overwrite as it will be the same value
-                            self.utf8_strings[identifier.uid] = identifier.uid
+                            sorting_list.append(identifier.uid)
+
+        # Remove duplicates and sort
+        sorting_list = sorted(frozenset(sorting_list))
 
         # Assign indices to each string
-        for index, key in enumerate(self.utf8_strings.keys()):
-            self.utf8_strings[key] = index
+        for index, value in enumerate(sorting_list):
+            self.utf8_strings[index] = value
 
     def analyze(self):
         '''

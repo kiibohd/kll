@@ -874,7 +874,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         animation_settings_list = self.control.stage('DataAnalysisStage').animation_settings_list
         animation_uid_lookup = self.control.stage('DataAnalysisStage').animation_uid_lookup
 
-        utf8_strings = sorted(self.control.stage('DataAnalysisStage').utf8_strings)
+        utf8_strings = self.control.stage('DataAnalysisStage').utf8_strings
         self.utf8_strings = utf8_strings
 
         # Build full list of C-Defines
