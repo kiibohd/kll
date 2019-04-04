@@ -58,7 +58,6 @@ class Context:
         # File data assigned to each context
         # This info is populated during the PreprocessorStage
         self.lines = []
-        self.data = ""
         self.parent = None
 
         # Tokenized data sets
@@ -83,7 +82,7 @@ class Context:
             self.kll_files,
             self.hid_mapping,
             self.lines,
-            self.data,
+            os.linesep.join(self.lines),
         )
 
     def layer_info(self):
@@ -95,16 +94,14 @@ class Context:
 
         return "{}".format(self.layer + 1)
 
-    def initial_context(self, lines, data, parent):
+    def initial_context(self, lines, parent):
         '''
         Used in the PreprocessorStage to update the initial line and kll file data
 
         @param lines:  Data split per line
-        @param data:   Entire context in a single string
         @param parent: Parent node, always a KLLFile
         '''
         self.lines = lines
-        self.data = data
         self.parent = parent
         self.connect_id = parent.connect_id
 

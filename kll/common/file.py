@@ -3,7 +3,7 @@
 KLL File Container
 '''
 
-# Copyright (C) 2016-2018 by Jacob Alexander
+# Copyright (C) 2016-2019 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ KLL File Container
 
 ### Imports ###
 
+import io
+import mmap
 import os
 
 import kll.common.context as context
@@ -51,7 +53,6 @@ class KLLFile:
         self.path = path
         self.context = file_context
         self.lines = []
-        self.data = ""
         self.connect_id = None
 
         # Add filename to context for debugging
@@ -93,9 +94,13 @@ class KLLFile:
         '''
         try:
             # Read file into memory, removing newlines
-            with open(self.path) as f:
-                self.data = f.read()
-                self.lines = self.data.splitlines()
+            with io.open(self.path, 'r', encoding='utf-8') as f:
+                mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+                while True:
+                    line = mm.readline().decode('utf-8')
+                    if line == '':
+                        break
+                    self.lines.append(line.rstrip())
 
         except BaseException:
             print(
@@ -120,7 +125,7 @@ class KLLFile:
                 os.makedirs(directory)
 
             with open(output_filename, 'w') as f:
-                f.write(self.data)
+                f.write(os.linesep.join(self.lines))
 
         except BaseException:
             print("{0} Failed to write to file '{1}'".format(ERROR, self.path))

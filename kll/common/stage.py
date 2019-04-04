@@ -497,7 +497,7 @@ class PreprocessorStage(Stage):
         TODO Update later for proper preprocessor
         Adds data from KLLFile into the Context
         '''
-        kll_file.context.initial_context(kll_file.lines, kll_file.data, kll_file)
+        kll_file.context.initial_context(kll_file.lines, kll_file)
 
     def apply_connect_ids(self):
         '''
@@ -521,7 +521,7 @@ class PreprocessorStage(Stage):
                 kll_file.context.connect_id = 0
 
     def process_connect_ids(self, kll_file, apply_offsets):
-        lines = kll_file.data.splitlines()
+        lines = kll_file.lines
 
         # Basic Tokens Spec
         # TODO Storing these somewhere central might be a reasonable idea
@@ -942,7 +942,8 @@ class OperationClassificationStage(Stage):
 
         # Tokenize and filter out useless tokens
         try:
-            tokens = [x for x in tokenizer(kll_context.data) if x.type not in useless]
+            tokens = [x for x in tokenizer(kll_context.lines) if x.type not in useless]
+            #tokens = [x for x in tokenizer(os.linesep.join(kll_context.lines)) if x.type not in useless]
         except LexerError as err:
             print(err)
             print("{0} {1}:tokenize -> {2}:{3}".format(
