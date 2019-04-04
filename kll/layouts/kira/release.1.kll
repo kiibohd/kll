@@ -1,11 +1,11 @@
 # Kira Release Animations and Default Map
 Name = Kira;
-Version = 0.4;
+Version = 0.5;
 Author = "HaaTa (Jacob Alexander) 2018-2019";
 KLL = 0.5.7.11;
 
 # Modified Date
-Date = 2018-12-09;
+Date = 2019-04-03;
 
 
 
@@ -513,4 +513,16 @@ KLL_LED_FadeDefaultConfig3[0] = 1;
 KLL_LED_FadeDefaultConfig3[1] = 1;
 KLL_LED_FadeDefaultConfig3[2] = 1;
 KLL_LED_FadeDefaultConfig3[3] = 1;
+
+# Fade Brightness (per profile)
+# From 0 to 255, this is an adjustment on the default brightness using the color PWM
+# One brightness setting per fade group
+KLL_LED_FadeBrightness[0] = 255;
+KLL_LED_FadeBrightness[1] = 255;
+KLL_LED_FadeBrightness[2] = 255;
+KLL_LED_FadeBrightness[3] = 0; # Used to blank out non-layer keys
+
+# Invert active fade layer
+# Blank out non-layer keys with the active layer set to 0 brightness
+KLL_LED_FadeActiveLayerInvert = 1;
 
