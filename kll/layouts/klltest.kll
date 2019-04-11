@@ -3,7 +3,6 @@
 Name = klltest;
 Version = 0.4;
 Author = "HaaTa (Jacob Alexander) 2018";
-KLL = 0.5;
 
 # Modified Date
 Date = 2018-04-21;

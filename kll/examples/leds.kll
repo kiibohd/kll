@@ -2,7 +2,6 @@
 
 Name = leds;
 Author = "HaaTa (Jacob Alexander) 2016-2018";
-KLL = 0.5;
 mydefine = "stuffs here";
 mydefine2 = '"stuffs here"'; # For outputting c define strings
 mynumber = 414;

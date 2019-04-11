@@ -8,6 +8,7 @@ layouts = ">=0.4.7"
 pytest = "*"
 pytest-xdist = "*"
 gitpython = "*"
+packaging = "*"
 
 [dev-packages]
 

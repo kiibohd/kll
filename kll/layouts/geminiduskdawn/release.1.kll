@@ -1,11 +1,11 @@
 # Gemini Dusk/Dawn Release Animations and Default Map
 Name = GeminiDuskDawn;
-Version = 0.1;
-Author = "HaaTa (Jacob Alexander) 2018";
-KLL = 0.5;
+Version = 0.3;
+Author = "HaaTa (Jacob Alexander) 2018-2019";
+KLL = 0.5.7.11;
 
 # Modified Date
-Date = 2018-11-07;
+Date = 2019-03-26;
 
 
 
@@ -14,64 +14,6 @@ Date = 2018-11-07;
 Layer[1] : fade_layer_highlight(1);
 Layer[2] : fade_layer_highlight(2);
 
-
-### Default Animation ###
-# TODO - Determine default animation
-A[default_animation] <= loops:1, pfunc:interp, replace:clear;
-A[default_animation, 1] <= P[1](0,0,0), P[128](0,0,0);
-A[default_animation, 2] <= P[1](10,10,10), P[128](10,10,10);
-A[default_animation, 3] <= P[1](20,20,20), P[128](20,20,20);
-A[default_animation, 4] <= P[1](30,30,30), P[128](30,30,30);
-A[default_animation, 5] <= P[1](40,40,40), P[128](40,40,40);
-A[default_animation, 6] <= P[1](50,50,50), P[128](50,50,50);
-A[default_animation, 7] <= P[1](60,60,60), P[128](60,60,60);
-A[default_animation, 8] <= P[1](70,70,70), P[128](70,70,70);
-A[default_animation, 9] <= P[1](80,80,80), P[128](80,80,80);
-A[default_animation, 10] <= P[1](90,90,90), P[128](90,90,90);
-A[default_animation, 11] <= P[1](100,100,100), P[128](100,100,100);
-A[default_animation, 12] <= P[1](110,110,110), P[128](110,110,110);
-A[default_animation, 13] <= P[1](120,120,120), P[128](120,120,120);
-A[default_animation, 14] <= P[1](130,130,130), P[128](130,130,130);
-A[default_animation, 15] <= P[1](140,140,140), P[128](140,140,140);
-A[default_animation, 16] <= P[1](150,150,150), P[128](150,150,150);
-A[default_animation, 17] <= P[1](160,160,160), P[128](160,160,160);
-A[default_animation, 18] <= P[1](170,170,170), P[128](170,170,170);
-A[default_animation, 19] <= P[1](180,180,180), P[128](180,180,180);
-A[default_animation, 20] <= P[1](190,190,190), P[128](190,190,190);
-A[default_animation, 21] <= P[1](200,200,200), P[128](200,200,200);
-A[default_animation, 22] <= P[1](210,210,210), P[128](210,210,210);
-A[default_animation, 23] <= P[1](220,220,220), P[128](220,220,220);
-A[default_animation, 24] <= P[1](230,230,230), P[128](230,230,230);
-A[default_animation, 25] <= P[1](240,240,240), P[128](240,240,240);
-A[default_animation, 26] <= P[1](250,250,250), P[128](250,250,250);
-A[default_animation, 27] <= P[1](255,255,255), P[128](255,255,255);
-A[default_animation, 28] <= P[1](255,250,250), P[128](255,250,250);
-A[default_animation, 29] <= P[1](255,240,240), P[128](255,240,240);
-A[default_animation, 30] <= P[1](255,230,230), P[128](255,230,230);
-A[default_animation, 31] <= P[1](255,220,220), P[128](255,220,220);
-A[default_animation, 32] <= P[1](255,210,210), P[128](255,210,210);
-A[default_animation, 33] <= P[1](255,200,200), P[128](255,200,200);
-A[default_animation, 34] <= P[1](255,190,190), P[128](255,190,190);
-A[default_animation, 35] <= P[1](255,180,180), P[128](255,180,180);
-A[default_animation, 36] <= P[1](255,170,170), P[128](255,170,170);
-A[default_animation, 37] <= P[1](255,160,160), P[128](255,160,160);
-A[default_animation, 38] <= P[1](255,150,150), P[128](255,150,150);
-A[default_animation, 39] <= P[1](255,140,140), P[128](255,140,140);
-A[default_animation, 40] <= P[1](255,130,130), P[128](255,130,130);
-A[default_animation, 41] <= P[1](255,120,120), P[128](255,120,120);
-A[default_animation, 42] <= P[1](255,110,110), P[128](255,110,110);
-A[default_animation, 43] <= P[1](255,100,100), P[128](255,100,100);
-A[default_animation, 44] <= P[1](255,90,90), P[128](255,90,90);
-A[default_animation, 45] <= P[1](255,88,80), P[128](255,88,80);
-A[default_animation, 46] <= P[1](255,88,70), P[128](255,88,70);
-A[default_animation, 47] <= P[1](255,88,60), P[128](255,88,60);
-A[default_animation, 48] <= P[1](255,88,50), P[128](255,88,50);
-A[default_animation, 49] <= P[1](255,88,40), P[128](255,88,40);
-A[default_animation, 50] <= P[1](255,88,30), P[128](255,88,30);
-A[default_animation, 51] <= P[1](255,88,20), P[128](255,88,20);
-A[default_animation, 52] <= P[1](255,88,10), P[128](255,88,10);
-A[default_animation, 53] <= P[1](255,88,0), P[128](255,88,0);
-A[default_animation, 53] <= P[126-128](0,0,0); # Indicators
 
 # Test animation (White, Red, Green, Blue)
 A[test_animation] <= loop, replace:clear, pfunc:interp, framedelay:255;
@@ -360,86 +302,60 @@ A[kira_wave, 65] <= P[c:-3%] (255,80,0), P[c:30%](239,10,129),   P[c:64%](129,10
 
 ### Color-Select Keys ###
 
-A[keys_only_rotation] <= pfunc:interp, replace:clear, single;
-A[keys_only_rotation, 1]  <= S1(0xC1, 0x2D, 0x1D), S114(0xC1, 0x2D, 0x1D);
-A[keys_only_rotation, 2]  <= S1(0xEE, 0x6D, 0x28), S114(0xEE, 0x6D, 0x28);
-A[keys_only_rotation, 3]  <= S1(0xE0, 0x9E, 0x3B), S114(0xE0, 0x9E, 0x3B);
-A[keys_only_rotation, 4]  <= S1(0xE5, 0xC9, 0x43), S114(0xE5, 0xC9, 0x43);
-A[keys_only_rotation, 5]  <= S1(0x1E, 0xB8, 0x6D), S114(0x1E, 0xB8, 0x6D);
-A[keys_only_rotation, 6]  <= S1(0x00, 0xB3, 0xA6), S114(0x00, 0xB3, 0xA6);
-A[keys_only_rotation, 7]  <= S1(0x20, 0x82, 0xC6), S114(0x20, 0x82, 0xC6);
-A[keys_only_rotation, 8]  <= S1(0x43, 0x54, 0xC1), S114(0x43, 0x54, 0xC1);
-A[keys_only_rotation, 9]  <= S1(0x71, 0x1C, 0x9E), S114(0x71, 0x1C, 0x9E);
-A[keys_only_rotation, 10] <= S1(0xCD, 0x3B, 0x70), S114(0xCD, 0x3B, 0x70);
-A[keys_only_rotation, 11] <= S1(0xB8, 0x34, 0x3E), S114(0xB8, 0x34, 0x3E);
+A[keys_only_rotation] <= pfunc:interp, replace:clearactive, single;
+A[keys_only_rotation, 1]  <= S1(0xC1, 0x2D, 0x1D), S112(0xC1, 0x2D, 0x1D);
+A[keys_only_rotation, 2]  <= S1(0xEE, 0x6D, 0x28), S112(0xEE, 0x6D, 0x28);
+A[keys_only_rotation, 3]  <= S1(0xE0, 0x9E, 0x3B), S112(0xE0, 0x9E, 0x3B);
+A[keys_only_rotation, 4]  <= S1(0xE5, 0xC9, 0x43), S112(0xE5, 0xC9, 0x43);
+A[keys_only_rotation, 5]  <= S1(0x1E, 0xB8, 0x6D), S112(0x1E, 0xB8, 0x6D);
+A[keys_only_rotation, 6]  <= S1(0x00, 0xB3, 0xA6), S112(0x00, 0xB3, 0xA6);
+A[keys_only_rotation, 7]  <= S1(0x20, 0x82, 0xC6), S112(0x20, 0x82, 0xC6);
+A[keys_only_rotation, 8]  <= S1(0x43, 0x54, 0xC1), S112(0x43, 0x54, 0xC1);
+A[keys_only_rotation, 9]  <= S1(0x71, 0x1C, 0x9E), S112(0x71, 0x1C, 0x9E);
+A[keys_only_rotation, 10] <= S1(0xCD, 0x3B, 0x70), S112(0xCD, 0x3B, 0x70);
+A[keys_only_rotation, 11] <= S1(0xB8, 0x34, 0x3E), S112(0xB8, 0x34, 0x3E);
 
 # Pastel Rainbow
-A[keys_only_rotation, 12] <= S1(40,255,40), S114(40,255,40);
-A[keys_only_rotation, 13] <= S1(255,255,40), S114(255,255,40);
-A[keys_only_rotation, 14] <= S1(255,40,40), S114(255,40,40);
-A[keys_only_rotation, 15] <= S1(127,40,255), S114(127,40,255);
-A[keys_only_rotation, 16] <= S1(40,40,255), S114(40,40,255);
+A[keys_only_rotation, 12] <= S1(40,255,40), S112(40,255,40);
+A[keys_only_rotation, 13] <= S1(255,255,40), S112(255,255,40);
+A[keys_only_rotation, 14] <= S1(255,40,40), S112(255,40,40);
+A[keys_only_rotation, 15] <= S1(127,40,255), S112(127,40,255);
+A[keys_only_rotation, 16] <= S1(40,40,255), S112(40,40,255);
 
 # Kira Colors
-A[keys_only_rotation, 17] <= S1(255,80,0), S114(255,80,0);
-A[keys_only_rotation, 18] <= S1(239,10,129), S114(239,10,129);
-A[keys_only_rotation, 19] <= S1(129,10,239), S114(129,10,239);
-A[keys_only_rotation, 20] <= S1(10,60,255), S114(10,60,255);
+A[keys_only_rotation, 17] <= S1(255,80,0), S112(255,80,0);
+A[keys_only_rotation, 18] <= S1(239,10,129), S112(239,10,129);
+A[keys_only_rotation, 19] <= S1(129,10,239), S112(129,10,239);
+A[keys_only_rotation, 20] <= S1(10,60,255), S112(10,60,255);
 
 
 ### Color-Select Underglow ###
 
-A[underlighting_only_rotation] <= replace:clear, single;
-A[underlighting_only_rotation, 1]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xC1, 0x2D, 0x1D);
-A[underlighting_only_rotation, 2]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xEE, 0x6D, 0x28);
-A[underlighting_only_rotation, 3]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xE0, 0x9E, 0x3B);
-A[underlighting_only_rotation, 4]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xE5, 0xC9, 0x43);
-A[underlighting_only_rotation, 5]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0x1E, 0xB8, 0x6D);
-A[underlighting_only_rotation, 6]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0x00, 0xB3, 0xA6);
-A[underlighting_only_rotation, 7]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0x20, 0x82, 0xC6);
-A[underlighting_only_rotation, 8]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0x43, 0x54, 0xC1);
-A[underlighting_only_rotation, 9]  <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0x71, 0x1C, 0x9E);
-A[underlighting_only_rotation, 10] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xCD, 0x3B, 0x70);
-A[underlighting_only_rotation, 11] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](0xB8, 0x34, 0x3E);
+A[underlighting_only_rotation] <= pfunc:interp, replace:clearactive, single;
+A[underlighting_only_rotation, 1]  <= P[113](0xC1, 0x2D, 0x1D), P[144](0xC1, 0x2D, 0x1D);
+A[underlighting_only_rotation, 2]  <= P[113](0xEE, 0x6D, 0x28), P[144](0xEE, 0x6D, 0x28);
+A[underlighting_only_rotation, 3]  <= P[113](0xE0, 0x9E, 0x3B), P[144](0xE0, 0x9E, 0x3B);
+A[underlighting_only_rotation, 4]  <= P[113](0xE5, 0xC9, 0x43), P[144](0xE5, 0xC9, 0x43);
+A[underlighting_only_rotation, 5]  <= P[113](0x1E, 0xB8, 0x6D), P[144](0x1E, 0xB8, 0x6D);
+A[underlighting_only_rotation, 6]  <= P[113](0x00, 0xB3, 0xA6), P[144](0x00, 0xB3, 0xA6);
+A[underlighting_only_rotation, 7]  <= P[113](0x20, 0x82, 0xC6), P[144](0x20, 0x82, 0xC6);
+A[underlighting_only_rotation, 8]  <= P[113](0x43, 0x54, 0xC1), P[144](0x43, 0x54, 0xC1);
+A[underlighting_only_rotation, 9]  <= P[113](0x71, 0x1C, 0x9E), P[144](0x71, 0x1C, 0x9E);
+A[underlighting_only_rotation, 10] <= P[113](0xCD, 0x3B, 0x70), P[144](0xCD, 0x3B, 0x70);
+A[underlighting_only_rotation, 11] <= P[113](0xB8, 0x34, 0x3E), P[144](0xB8, 0x34, 0x3E);
 
 # Pastel Rainbow
-A[underlighting_only_rotation, 12] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](40,255,40);
-A[underlighting_only_rotation, 13] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](255,255,40);
-A[underlighting_only_rotation, 14] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](255,40,40);
-A[underlighting_only_rotation, 15] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](127,40,255);
-A[underlighting_only_rotation, 16] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](40,40,255);
+A[underlighting_only_rotation, 12] <= P[113](40,255,40), P[144](40,255,40);
+A[underlighting_only_rotation, 13] <= P[113](255,255,40), P[144](255,255,40);
+A[underlighting_only_rotation, 14] <= P[113](255,40,40), P[144](255,40,40);
+A[underlighting_only_rotation, 15] <= P[113](127,40,255), P[144](127,40,255);
+A[underlighting_only_rotation, 16] <= P[113](40,40,255), P[144](40,40,255);
 
 # Kira Colors
-A[underlighting_only_rotation, 17] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](255,80,0);
-A[underlighting_only_rotation, 18] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](239,10,129);
-A[underlighting_only_rotation, 19] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](129,10,239);
-A[underlighting_only_rotation, 20] <= P[18,21,24,27,30,115,118,120,122,113,33,108,49,106,65,104,82,85-86,88-90,92,95,98,100](10,60,255);
-
-
-
-### Indicator Mode ###
-
-#A[numlock_on] <= loops:1, replace:all;
-#A[numlock_on, 1] <= P[126](155,155,155);
-#A[capslock_on] <= loops:1, replace:all;
-#A[capslock_on, 1] <= P[127](155,155,155);
-#A[scrolllock_on] <= loops:1, replace:all;
-#A[scrolllock_on, 1] <= P[128](155,155,155);
-
-#A[numlock_off] <= loops:1, replace:all;
-#A[numlock_off, 1] <= P[126](0,0,0);
-#A[capslock_off] <= loops:1, replace:all;
-#A[capslock_off, 1] <= P[127](0,0,0);
-#A[scrolllock_off] <= loops:1, replace:all;
-#A[scrolllock_off, 1] <= P[128](0,0,0);
-
-#I"NumLock"(On) : A[numlock_on](start);
-#I"CapsLock"(On) : A[capslock_on](start);
-#I"ScrollLock"(On) : A[scrolllock_on](start);
-
-#I"NumLock"(D) : A[numlock_off](start);
-#I"CapsLock"(D) : A[capslock_off](start);
-#I"ScrollLock"(D) : A[scrolllock_off](start);
+A[underlighting_only_rotation, 17] <= P[113](255,80,0), P[144](255,80,0);
+A[underlighting_only_rotation, 18] <= P[113](239,10,129), P[144](239,10,129);
+A[underlighting_only_rotation, 19] <= P[113](129,10,239), P[144](129,10,239);
+A[underlighting_only_rotation, 20] <= P[113](10,60,255), P[144](10,60,255);
 
 
 
@@ -503,8 +419,20 @@ KLL_LED_FadeDefaultConfig2[2] = 0;
 KLL_LED_FadeDefaultConfig2[3] = 0;
 ## Active Layer
 KLL_LED_FadeDefaultConfig3 => KLL_LED_FadeDefaultConfig3_define;
-KLL_LED_FadeDefaultConfig3[0] = 4;
-KLL_LED_FadeDefaultConfig3[1] = 4;
-KLL_LED_FadeDefaultConfig3[2] = 4;
-KLL_LED_FadeDefaultConfig3[3] = 4;
+KLL_LED_FadeDefaultConfig3[0] = 0;
+KLL_LED_FadeDefaultConfig3[1] = 0;
+KLL_LED_FadeDefaultConfig3[2] = 0;
+KLL_LED_FadeDefaultConfig3[3] = 0;
+
+# Fade Brightness (per profile)
+# From 0 to 255, this is an adjustment on the default brightness using the color PWM
+# One brightness setting per fade group
+KLL_LED_FadeBrightness[0] = 255;
+KLL_LED_FadeBrightness[1] = 255;
+KLL_LED_FadeBrightness[2] = 0; # Unused
+KLL_LED_FadeBrightness[3] = 0; # Used to blank out non-layer keys
+
+# Invert active fade layer
+# Blank out non-layer keys with the active layer set to 0 brightness
+KLL_LED_FadeActiveLayerInvert = 1;
 

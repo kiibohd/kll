@@ -65,7 +65,6 @@ S0x07f + S0x080 : U0x027; # S127 + S128 : U"0"; # :0 S127 + 0 S128[0]
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2014; # Author = "HaaTa (Jacob Alexander) 2014"; # Author
-KLL = 0.3; # KLL = 0.3; # KLL
 Name = colemak; # Name = colemak; # Name
 mydefine = stuffs here; # mydefine = "stuffs here"; # mydefine
 mydefine2 = "stuffs here"; # mydefine2 = '"stuffs here"'; # mydefine2

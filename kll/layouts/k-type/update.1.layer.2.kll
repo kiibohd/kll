@@ -1,6 +1,6 @@
-# Kira Layer 2 - Animation Layer
-Name = "Kira Control Layer";
-Version = 0.7;
+# KType Layer 2 - Animation Layer
+Name = "KType Control Layer";
+Version = 0.4;
 Author = "HaaTa (Jacob Alexander) 2018-2019";
 KLL = 0.5.7.11;
 
@@ -11,10 +11,10 @@ Date = 2019-03-14;
 
 ### General Animation Control ###
 
-U"Esc"       : animation_control(4) + ledControl(9, 0); # Animations reset + Animation Speed Reset
+U"Esc"       : animation_control(4); # Animations reset
 U"Equals"    : ledControl(1, 15); # Increase brightness
 U"Minus"     : ledControl(0, 15); # Decrease brightness
-U"Print"     : ledControl(4, 255); # Turn on animations (LEDs)
+U"Insert"    : ledControl(4, 255); # Turn on animations (LEDs)
 U"Delete"    : ledControl(3, 255); # Turn off animations (LEDs)
 U"Home"      : animation_control(2); # Animation play (Forward)
 U"End"       : animation_control(6); # Animation pause
@@ -22,13 +22,7 @@ U"Page Up"   : ledControl(7, 1); # Animation Speed Increase (overall)
 U"Page Down" : ledControl(8, 1); # Animation Speed Decrease (overall)
 U"Backslash" : gamma(2); # Toggle gamma correction
 
-U"Keypad Enter" : A[test_animation](start);
-
-U"Keypad 4" : animation_control(3), ledTest(11, 0xFFFF); # Pixel decrement
-U"Keypad 5" : animation_control(3), ledTest(15, 0);      # Test reset
-U"Keypad 6" : animation_control(3), ledTest(10, 0xFFFF); # Pixel increment
-U"Keypad 2" : animation_control(3), ledTest(2, 0xFFFF);  # Channel decrement
-U"Keypad 8" : animation_control(3), ledTest(1, 0xFFFF);  # Channel increment
+U"Backspace" : A[test_animation](start);
 
 U"Up"    : fade_control(0, 3, 15);
 U"Down"  : fade_control(0, 4, 15);
@@ -127,17 +121,6 @@ T[21,3](8)  : fade_set(1, 0, 11) + fade_set(1, 1, 4) + fade_set(1, 2, 11) + fade
 T[21,3](9)  : fade_set(1, 0, 12) + fade_set(1, 1, 5) + fade_set(1, 2, 12) + fade_set(1, 3, 0);
 T[21,3](10)  : fade_set(1, 0, 13) + fade_set(1, 1, 5) + fade_set(1, 2, 13) + fade_set(1, 3, 0);
 
-# Indicators
-U"F5" : rotate(4, 1);
-T[21,4](0) : fade_set(2, 0, 4) + fade_set(2, 1, 2) + fade_set(2, 2, 4) + fade_set(2, 3, 0);
-T[21,4](1) : fade_set(2, 0, 5) + fade_set(2, 1, 3) + fade_set(2, 2, 5) + fade_set(2, 3, 0);
-T[21,4](2) : fade_set(2, 0, 5) + fade_set(2, 1, 0) + fade_set(2, 2, 7) + fade_set(2, 3, 0);
-T[21,4](3) : fade_set(2, 0, 6) + fade_set(2, 1, 4) + fade_set(2, 2, 6) + fade_set(2, 3, 0);
-T[21,4](4) : fade_set(2, 0, 7) + fade_set(2, 1, 5) + fade_set(2, 2, 7) + fade_set(2, 3, 0);
-T[21,4](5) : fade_set(2, 0, 11) + fade_set(2, 1, 0) + fade_set(2, 2, 11) + fade_set(2, 3, 0);
-T[21,4](6) : fade_set(2, 0, 0) + fade_set(2, 1, 0) + fade_set(2, 2, 0) + fade_set(2, 3, 0);
-T[21,4](7) : fade_set(2, 0, 3) + fade_set(2, 1, 0) + fade_set(2, 2, 6) + fade_set(2, 3, 0);
-
 # Layer
 U"F6" : rotate(5, 1);
 T[21,5](0) : fade_set(3, 0, 4) + fade_set(3, 1, 2) + fade_set(3, 2, 4) + fade_set(3, 3, 0);
@@ -153,11 +136,10 @@ T[21,5](7) : fade_set(3, 0, 3) + fade_set(3, 1, 0) + fade_set(3, 2, 6) + fade_se
 
 ### General Animations ###
 
-# Animation selector
+# Waves + Start Animation
 U"F7" : rotate(6, 1);
 T[21,6](0) : A[miami_wave](start, replace:clear); # Miami
 T[21,6](1) : A[rainbow_wave](start, replace:clear); # Rainbow
 T[21,6](2) : A[pastel_wave](start, replace:clear); # Pastel Rainbow
 T[21,6](3) : A[kira_wave](start, replace:clear); # Kira Wave
-T[21,6](4) : A[orange_fade_in](start, replace:clear); # Orange fade animation
 

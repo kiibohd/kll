@@ -1,11 +1,11 @@
 # Gemini Dusk Dawn Layer 1 - Control Layer
 Name = "Gemini Dusk Dawn Control Layer";
-Version = 0.1;
-Author = "HaaTa (Jacob Alexander) 2018";
-KLL = 0.5;
+Version = 0.2;
+Author = "HaaTa (Jacob Alexander) 2018-2019";
+KLL = 0.5.7.11;
 
 # Modified Date
-Date = 2018-11-07;
+Date = 2019-03-25;
 
 
 # Animation Layer
@@ -22,6 +22,10 @@ U"F10" : storage_control(2); # Defaults
 U"F11" : storage_control(0); # Load
 U"F12" : storage_control(1); # Save
 
+# Old keys
+U"Delete" : U"ScrollLock";
+U"End"    : U"Pause";
+
 # Media Keys
 U"Print"       : CONS"Scan Previous Track";
 U"Volume Up"   : CONS"Scan Next Track";
@@ -34,8 +38,8 @@ U"Page Down" : CONS"Fast Forward";
 # System Control Keys
 U"F5" : CONS"Brightness Increment";
 U"F6" : CONS"Brightness Decrement";
-U"F7" : SYS"Wake Up";
-U"F8" : SYS"Sleep";
+U"[" : SYS"Wake Up";
+U"]" : SYS"Sleep";
 
 # International Keys
 U"1" : U"International1"; # Kanji1

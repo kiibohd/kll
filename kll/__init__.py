@@ -31,8 +31,12 @@ import kll.common.stage as stage
 
 ## Variables
 
-__version__ = '0.5.7.8'
+__version__ = '0.5.7.12'
 kll_name = 'kll'
+
+# This is updated whenever there is a KLL language breaking behaviour
+# The intent here is force users to update their (showing examples) rather than failing later (or succeeding incorrectly)
+__last_compat_version__ = '0.5.7.11'
 
 
 
@@ -199,6 +203,8 @@ def command_line_args(control, input_args):
 def main(args):
     # Initialize Control Stages
     control = stage.ControlStage()
+    control.last_compat_version = __last_compat_version__
+    control.short_version = __version__
 
     # Process Command-Line Args
     command_line_args(control, args)

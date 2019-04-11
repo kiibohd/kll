@@ -1,6 +1,5 @@
 Name = "State Scheduling";
 Author = "HaaTa (Jacob Alexander) 2016";
-KLL = 0.4;
 mydefine = "stuffs here";
 mydefine2 = '"stuffs here"'; # For outputting c define strings
 mynumber = 414;

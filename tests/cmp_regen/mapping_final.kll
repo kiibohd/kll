@@ -45,6 +45,5 @@ U0x011 i:: U0x012; # U"N"  i:: U"O"; # i::0 HID(USBCode,default)"17"N[0]
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2016; # Author = "HaaTa (Jacob Alexander) 2016"; # Author
-KLL = 0.5b; # KLL = 0.5b; # KLL
 Name = mappingtest; # Name = mapping test; # Name
 

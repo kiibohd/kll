@@ -784,10 +784,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             a_state = "AnimationPlayState_Pause"
         elif a_stop == 1:
             a_state = "AnimationPlayState_Stop"
-        elif a_start == 1:
-            a_state = "AnimationPlayState_Start"
         elif a_single == 1:
             a_state = "AnimationPlayState_Single"
+        elif a_start == 1:
+            a_state = "AnimationPlayState_Start"
         else:
             a_state = "AnimationPlayState_Pause"
 
@@ -803,6 +803,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         a_initial = 1
         if additional:
             a_initial = 0
+
+        # Add autostart flag if this animation has the start flag and is an initial animation
+        if a_initial == 1 and a_start == 1:
+            a_state += " | AnimationPlayState_AutoStart"
 
         return "\n\t{{ (TriggerMacro*){2}, {3}, /*{0} {1}*/\n\t\t{4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}}},".format(
             count,
@@ -1533,6 +1537,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     offset_col,
                     offset_row,
                 )
+            max_pixel_to_scancode = last_scancode
             self.fill_dict['ScanCodeToPixelMapping'] += "};"
             self.fill_dict['ScanCodeToDisplayMapping'] += "};"
 
@@ -1781,7 +1786,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
 
         ## UTF-8 ##
         self.fill_dict['UTF8Data'] = "const char* UTF8_Strings[] = {\n"
-        for key, item in sorted(utf8_strings.items()):
+        for key, item in utf8_strings.items():
             # Remove surrounding b'mytext' -> mytext and encode into utf-8
             output_str = '{}'.format(key.encode('utf-8'))[2:-1]
             self.fill_dict['UTF8Data'] += '\t"{}",\n'.format(output_str)
@@ -1812,6 +1817,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 len(animation_settings_list)
             )
             self.fill_dict['KLLDefines'] += "#define AnimationNum_KLL {0}\n".format(len(animations.data))
+            self.fill_dict['KLLDefines'] += "#define MaxPixelToScanCode_KLL {0}\n".format(max_pixel_to_scancode)
         else:
             self.fill_dict['KLLDefines'] += "#define AnimationNum_KLL 0\n"
 

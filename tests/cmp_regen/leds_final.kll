@@ -83,7 +83,6 @@ S0x07d <= x:20,rx:15; # S[122-125] <= x:20, rx:15; # S125
 
 # VariableData
 Author = HaaTa (Jacob Alexander) 2016-2018; # Author = "HaaTa (Jacob Alexander) 2016-2018"; # Author
-KLL = 0.5; # KLL = 0.5; # KLL
 Name = leds; # Name = leds; # Name
 myarray[] = "elem0" "elem1" "elem 2" "" "test"; # myarray[] = elem0 elem1 "elem 2"; # myarray
 mydefine = stuffs here; # mydefine = "stuffs here"; # mydefine

@@ -57,6 +57,5 @@ U0x052 : U+1F592; # U"Up" : U+1F592; # :0 HID(USBCode,default)"82"Up[0]
 # VariableData
 Author = HaaTa (Jacob Alexander) 2019; # Author = "HaaTa (Jacob Alexander) 2019"; # Author
 Date = 2019-02-24; # Date = 2019-02-24; # Date
-KLL = 0.6; # KLL = 0.6; # KLL
 Name = utf8; # Name = utf8; # Name
 
