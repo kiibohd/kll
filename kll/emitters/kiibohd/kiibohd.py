@@ -125,6 +125,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.def_output = "kll_defs.h"
         self.json_output = "kll.json"
         self.kiibohd_debug = False
+        self.enable_capv2 = False
 
         # Convenience
         self.capabilities = None
@@ -162,6 +163,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
         self.pixel_output = args.pixel_output
         self.json_output = args.json_output
         self.kiibohd_debug = args.kiibohd_debug
+        self.enable_capv2 = args.enable_capv2
 
     def command_line_flags(self, parser):
         '''
@@ -213,6 +215,12 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
             action='store_true',
             default=self.kiibohd_debug,
             help="Show debug info from kiibohd emitter.",
+        )
+        group.add_argument(
+            '--enable-capv2',
+            action='store_true',
+            default=self.enable_capv2,
+            help="Enable v2 of capabilities (requires firmware support).",
         )
 
     def check_file(self, filepath):
@@ -1043,8 +1051,12 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 count,
                 dkey,
             )
-            self.fill_dict['CapabilitiesFuncDecl'] += \
-                "void {0}( TriggerMacro *trigger, uint8_t state, uint8_t stateType, uint8_t *args );\n".format(funcName)
+            if self.enable_capv2:
+                self.fill_dict['CapabilitiesFuncDecl'] += \
+                    "void {0}( TriggerMacro *trigger, uint16_t state, uint8_t stateType, uint8_t *args );\n".format(funcName)
+            else:
+                self.fill_dict['CapabilitiesFuncDecl'] += \
+                    "void {0}( TriggerMacro *trigger, uint8_t state, uint8_t stateType, uint8_t *args );\n".format(funcName)
             self.fill_dict['CapabilitiesIndices'] += "\t{0}_index,\n".format(funcName)
 
             # Add to json
