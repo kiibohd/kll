@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+flit = "*"
 layouts = ">=0.4.7"
 pytest = "*"
 pytest-xdist = "*"
