@@ -22,6 +22,7 @@ KLL Emitters Container Classes
 
 import kll.emitters.kiibohd.kiibohd as kiibohd
 import kll.emitters.kll.kll as kll
+import kll.emitters.state.state as state
 import kll.emitters.none.none as none
 
 
@@ -62,6 +63,7 @@ class Emitters:
         self.emitters = {
             'kiibohd': kiibohd.Kiibohd(control),
             'kll': kll.KLL(control),
+            'state': state.State(control),
             'none': none.Drop(control)
         }
 
