@@ -245,7 +245,8 @@ class CompilerConfigurationStage(Stage):
 
         @param args: Name space of processed arguments
         '''
-        self.emitter = args.emitter
+        if args.emitter:
+            self.emitter = args.emitter
         self.color = args.color
         self.jobs = args.jobs
 
@@ -258,10 +259,11 @@ class CompilerConfigurationStage(Stage):
         self.color = self.color in ['auto', 'always']
 
         # Validate if it's a valid emitter
-        if self.emitter not in self.emitters.emitter_list():
-            print("{0} Invalid emitter '{1}'".format(ERROR, self.emitter))
-            print("Valid emitters: {0}".format(self.emitters.emitter_list()))
-            sys.exit(2)
+        for emitter in self.emitter:
+            if emitter not in self.emitters.emitter_list():
+                print("{0} Invalid emitter '{1}'".format(ERROR, self.emitter))
+                print("Valid emitters: {0}".format(self.emitters.emitter_list()))
+                sys.exit(2)
 
     def command_line_flags(self, parser):
         '''
@@ -273,8 +275,9 @@ class CompilerConfigurationStage(Stage):
         group = parser.add_argument_group('\033[1mCompiler Configuration\033[0m')
 
         # Optional Arguments
-        group.add_argument('--emitter', type=str, default=self.emitter,
-            help="Specify target emitter for the KLL compiler.\n"
+        group.add_argument('--emitter', type=str, action='append', default=[],
+            choices=self.emitters.emitter_list(),
+            help="Specify target emitter for the KLL compiler. Pass multiple times to use more than one.\n"
             "\033[1mDefault\033[0m: {0}\n"
             "\033[1mOptions\033[0m: {1}".format(self.emitter, self.emitters.emitter_list())
         )
@@ -3012,22 +3015,25 @@ class CodeGenerationStage(Stage):
         # Determine colorization setting
         self.color = self.control.stage('CompilerConfigurationStage').color
 
-        # Get Emitter object
-        self.emitter = self.control.stage('CompilerConfigurationStage').emitters.emitter(
-            self.control.stage('CompilerConfigurationStage').emitter
-        )
+        self.emitters = self.control.stage('CompilerConfigurationStage').emitter
+        self._status = 'Completed'
 
-        # Call Emitter
-        self.emitter.process()
+        for emitter in self.emitters:
+            # Get Emitter object
+            emitter = self.control.stage('CompilerConfigurationStage').emitters.emitter(
+                emitter
+            )
 
-        # Generate Outputs using Emitter
-        self.emitter.output()
+            # Call Emitter
+            emitter.process()
 
-        # Check Emitter status
-        if self.emitter.check():
-            self._status = 'Completed'
-        else:
-            self._status = 'Incomplete'
+            # Generate Outputs using Emitter
+            emitter.output()
+
+            # Check Emitter status
+            # Mark whole stage as incomplete if any emitter is not finished
+            if not emitter.check():
+                self._status = 'Incomplete'
 
 
 class ReportGenerationStage(Stage):
