@@ -160,12 +160,19 @@ class HIDId(Id, Schedule):
         '''
         return self.type_width[self.type]
 
+    def name(self):
+        '''
+        Return a human readable name from the current locale
+        '''
+
+        return self.locale.json()[self.locale_type][self.hex_str()]
+
     def __repr__(self):
         '''
         Use string name instead of integer, easier to debug
         '''
         try:
-            name = self.locale.json()[self.locale_type][self.hex_str()]
+            name = self.name()
             schedule = self.strSchedule()
             if len(schedule) > 0:
                 schedule = "({0})".format(schedule)

@@ -25,6 +25,7 @@ import os
 import re
 import sys
 
+from collections import OrderedDict
 
 
 ### Decorators ###
@@ -239,13 +240,13 @@ class JsonEmitter:
         '''
         JsonEmitter Initialization
         '''
-        self.json_dict = {}
+        self.json_dict = OrderedDict()
 
     def generate_json(self, output_path):
         '''
         Generates the output json file using an self.json_dict
         '''
-        output = json.dumps(self.json_dict, indent=4, sort_keys=True)
+        output = json.dumps(self.json_dict, indent=4)
 
         # Write json file
         with open(output_path, 'w') as outputFile:
