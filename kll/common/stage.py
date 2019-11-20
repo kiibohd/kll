@@ -2730,6 +2730,9 @@ class DataAnalysisStage(Stage):
         width_offset = minval['x'] * -1
 
         # Set parameters
+        self.pixel_display_params['UnitSize'] = unit_size
+        self.pixel_display_params['ColumnSize'] = column_size
+        self.pixel_display_params['RowSize'] = row_size
         self.pixel_display_params['Columns'] = width
         self.pixel_display_params['Rows'] = height
 
