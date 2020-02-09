@@ -1,6 +1,7 @@
 # kll - keyboard layout language
 
 [![https://travis-ci.org/kiibohd/kll](https://travis-ci.org/kiibohd/kll.svg?branch=master)](https://travis-ci.org/kiibohd/kll)
+[![PyPI version](https://badge.fury.io/py/kll.svg)](https://badge.fury.io/py/kll)
 
 [![Visit our IRC channel](https://kiwiirc.com/buttons/irc.freenode.net/input.club.png)](https://kiwiirc.com/client/irc.freenode.net/#input.club)
 
