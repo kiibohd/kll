@@ -4,7 +4,7 @@ KLL Compiler
 KLL - Keyboard Layout Language
 '''
 
-# Copyright (C) 2018-2019 by Jacob Alexander
+# Copyright (C) 2018-2020 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import kll.common.stage as stage
 
 ## Variables
 
-__version__ = '0.5.7.14'
+__version__ = '0.5.7.15'
 kll_name = 'kll'
 
 # This is updated whenever there is a KLL language breaking behaviour
