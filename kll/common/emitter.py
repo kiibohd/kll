@@ -221,7 +221,7 @@ class TextEmitter:
                     if match:
                         try:
                             outputFile.write(self.fill_dict[match[0]])
-                        except KeyError as err:
+                        except KeyError:
                             print("{0} '{1}' not found, skipping...".format(
                                 WARNING, match[0]
                             ))

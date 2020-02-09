@@ -15,9 +15,9 @@ classifiers = [
 ]
 description-file = "README.md"
 requires = [
-    "layouts>=0.4.7",
+    "layouts>=0.4.9",
     "gitpython",
     "packaging",
 ]
-requires-python = ">=3.4"
+requires-python = ">=3.5"
 

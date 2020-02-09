@@ -179,7 +179,7 @@ class HIDId(Id, Schedule):
 
             output = 'HID({},{})"{}"{}{}'.format(self.type, self.locale.name(), self.uid, name, schedule)
             return output
-        except:
+        except Exception:
             print("{} '{}' is an invalid dictionary lookup.".format(
                 WARNING,
                 (self.second_type, self.uid),

@@ -31,6 +31,13 @@ from kll.common.emitter import JsonEmitter, Emitter
 
 
 
+### Decorators ###
+
+# Print Decorator Variables
+ERROR = '\033[5;1;31mERROR\033[0m:'
+
+
+
 ### Classes ###
 
 class Configurator(Emitter, JsonEmitter):

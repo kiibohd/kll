@@ -254,7 +254,7 @@ class MergeContext(Context):
 
         for kll_context in self.contexts:
             # If context is a MergeContext then we have to recursively search
-            if kll_context.__class__.__name__ is 'MergeContext':
+            if kll_context.__class__.__name__ == 'MergeContext':
                 file_paths.extend(kll_context.paths())
             else:
                 file_paths.append(kll_context.parent.path)
