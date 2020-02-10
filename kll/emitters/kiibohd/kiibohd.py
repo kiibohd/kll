@@ -1471,8 +1471,18 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 last_uid += 1
                 # If last_uid isn't directly before, insert placeholder(s)
                 while last_uid != item.pixel.uid.index:
+                    if last_uid > item.pixel.uid.index:
+                        break
                     self.fill_dict['PixelMapping'] += "\tPixel_Blank(), // {0}\n".format(last_uid)
                     last_uid += 1
+                if last_uid > item.pixel.uid.index:
+                    print("{} Large uid, there is likely a bug in the KLL file: Position {}, Looking for {}".format(
+                        WARNING,
+                        last_uid,
+                        item.pixel.uid.index,
+                    ))
+                    last_uid -= 1
+                    continue
 
                 # Lookup width and number of channels
                 width = item.pixel.channels[0].width
