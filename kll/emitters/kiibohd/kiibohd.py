@@ -3,7 +3,7 @@
 KLL Kiibohd .h/.c File Emitter
 '''
 
-# Copyright (C) 2016-2019 by Jacob Alexander
+# Copyright (C) 2016-2020 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -647,6 +647,7 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                     0x13: 'TriggerType_Inactive1',
                     0x14: 'TriggerType_Active1',
                     0x15: 'TriggerType_Rotation1',
+                    0x16: 'TriggerType_Dial1',
                     0xFF: 'TriggerType_Debug',
                 }
                 if trigger_type in lookup.keys():
