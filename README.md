@@ -2,6 +2,8 @@
 
 [![GitHub Action Status](https://github.com/kiibohd/kll/workflows/Python%20package/badge.svg)](https://github.com/kiibohd/kll/actions)
 [![PyPI version](https://badge.fury.io/py/kll.svg)](https://badge.fury.io/py/kll)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/kiibohd/kll.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/kiibohd/kll/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/kiibohd/kll.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/kiibohd/kll/context:python)
 
 [![Visit our IRC channel](https://kiwiirc.com/buttons/irc.freenode.net/input.club.png)](https://kiwiirc.com/client/irc.freenode.net/#input.club)
 
