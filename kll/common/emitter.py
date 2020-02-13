@@ -3,7 +3,7 @@
 KLL Emitter Base Classes
 '''
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2020 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 
 ### Classes ###
 
-class Emitter:
+class Emitter(object):
     '''
     KLL Emitter Base Class
 
@@ -120,7 +120,7 @@ class Emitter:
         return not self.error_exit
 
 
-class FileEmitter:
+class FileEmitter(object):
     '''
     KLL File Emitter Class
 
@@ -146,7 +146,7 @@ class FileEmitter:
                 outputFile.write(contents)
 
 
-class TextEmitter:
+class TextEmitter(object):
     '''
     KLL Text Emitter Class
 
@@ -232,7 +232,7 @@ class TextEmitter:
                         outputFile.write(line)
 
 
-class JsonEmitter:
+class JsonEmitter(object):
     '''
     '''
 

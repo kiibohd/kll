@@ -22,8 +22,6 @@ Emits internal KLL state to files for inspecting.
 
 import json
 import os
-import sys
-import traceback
 
 from kll.common.emitter import Emitter
 

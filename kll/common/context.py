@@ -8,7 +8,7 @@ KLL Context Definitions
 * PartialMap
 '''
 
-# Copyright (C) 2016-2018 by Jacob Alexander
+# Copyright (C) 2016-2020 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 
 ### Classes ###
 
-class Context:
+class Context(object):
     '''
     Base KLL Context Class
     '''

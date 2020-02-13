@@ -25,7 +25,7 @@ import argparse
 import os
 import sys
 
-import kll.common.stage as stage
+import kll.common.stage
 
 
 
@@ -202,7 +202,7 @@ def command_line_args(control, input_args):
 
 def main(args):
     # Initialize Control Stages
-    control = stage.ControlStage()
+    control = kll.common.stage.ControlStage()
     control.last_compat_version = __last_compat_version__
     control.short_version = __version__
 

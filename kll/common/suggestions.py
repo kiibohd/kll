@@ -77,7 +77,7 @@ suggestions = {
     ],
     '0.5.7.0': [
         "KLL now supports the single animation option.",
-        "For example:"
+        "For example:",
         "A[my_animation] <= pfunc:interp, single;",
         'U"Q" : A[my_other_animation](single, pos:20); # Start animation at frame 20 and pause',
         "",
@@ -96,7 +96,7 @@ suggestions = {
     ],
     '0.5.6.0': [
         "KLL now supports fade profile groups.",
-        "A fade profile is a selection of LEDs associated to one of 4 groups:"
+        "A fade profile is a selection of LEDs associated to one of 4 groups:",
         " - Keys",
         " - Underglow",
         " - Indicators",

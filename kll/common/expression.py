@@ -525,7 +525,7 @@ class DataAssociationExpression(Expression):
         return keys
 
 
-class MapExpression(Expression):
+class MapExpression(Expression): # lgtm [py/missing-call-to-init]
     '''
     Container class for KLL map expressions
     '''

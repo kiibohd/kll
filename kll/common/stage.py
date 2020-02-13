@@ -3,7 +3,7 @@
 KLL Compiler Stage Definitions
 '''
 
-# Copyright (C) 2016-2019 by Jacob Alexander
+# Copyright (C) 2016-2020 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ import kll.emitters.emitters as emitters
 from kll.extern.funcparserlib.lexer import make_tokenizer, Token, LexerError
 from kll.extern.funcparserlib.parser import many, oneplus, maybe, skip, NoParseError, Parser_debug
 
-from layouts import Layouts, Layout
+from layouts import Layouts
 
 
 ### Decorators ###
@@ -56,7 +56,7 @@ ansi_escape = re.compile(r'\x1b[^m]*m')
 
 ### Classes ###
 
-class ControlStage:
+class ControlStage(object):
     '''
     Top-level Stage
 
@@ -145,7 +145,7 @@ class ControlStage:
             sys.exit(1)
 
 
-class Stage:
+class Stage(object):
     '''
     Base Stage Class
     '''
@@ -882,7 +882,7 @@ class OperationClassificationStage(Stage):
         @param parser: argparse setup object
         '''
         # Create new option group
-        group = parser.add_argument_group('\033[1mOperation Classification Configuration\033[0m')
+        parser.add_argument_group('\033[1mOperation Classification Configuration\033[0m')
 
     def merge_tokens(self, token_list, token_type):
         '''
@@ -1419,7 +1419,7 @@ class OperationSpecificsStage(Stage):
             if not quiet:
                 print(kll_expression.final_tokens())
                 print("\033[1;33m{0}\033[0m".format(err))
-            ret = False
+            #ret = False
             raise
 
         return ret
@@ -2499,44 +2499,44 @@ class DataAnalysisStage(Stage):
 
         # FIXME Should this be removed entirely?
         return
-        print("{0} This functionality is handled by the preprocessor".format(ERROR))
-
-        maxscancode = {}
-        maxpixelid = {}
-        for index, layer in enumerate(self.reduced_contexts):
-            # Find the max scancode of each the layers
-            # A max scancode for each of the interconnect ids found
-            for key, value in layer.organization.maxscancode().items():
-                if key not in maxscancode.keys() or maxscancode[key] < value:
-                    maxscancode[key] = value
-
-            # Find the max pixel id for each of the interconnect ids found
-            for key, value in layer.organization.maxpixelid().items():
-                if key not in maxpixelid.keys() or maxpixelid[key] < value:
-                    maxpixelid[key] = value
-
-        # Build scancode list of offsets
-        self.interconnect_scancode_offsets = []
-        cumulative = 0
-        if len(maxscancode.keys()) > 0:
-            for index in range(max(maxscancode.keys()) + 1):
-                # Set offset, then add max to cumulative
-                self.interconnect_scancode_offsets.append(cumulative)
-                cumulative += maxscancode[index]
-
-        # Build pixel id list of offsets
-        self.interconnect_pixel_offsets = []
-        cumulative = 0
-        if len(maxpixelid.keys()) > 0:
-            for index in range(max(maxpixelid.keys()) + 1):
-                # Set offset, then add max to cumulative
-                self.interconnect_pixel_offsets.append(cumulative)
-                cumulative += maxscancode[index]
-
-        if self.data_analysis_debug:
-            print("\033[1m--- Map Offsets ---\033[0m")
-            print("Scan Code Offsets: {0}".format(self.interconnect_scancode_offsets))
-            print("Pixel Id Offsets:  {0}".format(self.interconnect_pixel_offsets))
+#        print("{0} This functionality is handled by the preprocessor".format(ERROR))
+#
+#        maxscancode = {}
+#        maxpixelid = {}
+#        for index, layer in enumerate(self.reduced_contexts):
+#             Find the max scancode of each the layers
+#             A max scancode for each of the interconnect ids found
+#            for key, value in layer.organization.maxscancode().items():
+#                if key not in maxscancode.keys() or maxscancode[key] < value:
+#                    maxscancode[key] = value
+#
+#             Find the max pixel id for each of the interconnect ids found
+#            for key, value in layer.organization.maxpixelid().items():
+#                if key not in maxpixelid.keys() or maxpixelid[key] < value:
+#                    maxpixelid[key] = value
+#
+#         Build scancode list of offsets
+#        self.interconnect_scancode_offsets = []
+#        cumulative = 0
+#        if len(maxscancode.keys()) > 0:
+#            for index in range(max(maxscancode.keys()) + 1):
+#                 Set offset, then add max to cumulative
+#                self.interconnect_scancode_offsets.append(cumulative)
+#                cumulative += maxscancode[index]
+#
+#         Build pixel id list of offsets
+#        self.interconnect_pixel_offsets = []
+#        cumulative = 0
+#        if len(maxpixelid.keys()) > 0:
+#            for index in range(max(maxpixelid.keys()) + 1):
+#                 Set offset, then add max to cumulative
+#                self.interconnect_pixel_offsets.append(cumulative)
+#                cumulative += maxscancode[index]
+#
+#        if self.data_analysis_debug:
+#            print("\033[1m--- Map Offsets ---\033[0m")
+#            print("Scan Code Offsets: {0}".format(self.interconnect_scancode_offsets))
+#            print("Pixel Id Offsets:  {0}".format(self.interconnect_pixel_offsets))
 
     def generate_trigger_lists(self):
         '''
@@ -3004,7 +3004,7 @@ class CodeGenerationStage(Stage):
         @param parser: argparse setup object
         '''
         # Create new option group
-        group = parser.add_argument_group('\033[1mCode Generation Configuration\033[0m')
+        parser.add_argument_group('\033[1mCode Generation Configuration\033[0m')
 
         # Create options groups for each of the Emitters
         self.control.stage('CompilerConfigurationStage').emitters.command_line_flags(parser)

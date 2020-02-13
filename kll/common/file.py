@@ -97,7 +97,7 @@ class KLLFile:
                 self.data = f.read()
                 self.lines = self.data.splitlines()
 
-        except BaseException:
+        except Exception:
             print(
                 "{0} Failed to read '{1}' into memory...".format(
                     ERROR, self.path))
@@ -122,7 +122,7 @@ class KLLFile:
             with open(output_filename, 'w') as f:
                 f.write(self.data)
 
-        except BaseException:
+        except Exception:
             print("{0} Failed to write to file '{1}'".format(ERROR, self.path))
             return False
 

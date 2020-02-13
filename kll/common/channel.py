@@ -3,7 +3,7 @@
 KLL Channel Containers
 '''
 
-# Copyright (C) 2016-2017 by Jacob Alexander
+# Copyright (C) 2016-2020 by Jacob Alexander
 #
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ WARNING = '\033[5;1;33mWARNING\033[0m:'
 
 ### Classes ###
 
-class Channel:
+class Channel(object):
     '''
     Pixel Channel Container
     '''
@@ -45,7 +45,7 @@ class Channel:
         return "{0}:{1}".format(self.uid, self.width)
 
 
-class ChannelList:
+class ChannelList(object):
     '''
     Pixel Channel List Container
     '''
