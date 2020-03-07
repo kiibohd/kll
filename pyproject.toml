@@ -21,3 +21,6 @@ requires = [
 ]
 requires-python = ">=3.5"
 
+[tool.flit.scripts]
+kll = "kll:wrapper"
+
