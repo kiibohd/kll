@@ -1,11 +1,11 @@
 # Kira Release Animations and Default Map
 Name = Kira;
-Version = 0.5;
-Author = "HaaTa (Jacob Alexander) 2018-2019";
+Version = 0.6;
+Author = "HaaTa (Jacob Alexander) 2018-2020";
 KLL = 0.5.7.11;
 
 # Modified Date
-Date = 2019-04-03;
+Date = 2020-03-14;
 
 
 
@@ -15,11 +15,16 @@ U"RCtrl" + U"RShift" : Layer[1];
 U"RCtrl" + U"RAlt"   : Layer[2];
 
 
+### Layer Combination Blockers ###
+
+Layer[1] : releaseUSBKey(0xE4) + releaseUSBKey(0xE5);
+Layer[2] : releaseUSBKey(0xE4) + releaseUSBKey(0xE6);
+
 
 ### Layer Fade Updates ###
 
-Layer[1] : fade_layer_highlight(1);
-Layer[2] : fade_layer_highlight(2);
+Layer[1] :+ fade_layer_highlight(1);
+Layer[2] :+ fade_layer_highlight(2);
 
 
 ### Orange Fade In Animation ###
