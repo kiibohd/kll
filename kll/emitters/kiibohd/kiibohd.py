@@ -659,6 +659,10 @@ class Kiibohd(Emitter, TextEmitter, JsonEmitter):
                 if trigger_type == 'TriggerType_Rotation1':
                     state = identifier.parameters[0]
 
+                # Dials use state for directionality
+                if trigger_type == 'TriggerType_Dial1':
+                    state = identifier.parameters[0]
+
             # Unknown/Invalid Id
             else:
                 print("{0} Unknown identifier -> {1}".format(ERROR, identifier))
